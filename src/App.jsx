@@ -29,27 +29,6 @@ export default function App() {
     // GSAP ScrollTrigger global config
     ScrollTrigger.config({ limitCallbacks: true })
 
-    // Custom cursor — reaplicar sobre elementos dinámicos
-    const updateCursorListeners = () => {
-      const targets = document.querySelectorAll('a, button, [data-cursor-hover]')
-      targets.forEach((el) => {
-        const cursor = document.querySelector('.cursor')
-        const follower = document.querySelector('.cursor-follower')
-        if (!cursor || !follower) return
-
-        el.addEventListener('mouseenter', () => {
-          cursor.classList.add('hover')
-          follower.classList.add('hover')
-        })
-        el.addEventListener('mouseleave', () => {
-          cursor.classList.remove('hover')
-          follower.classList.remove('hover')
-        })
-      })
-    }
-
-    const timer = setTimeout(updateCursorListeners, 500)
-
     const sharedImage = sharedImageRef.current
 
     if (sharedImage) {
@@ -141,22 +120,14 @@ export default function App() {
 
       return () => {
         mm.revert()
-        clearTimeout(timer)
         ScrollTrigger.getAll().forEach((t) => t.kill())
       }
-    }
-
-    return () => {
-      clearTimeout(timer)
-      ScrollTrigger.getAll().forEach((t) => t.kill())
     }
   }, [])
 
   return (
     <Box bg="#080C12" minH="100vh" position="relative">
-      <Box display={{ base: 'none', lg: 'block' }}>
-        <CustomCursor />
-      </Box>
+      <CustomCursor />
 
       <Box
         ref={sharedImageRef}

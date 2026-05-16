@@ -20,41 +20,32 @@ body {
   cursor: none;
 }
 
-.cursor {
-  width: 12px;
-  height: 12px;
-  background: #0057B8;
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
-  mix-blend-mode: normal;
+*, a, button, [data-cursor-hover], input, textarea, select, label {
+  cursor: none !important;
 }
 
-.cursor-follower {
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(0, 87, 184, 0.5);
-  border-radius: 50%;
+.cursor {
+  width: 22px;
+  height: 24px;
   position: fixed;
+  top: 0;
+  left: 0;
   pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: all 0.15s ease;
+  z-index: 9999;
+  color: #ffffff;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.cursor svg {
+  width: 22px;
+  height: 24px;
+  display: block;
 }
 
 .cursor.hover {
-  width: 24px;
-  height: 24px;
-  background: #C9A84C;
-}
-
-.cursor-follower.hover {
-  width: 60px;
-  height: 60px;
-  border-color: rgba(201, 168, 76, 0.4);
+  color: #0057B8;
+  transform: scale(1.1);
 }
 
 /* ─── MARQUEE ───────────────────────────────────────────────── */

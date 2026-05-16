@@ -1,37 +1,23 @@
 import { useEffect, useRef } from 'react'
-import { gsap } from 'gsap'
 
 export default function CustomCursor() {
   const cursorRef = useRef(null)
-  const followerRef = useRef(null)
 
   useEffect(() => {
     const cursor = cursorRef.current
-    const follower = followerRef.current
+    if (!cursor) return
 
     const moveCursor = (e) => {
-      gsap.to(cursor, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.05,
-        ease: 'none',
-      })
-      gsap.to(follower, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.18,
-        ease: 'power2.out',
-      })
+      cursor.style.left = e.clientX + 'px'
+      cursor.style.top = e.clientY + 'px'
     }
 
     const addHover = () => {
       cursor.classList.add('hover')
-      follower.classList.add('hover')
     }
 
     const removeHover = () => {
       cursor.classList.remove('hover')
-      follower.classList.remove('hover')
     }
 
     window.addEventListener('mousemove', moveCursor)
@@ -52,9 +38,17 @@ export default function CustomCursor() {
   }, [])
 
   return (
-    <>
-      <div ref={cursorRef} className="cursor" />
-      <div ref={followerRef} className="cursor-follower" />
-    </>
+    <div ref={cursorRef} className="cursor">
+      <svg viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M3 2L3 17L7 13L10.5 21L13 19.5L9.5 12L16 12Z"
+          fill="currentColor"
+          stroke="rgba(0,0,0,0.6)"
+          strokeWidth="1.2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
   )
 }
