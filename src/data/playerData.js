@@ -2,6 +2,13 @@
 // Reemplazar con datos reales de Piovi
 
 import pioviImage from '../assets/piovi2.png'
+import photo1 from '../assets/galleryPhotos/photo1.jpg'
+import photo2 from '../assets/galleryPhotos/photo2.jpg'
+import photo3 from '../assets/galleryPhotos/photo3.jpg'
+import photo4 from '../assets/galleryPhotos/photo4.jpg'
+import video1 from '../assets/galleryVideos/video1.mp4'
+
+
 
 export const playerData = {
   name: 'Piovi',
@@ -83,9 +90,9 @@ export const playerData = {
       id: 1,
       title: 'Mejor temporada Cruz Azul 2024',
       duration: '3:42',
-      thumbnail: '/videos/thumb1.jpg',
-      src: '/videos/highlight1.mp4',
-      previewSrc: '/videos/preview1.mp4',
+      thumbnail: video1,
+      src: video1,
+      previewSrc: video1,
       category: 'Highlights',
     },
     {
@@ -142,20 +149,18 @@ export const playerData = {
     },
   ],
 
-  // Galería de fotos — colocar archivos reales en /public/gallery/
+  // Galería de fotos — colocar archivos reales en src/assets/galleryPhotos/
   gallery: [
-    { id: 1,  src: '/gallery/img01.jpg', alt: 'Cruz Azul vs América 2024',          caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',        aspect: 'tall'   },
-    { id: 2,  src: '/gallery/img02.jpg', alt: 'Festejo de gol',                      caption: 'Festejo tras anotar',                        category: 'Partido',        aspect: 'wide'   },
-    { id: 3,  src: '/gallery/img03.jpg', alt: 'Entrenamiento Cruz Azul',             caption: 'Sesión de entrenamiento · Ciudad Deportiva', category: 'Entrenamiento',  aspect: 'square' },
-    { id: 4,  src: '/gallery/img04.jpg', alt: 'Duelo aéreo en la cancha',            caption: 'Duelo aéreo · Torneo Clausura',               category: 'Partido',        aspect: 'tall'   },
-    { id: 5,  src: '/gallery/img05.jpg', alt: 'Posado con la camiseta de Cruz Azul', caption: 'Presentación oficial Cruz Azul',             category: 'Oficial',        aspect: 'wide'   },
-    { id: 6,  src: '/gallery/img06.jpg', alt: 'Copa Sudamericana 2022',              caption: 'Copa Sudamericana 2022 · Racing Club',        category: 'Copa',           aspect: 'square' },
-    { id: 7,  src: '/gallery/img07.jpg', alt: 'Backstage vestuario',                 caption: 'Backstage vestuario',                        category: 'Off-Field',      aspect: 'wide'   },
-    { id: 8,  src: '/gallery/img08.jpg', alt: 'Marca defensiva',                     caption: 'Bloqueo defensivo · Liga MX',                category: 'Partido',        aspect: 'tall'   },
-    { id: 9,  src: '/gallery/img09.jpg', alt: 'Sesión de pesas',                     caption: 'Preparación física · pretemporada',          category: 'Entrenamiento',  aspect: 'square' },
-    { id: 10, src: '/gallery/img10.jpg', alt: 'Celebración título 2024',             caption: 'Campeón Liga MX 2024',                       category: 'Copa',           aspect: 'tall'   },
-    { id: 11, src: '/gallery/img11.jpg', alt: 'Charla con el cuerpo técnico',        caption: 'Coordinación táctica',                       category: 'Entrenamiento',  aspect: 'wide'   },
-    { id: 12, src: '/gallery/img12.jpg', alt: 'Piovi con aficionados',               caption: 'Con los fans tras el partido',               category: 'Off-Field',      aspect: 'square' },
+    { id: 1, src: photo1, alt: 'Cruz Azul vs América 2024',  caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',       aspect: 'tall'   },
+    { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
+    { id: 3, src: photo3, alt: 'Entrenamiento Cruz Azul',     caption: 'Sesión de entrenamiento · Ciudad Deportiva', category: 'Entrenamiento', aspect: 'square' },
+    { id: 4, src: photo4, alt: 'Duelo aéreo en la cancha',   caption: 'Duelo aéreo · Torneo Clausura',              category: 'Partido',       aspect: 'tall'   },
+    { id: 1, src: photo1, alt: 'Cruz Azul vs América 2024',  caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',       aspect: 'tall'   },
+    { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
+    { id: 3, src: photo3, alt: 'Entrenamiento Cruz Azul',     caption: 'Sesión de entrenamiento · Ciudad Deportiva', category: 'Entrenamiento', aspect: 'square' },
+    { id: 4, src: photo4, alt: 'Duelo aéreo en la cancha',   caption: 'Duelo aéreo · Torneo Clausura',              category: 'Partido',       aspect: 'tall'   },
+     { id: 1, src: photo1, alt: 'Cruz Azul vs América 2024',  caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',       aspect: 'tall'   },
+    { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
   ],
 
   socialMedia: {
