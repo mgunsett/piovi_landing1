@@ -7,7 +7,7 @@ import photo2 from '../assets/galleryPhotos/photo2.jpg'
 import photo3 from '../assets/galleryPhotos/photo3.jpg'
 import photo4 from '../assets/galleryPhotos/photo4.jpg'
 import video1 from '../assets/galleryVideos/video1.mp4'
-
+import bgCancha from '../assets/bg_cancha.jpg'
 
 
 export const playerData = {
@@ -27,6 +27,7 @@ export const playerData = {
   currentClub: 'Cruz Azul',
   quote: '"El trabajo diario es la base de todo lo que logramos."',
   image: pioviImage,
+  bg: bgCancha,
 
   // Stats técnicas (0-100)
   stats: [
