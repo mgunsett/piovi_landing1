@@ -154,6 +154,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       overflow="hidden"
       display="flex"
       flexDirection="column"
+      
     >
       {/* Noise overlay */}
       <div className="noise-overlay" />
@@ -358,15 +359,19 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           display={{ base: 'none', md: 'block' }}
           textAlign="right"
         >
-          <HoverFloat intensity={1}>
-            <Box ref={statsRef}>
+          <Box ref={statsRef}>
               <VStack spacing={3} align="flex-end">
-                <MiniStat label="Edad" value="27" />
-                <MiniStat label="Club" value="Cruz Azul" accent />
-                <MiniStat label="Altura" value="1.84m" />
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Edad" value="27" />
+                </HoverFloat>
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Club" value="Cruz Azul" accent />
+                </HoverFloat>
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Altura" value="1.84m" />
+                </HoverFloat>
               </VStack>
             </Box>
-          </HoverFloat>
         </Box>
       </Flex>
 

@@ -10,7 +10,6 @@ const navLinks = [
   { label: 'Stats',    href: '#stats' },
   { label: 'Videos',   href: '#videos' },
   { label: 'Prensa',   href: '#press' },
-  { label: 'Contacto', href: '#contact' },
 ]
 
 export default function Navbar() {
@@ -42,7 +41,7 @@ export default function Navbar() {
       px={{ base: 6, md: 12, lg: 20 }}
       py={4}
       transition="all 0.4s ease"
-      bg={scrolled ? 'rgba(8, 12, 18, 0.92)' : 'transparent'}
+      bg={scrolled ? 'rgba(8, 12, 18, 0.7)' : 'transparent'}
       backdropFilter={scrolled ? 'blur(16px)' : 'none'}
       borderBottom={scrolled ? '1px solid rgba(0, 87, 184, 0.2)' : 'none'}
     >
