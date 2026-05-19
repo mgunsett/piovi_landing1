@@ -17,13 +17,44 @@ const marqueeItems = [
 export default function Hero({ playerImage, hidePlayerImage = false }) {
   const containerRef = useRef(null)
   const lettersRef = useRef([])
+  const bgLettersRef = useRef([])
   const photoRef = useRef(null)
   const subtitleRef = useRef(null)
   const statsRef = useRef(null)
   const lineRef = useRef(null)
   const numberRef = useRef(null)
+  const photoInnerRef = useRef(null)
+  const glowFlashRef = useRef(null)
 
   const heroName = 'PIOVI'
+
+  // ── Global mouse parallax ─────────────────────────────────────
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const onMove = (e) => {
+      const rect = container.getBoundingClientRect()
+      const xn = (e.clientX - rect.left) / rect.width - 0.5   // -0.5 → 0.5
+      const yn = (e.clientY - rect.top)  / rect.height - 0.5
+
+      // Player image — most movement
+      if (photoRef.current) {
+        gsap.to(photoRef.current, { x: xn * 28, y: yn * 14, duration: 1, ease: 'power2.out' })
+      }
+      // Foreground letters — medium layer
+      if (lettersRef.current.length) {
+        gsap.to(lettersRef.current, { x: xn * 12, y: yn * 6, duration: 1.2, ease: 'power2.out', stagger: 0.02 })
+      }
+      // Background ghost letters — slowest layer
+      if (bgLettersRef.current.length) {
+        gsap.to(bgLettersRef.current, { x: xn * 5, y: yn * 3, duration: 1.6, ease: 'power2.out', stagger: 0.02 })
+      }
+    }
+
+    container.addEventListener('mousemove', onMove)
+    return () => container.removeEventListener('mousemove', onMove)
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -44,12 +75,36 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         0
       )
 
-      // Photo entrance
+      // Photo entrance — clip-path rise from ground + glow flash
       tl.fromTo(
-        photoRef.current,
-        { yPercent: 8, opacity: 0, scale: 0.97 },
-        { yPercent: 0, opacity: 1, scale: 1, duration: 1.4, ease: 'expo.out' },
-        0.3
+        photoInnerRef.current,
+        {
+          clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)',
+          scale: 1.06,
+          filter: 'brightness(1.8) saturate(0.4)',
+        },
+        {
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+          scale: 1,
+          filter: 'brightness(1) saturate(1)',
+          duration: 1.5,
+          ease: 'expo.out',
+        },
+        0.25
+      )
+      // Glow flash burst at end of reveal
+      tl.fromTo(
+        glowFlashRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.18,
+          ease: 'power2.in',
+          onComplete: () => {
+            gsap.to(glowFlashRef.current, { opacity: 0, duration: 0.55, ease: 'power2.out' })
+          },
+        },
+        1.55
       )
 
       // Number
@@ -145,7 +200,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             {heroName.split('').map((letter, i) => (
               <Box
                 key={i}
-                ref={(el) => (lettersRef.current[i] = el)}
+                ref={(el) => (bgLettersRef.current[i] = el)}
                 as="span"
                 fontFamily="'Bebas Neue', sans-serif"
                 fontSize={{ base: '22vw', md: '18vw', lg: '40vw' }}
@@ -179,7 +234,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             {heroName.split('').map((letter, i) => (
               <Box
                 key={i}
-                ref={(el) => { if (i === 0) lettersRef.current = [] ; lettersRef.current[i] = el }}
+                ref={(el) => { lettersRef.current[i] = el }}
                 as="span"
                 fontFamily="'Bebas Neue', sans-serif"
                 fontSize={{ base: '22vw', md: '18vw', lg: '20vw' }}
@@ -206,7 +261,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             zIndex={6}
             w={{ base: '280px', md: '400px', lg: '400px' }}
           >
-            <Box>
+            {/* Inner wrapper — clip-path animation target */}
+            <Box ref={photoInnerRef} position="relative">
               <Image
                 src={playerImage || '/player.png'}
                 alt="Gonzalo Piovi"
@@ -217,6 +273,16 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   filter: 'drop-shadow(0 40px 80px rgba(0,87,184,0.4))',
                   display: 'block',
                 }}
+              />
+              {/* Glow flash overlay */}
+              <Box
+                ref={glowFlashRef}
+                position="absolute"
+                inset="0"
+                bg="radial-gradient(ellipse at 50% 80%, rgba(0,87,184,0.7) 0%, rgba(0,130,255,0.2) 50%, transparent 75%)"
+                pointerEvents="none"
+                opacity={0}
+                mixBlendMode="screen"
               />
             </Box>
           </Box>
@@ -231,18 +297,20 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           display={{ base: 'none', md: 'block' }}
         >
           {/* Jersey number */}
-          <Box ref={numberRef}>
-            <Text
-              fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ md: '120px', lg: '160px' }}
-              lineHeight="0.85"
-              color="transparent"
-              sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
-              mb={4}
-            >
-              3
-            </Text>
-          </Box>
+          <HoverFloat intensity={1.2}>
+            <Box ref={numberRef}>
+              <Text
+                fontFamily="'Bebas Neue', sans-serif"
+                fontSize={{ md: '120px', lg: '160px' }}
+                lineHeight="0.85"
+                color="transparent"
+                sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
+                mb={4}
+              >
+                3
+              </Text>
+            </Box>
+          </HoverFloat>
 
           {/* Divider line */}
           <Box
@@ -254,29 +322,31 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           />
 
           {/* Position & nationality */}
-          <Box ref={subtitleRef}>
-            <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="13px"
-              fontWeight="600"
-              letterSpacing="0.18em"
-              textTransform="uppercase"
-              color="whiteAlpha.600"
-              mb={1}
-            >
-              Defensor Central
-            </Text>
-            <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="13px"
-              fontWeight="600"
-              letterSpacing="0.18em"
-              textTransform="uppercase"
-              color="brand.blue"
-            >
-              🇦🇷 Argentina
-            </Text>
-          </Box>
+          <HoverFloat intensity={1}>
+            <Box ref={subtitleRef}>
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="13px"
+                fontWeight="600"
+                letterSpacing="0.18em"
+                textTransform="uppercase"
+                color="whiteAlpha.600"
+                mb={1}
+              >
+                Defensor Central
+              </Text>
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="13px"
+                fontWeight="600"
+                letterSpacing="0.18em"
+                textTransform="uppercase"
+                color="brand.blue"
+              >
+                🇦🇷 Argentina
+              </Text>
+            </Box>
+          </HoverFloat>
         </Box>
 
         {/* Right info panel */}
@@ -288,13 +358,15 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           display={{ base: 'none', md: 'block' }}
           textAlign="right"
         >
-          <Box ref={statsRef}>
-            <VStack spacing={3} align="flex-end">
-              <MiniStat label="Edad" value="27" />
-              <MiniStat label="Club" value="Cruz Azul" accent />
-              <MiniStat label="Altura" value="1.84m" />
-            </VStack>
-          </Box>
+          <HoverFloat intensity={1}>
+            <Box ref={statsRef}>
+              <VStack spacing={3} align="flex-end">
+                <MiniStat label="Edad" value="27" />
+                <MiniStat label="Club" value="Cruz Azul" accent />
+                <MiniStat label="Altura" value="1.84m" />
+              </VStack>
+            </Box>
+          </HoverFloat>
         </Box>
       </Flex>
 
@@ -397,6 +469,47 @@ function GridLines() {
         backgroundSize: '80px 80px',
       }}
     />
+  )
+}
+
+// ─── HOVER FLOAT ─────────────────────────────────────────────────
+function HoverFloat({ children, intensity = 1 }) {
+  const ref = useRef(null)
+
+  const onMove = (e) => {
+    const el = ref.current
+    if (!el) return
+    const r = el.getBoundingClientRect()
+    const dx = ((e.clientX - r.left) / r.width  - 0.5) * 2  // -1 → 1
+    const dy = ((e.clientY - r.top)  / r.height - 0.5) * 2
+    gsap.to(el, {
+      x: dx * 7 * intensity,
+      y: dy * 5 * intensity,
+      rotateX: -dy * 4 * intensity,
+      rotateY:  dx * 4 * intensity,
+      duration: 0.35,
+      ease: 'power2.out',
+      transformPerspective: 600,
+    })
+  }
+
+  const onLeave = () => {
+    gsap.to(ref.current, {
+      x: 0, y: 0, rotateX: 0, rotateY: 0,
+      duration: 0.55,
+      ease: 'power3.out',
+    })
+  }
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={{ display: 'inline-block', transformStyle: 'preserve-3d' }}
+    >
+      {children}
+    </div>
   )
 }
 
