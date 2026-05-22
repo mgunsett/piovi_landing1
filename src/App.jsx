@@ -3,6 +3,10 @@ import { Box, Image } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+// Images
+import piovi3 from './assets/piovi3.png'
+import piovi4 from './assets/piovi4.png'
+
 // UI
 import CustomCursor from './components/UI/CustomCursor'
 import Navbar from './components/UI/Navbar'
@@ -16,112 +20,136 @@ import GallerySection from './components/Gallery/GallerySection'
 import VideosSection from './components/Videos/VideosSection'
 import PressSection from './components/Press/PressSection'
 import ContactSection from './components/Contact/ContactSection'
-import playerData from './data/playerData'
-
-const PLAYER_IMAGE = playerData.image
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function App() {
-  const sharedImageRef = useRef(null)
+  const sharedContainerRef = useRef(null)
+  const img4Ref = useRef(null) // piovi4 — Hero
+  const img3Ref = useRef(null) // piovi3 — CinematicTransition
 
   useEffect(() => {
-    // GSAP ScrollTrigger global config
     ScrollTrigger.config({ limitCallbacks: true })
 
-    const sharedImage = sharedImageRef.current
+    const container = sharedContainerRef.current
+    const img4 = img4Ref.current
+    const img3 = img3Ref.current
 
-    if (sharedImage) {
-      const mm = gsap.matchMedia()
+    if (!container || !img4 || !img3) return
 
-      const buildSharedImageTimeline = ({
-        startBottom,
-        enterBottom,
-        centerBottom,
-        exitBottom,
-        downScale,
-        growScale,
-        exitScale,
-      }) => {
-        gsap.set(sharedImage, {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          bottom: startBottom,
-        })
+    const mm = gsap.matchMedia()
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '#hero',
-            endTrigger: '#cinematic-transition',
-            start: 'top top',
-            end: 'bottom -110%',
-            scrub: 0.9,
-          },
-        })
+    const buildTimelines = ({
+      startBottom,
+      enterBottom,
+      centerBottom,
+      exitBottom,
+      downScale,
+      growScale,
+      exitScale,
+    }) => {
+      // ── Initial states ──────────────────────────────────────────
+      gsap.set(container, {
+        autoAlpha: 1,
+        scale: 1,
+        bottom: startBottom,
+      })
+      gsap.set(img4, { opacity: 1 })
+      gsap.set(img3, { opacity: 0 })
 
-        // 1) Baja desde Hero y se achica apenas
-        tl.to(sharedImage, {
-          bottom: enterBottom,
-          scale: downScale,
-          duration: 0.3,
-          ease: 'none',
-        })
-
-        // 2) En cinematic recupera y supera levemente el tamaño para dar sensación de empuje
-        tl.to(sharedImage, {
-          bottom: centerBottom,
-          scale: growScale,
-          duration: 0.46,
-          ease: 'none',
-        })
-
-        // 3) Al final vuelve a encogerse, manteniéndose visible casi todo el recorrido
-        tl.to(sharedImage, {
-          bottom: exitBottom,
-          scale: exitScale,
-          duration: 0.16,
-          ease: 'none',
-        })
-
-        // 4) Fade out en el tramo final real del componente
-        tl.to(sharedImage, {
-          autoAlpha: 0,
-          duration: 0.08,
-          ease: 'none',
-        })
-      }
-
-      mm.add('(max-width: 767px)', () => {
-        buildSharedImageTimeline({
-          startBottom: '2vh',
-          enterBottom: '13vh',
-          centerBottom: '7vh',
-          exitBottom: '14vh',
-          downScale: 0.9,
-          growScale: 1.02,
-          exitScale: 0.88,
-        })
+      // ── Main movement timeline: Hero top → CinematicTransition end ──
+      // Total scroll: ~100vh (hero) + ~250vh (cinematic) = ~350vh
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#hero',
+          endTrigger: '#cinematic-transition-outer',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.9,
+        },
       })
 
-      mm.add('(min-width: 768px)', () => {
-        buildSharedImageTimeline({
-          startBottom: '0vh',
-          enterBottom: '15vh',
-          centerBottom: '8.5vh',
-          exitBottom: '16.5vh',
-          downScale: 0.91,
-          growScale: 1.03,
-          exitScale: 0.89,
-        })
+      // Phase 1 (0–0.22): Hero scroll — slight rise + shrink
+      tl.to(container, {
+        bottom: enterBottom,
+        scale: downScale,
+        duration: 0.22,
+        ease: 'none',
       })
 
-      ScrollTrigger.refresh()
+      // Phase 2 (0.22–0.57): Cinematic entry — image comes forward + grows
+      tl.to(container, {
+        bottom: centerBottom,
+        scale: growScale,
+        duration: 0.35,
+        ease: 'none',
+      })
 
-      return () => {
-        mm.revert()
-        ScrollTrigger.getAll().forEach((t) => t.kill())
-      }
+      // Phase 3 (0.57–0.85): Cinematic middle — subtle zoom as text appears
+      tl.to(container, {
+        scale: growScale + 0.032,
+        duration: 0.28,
+        ease: 'none',
+      })
+
+      // Phase 4 (0.85–0.93): Begin exit — shrink and rise
+      tl.to(container, {
+        bottom: exitBottom,
+        scale: exitScale,
+        duration: 0.08,
+        ease: 'none',
+      })
+
+      // Phase 5 (0.93–1.0): Fade out as StatsSection approaches
+      tl.to(container, {
+        autoAlpha: 0,
+        duration: 0.07,
+        ease: 'none',
+      })
+
+      // ── Crossfade: piovi4 → piovi3 as Hero scrolls away ──────────
+      // Starts when Hero bottom is 75% down the viewport, ends when fully off
+      const crossfadeTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'bottom 75%',
+          end: 'bottom top',
+          scrub: 0.9,
+        },
+      })
+      crossfadeTL.to(img4, { opacity: 0, ease: 'none' }, 0)
+      crossfadeTL.to(img3, { opacity: 1, ease: 'none' }, 0)
+    }
+
+    mm.add('(max-width: 767px)', () => {
+      buildTimelines({
+        startBottom: '2vh',
+        enterBottom: '8vh',
+        centerBottom: '1vh',
+        exitBottom: '8vh',
+        downScale: 0.90,
+        growScale: 1.02,
+        exitScale: 0.88,
+      })
+    })
+
+    mm.add('(min-width: 768px)', () => {
+      buildTimelines({
+        startBottom: '0vh',
+        enterBottom: '10vh',
+        centerBottom: '0vh',
+        exitBottom: '10vh',
+        downScale: 0.91,
+        growScale: 1.03,
+        exitScale: 0.89,
+      })
+    })
+
+    ScrollTrigger.refresh()
+
+    return () => {
+      mm.revert()
+      ScrollTrigger.getAll().forEach((t) => t.kill())
     }
   }, [])
 
@@ -129,8 +157,11 @@ export default function App() {
     <Box bg="#080C12" minH="100vh" position="relative">
       <CustomCursor />
 
+      {/* ── Shared floating player image ──────────────────────────── */}
+      {/* Two images stacked — piovi4 visible in Hero, piovi3 in Cinematic.
+          They cross-fade during scroll so the swap is imperceptible.       */}
       <Box
-        ref={sharedImageRef}
+        ref={sharedContainerRef}
         position="fixed"
         left="50%"
         bottom={{ base: '2vh', md: '0vh' }}
@@ -139,21 +170,51 @@ export default function App() {
         pointerEvents="none"
         w={{ base: '66vw', sm: '56vw', md: '38vw', lg: '32vw', xl: '29vw' }}
         maxW={{ base: '300px', md: '390px', lg: '440px' }}
-        opacity={1}
       >
+        {/* Invisible spacer — maintains container height via natural image dimensions */}
         <Image
-          src={PLAYER_IMAGE}
-          alt="Gonzalo Piovi"
+          src={piovi4}
+          alt=""
           width="100%"
           height="auto"
           objectFit="contain"
-          filter="drop-shadow(0 30px 80px rgba(0,87,184,0.38))"
+          visibility="hidden"
+          display="block"
+          aria-hidden="true"
         />
+
+        {/* piovi4 — shown during Hero */}
+        {/* bottom-anchored so the player's feet always sit at the
+            container's bottom edge regardless of aspect ratio        */}
+        <Box ref={img4Ref} position="absolute" bottom="0" left="0" right="0">
+          <Image
+            src={piovi4}
+            alt="Gonzalo Piovi"
+            width="100%"
+            height="auto"
+            objectFit="contain"
+            filter="drop-shadow(0 30px 80px rgba(0,87,184,0.38))"
+            display="block"
+          />
+        </Box>
+
+        {/* piovi3 — shown during CinematicTransition (cross-fades in) */}
+        <Box ref={img3Ref} position="absolute" bottom="0" left="0" right="0" opacity={0}>
+          <Image
+            src={piovi3}
+            alt="Gonzalo Piovi"
+            width="100%"
+            height="auto"
+            objectFit="contain"
+            filter="drop-shadow(0 30px 80px rgba(0,87,184,0.42))"
+            display="block"
+          />
+        </Box>
       </Box>
 
       <Navbar />
-      <Hero playerImage={PLAYER_IMAGE} hidePlayerImage />
-      <CinematicTransition playerImage={PLAYER_IMAGE} useSharedImage />
+      <Hero playerImage={piovi4} hidePlayerImage />
+      <CinematicTransition playerImage={piovi3} useSharedImage />
       <StatsSection />
       <GallerySection />
       <VideosSection />

@@ -2,104 +2,136 @@ import { useEffect, useRef } from 'react'
 import { Box, Text, VStack, Flex } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { motion, useScroll, useTransform } from 'framer-motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// ─── CINEMATIC TRANSITION ─────────────────────────────────────────
+// Architecture:
+//   sectionRef      — outer wrapper, height: 350vh, position: relative
+//                     id="cinematic-transition-outer"
+//                     This tall div is the ScrollTrigger anchor AND the
+//                     element that makes CSS sticky work correctly.
+//
+//   pinContainerRef — inner sticky viewport, height: 100vh, position: sticky, top: 0
+//                     id="cinematic-transition"
+//                     Sticks inside its 350vh parent → gives 250vh of
+//                     scrub without relying on ScrollTrigger pin.
+//
+// After the 350vh outer wrapper is scrolled past, the sticky element
+// "lands" at the bottom of its container (page position ~250vh into
+// the section). StatsSection, which follows immediately in the DOM,
+// naturally slides UP over the still-visible blue CinematicTransition,
+// creating the layered "cover" effect without any extra JS.
+// ─────────────────────────────────────────────────────────────────
+
 export default function CinematicTransition({ playerImage, useSharedImage = false }) {
-  const sectionRef = useRef(null)
-  const pinContainerRef = useRef(null)
-  const bgRef = useRef(null)
-  const photoRef = useRef(null)
-  const textLeftRef = useRef(null)
-  const textRightRef = useRef(null)
-  const overlayRef = useRef(null)
-  const taglineRef = useRef(null)
+  const sectionRef      = useRef(null) // outer 350vh wrapper
+  const pinContainerRef = useRef(null) // inner sticky 100vh element
+  const bgRef           = useRef(null)
+  const photoRef        = useRef(null)
+  const textLeftRef     = useRef(null)
+  const textRightRef    = useRef(null)
+  const overlayRef      = useRef(null)
+  const taglineRef      = useRef(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // ── Scrubbed timeline driven by the OUTER 350vh wrapper ───
+      // start: outer-top  = viewport-top  → progress 0
+      // end:   outer-bottom = viewport-bottom → progress 1
+      // Scroll distance = 350vh – 100vh = 250vh  ✓
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: pinContainerRef.current,
+          trigger: sectionRef.current,
           start: 'top top',
-          end: '+=250%',
+          end: 'bottom bottom',
           scrub: 1,
-          pin: true,
-          anticipatePin: 1,
         },
       })
 
-      // Phase 1: Fondo blanco hueso aparece (0 → 0.4)
-      tl.fromTo(bgRef.current,
+      // ── Phase 1 (0 → 0.4): Dark → bone white ─────────────────
+      tl.fromTo(
+        bgRef.current,
         { backgroundColor: '#080C12' },
         { backgroundColor: '#F5F0E8', duration: 0.4 },
         0
       )
 
-      // Foto entra suavemente (0 → 0.3)
-      tl.fromTo(photoRef.current,
-        { scale: 0.85, opacity: 0.6 },
-        { scale: 1, opacity: 1, duration: 0.3 },
-        0
-      )
+      // Photo enters from slightly below (only for local / non-shared)
+      if (!useSharedImage && photoRef.current) {
+        tl.fromTo(
+          photoRef.current,
+          { scale: 0.85, opacity: 0.6 },
+          { scale: 1.0, opacity: 1, duration: 0.3 },
+          0
+        )
+      }
 
-      // Texto izquierdo entra (0.1 → 0.5)
-      tl.fromTo(textLeftRef.current,
+      // Left text slides in from left
+      tl.fromTo(
+        textLeftRef.current,
         { x: -80, opacity: 0 },
         { x: 0, opacity: 1, duration: 0.4 },
         0.1
       )
 
-      // Texto derecho entra (0.2 → 0.6)
-      tl.fromTo(textRightRef.current,
+      // Right text slides in from right
+      tl.fromTo(
+        textRightRef.current,
         { x: 80, opacity: 0 },
         { x: 0, opacity: 1, duration: 0.4 },
         0.2
       )
 
-      // Phase 2: Fondo cambia a azul Cruz Azul (0.5 → 1.0)
-      tl.to(bgRef.current,
-        { backgroundColor: '#0057B8', duration: 0.5 },
-        0.5
-      )
+      // ── Phase 2 (0.5 → 1.0): Bone white → Cruz Azul blue ─────
+      tl.to(bgRef.current, { backgroundColor: '#0057B8', duration: 0.5 }, 0.5)
 
-      // Overlay blanco sale (0.5 → 0.8)
-      tl.fromTo(overlayRef.current,
+      // Grid overlay fades in
+      tl.fromTo(
+        overlayRef.current,
         { opacity: 0 },
         { opacity: 0.06, duration: 0.3 },
         0.5
       )
 
-      // Texto cambia a blanco (0.5 → 0.8)
-      tl.to([textLeftRef.current, textRightRef.current],
+      // Text colour shifts to white
+      tl.to(
+        [textLeftRef.current, textRightRef.current],
         { color: 'rgba(255,255,255,0.9)', duration: 0.3 },
         0.5
       )
 
-      // Tagline entra desde abajo (0.7 → 1.0)
-      tl.fromTo(taglineRef.current,
+      // Tagline rises from below
+      tl.fromTo(
+        taglineRef.current,
         { yPercent: 60, opacity: 0 },
         { yPercent: 0, opacity: 1, duration: 0.4 },
         0.65
       )
 
-      // Foto escala levemente (acento en fase 2)
-      tl.to(photoRef.current,
-        { scale: 1.04, duration: 0.5 },
-        0.5
-      )
+      // Local photo: subtle zoom accent in phase 2
+      if (!useSharedImage && photoRef.current) {
+        tl.to(photoRef.current, { scale: 1.04, duration: 0.5 }, 0.5)
+      }
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [useSharedImage])
 
   return (
-    <Box ref={sectionRef} position="relative">
-      {/* Pin container */}
+    // ── Outer wrapper — the "tall scroll space" for sticky ────────
+    <Box
+      ref={sectionRef}
+      id="cinematic-transition-outer"
+      position="relative"
+      h="350vh"   // 100vh visible + 250vh of scrub distance
+    >
+      {/* ── Inner sticky viewport ─────────────────────────────── */}
       <Box
         ref={pinContainerRef}
         id="cinematic-transition"
-        position="relative"
+        position="sticky"
+        top="0"
         w="100%"
         h="100vh"
         overflow="hidden"
@@ -113,13 +145,14 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
           zIndex={0}
         />
 
-        {/* Grid overlay (sutil) */}
+        {/* Grid overlay (subtle) */}
         <Box
           ref={overlayRef}
           position="absolute"
           inset="0"
           zIndex={1}
           pointerEvents="none"
+          opacity={0}
           sx={{
             backgroundImage: `
               linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
@@ -129,10 +162,10 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
           }}
         />
 
-        {/* Noise */}
+        {/* Noise overlay */}
         <div className="noise-overlay" style={{ zIndex: 1 }} />
 
-        {/* Layout principal */}
+        {/* ── Main layout ───────────────────────────────────────── */}
         <Flex
           position="relative"
           zIndex={2}
@@ -141,7 +174,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
           justify="center"
           px={{ base: 4, md: 12, lg: 20 }}
         >
-          {/* Left text panel */}
+          {/* Left text */}
           <Box
             ref={textLeftRef}
             flex="1"
@@ -177,14 +210,34 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
             </VStack>
           </Box>
 
-          {/* Center — shared image spacer or local image */}
+          {/* Center — shared image spacer OR local image */}
           {useSharedImage ? (
             <Box
               flex={{ base: '1', md: '0 0 420px' }}
               maxW={{ base: '300px', md: '420px' }}
               mx="auto"
               position="relative"
-            />
+              h={{ base: '60vw', md: '420px' }}
+            >
+              {/* Ghost watermark — visible through shared image */}
+              <Text
+                position="absolute"
+                bottom="-20px"
+                left="50%"
+                transform="translateX(-50%)"
+                fontFamily="'Bebas Neue', sans-serif"
+                fontSize={{ base: '120px', md: '200px' }}
+                lineHeight="1"
+                color="transparent"
+                sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.07)' }}
+                userSelect="none"
+                zIndex={0}
+                whiteSpace="nowrap"
+                pointerEvents="none"
+              >
+                03
+              </Text>
+            </Box>
           ) : (
             <Box
               ref={photoRef}
@@ -226,7 +279,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
             </Box>
           )}
 
-          {/* Right text panel */}
+          {/* Right text */}
           <Box
             ref={textRightRef}
             flex="1"
@@ -292,6 +345,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
   )
 }
 
+// ─── PHASE INDICATOR ─────────────────────────────────────────────
 function PhaseIndicator() {
   return (
     <Box

@@ -219,7 +219,12 @@ export default function StatsSection() {
       bg="#0A0E16"
       pt={{ base: 20, md: 28 }}
       pb={{ base: 0, md: 0 }}
-      position="relative" overflow="hidden"
+      position="relative"
+      overflow="hidden"
+      zIndex={20}
+      borderTopLeftRadius={{ base: '14px', md: '22px' }}
+      borderTopRightRadius={{ base: '14px', md: '22px' }}
+      boxShadow="0 -24px 80px rgba(0,0,0,0.65)"
     >
       {/* Subtle background grid */}
       <Box
