@@ -87,7 +87,7 @@ export default function App() {
 
       // Phase 3 (0.57–0.85): Cinematic middle — subtle zoom as text appears
       tl.to(container, {
-        scale: growScale + 0.032,
+        scale: growScale + 0.012,
         duration: 0.28,
         ease: 'none',
       })
@@ -125,11 +125,11 @@ export default function App() {
       buildTimelines({
         startBottom: '2vh',
         enterBottom: '8vh',
-        centerBottom: '1vh',
+        centerBottom: '8vh',
         exitBottom: '8vh',
-        downScale: 0.90,
+        downScale: 0.94,
         growScale: 1.02,
-        exitScale: 0.88,
+        exitScale: 1.02,
       })
     })
 
@@ -137,11 +137,11 @@ export default function App() {
       buildTimelines({
         startBottom: '0vh',
         enterBottom: '10vh',
-        centerBottom: '0vh',
+        centerBottom: '10vh',
         exitBottom: '10vh',
-        downScale: 0.91,
+        downScale: 0.95,
         growScale: 1.03,
-        exitScale: 0.89,
+        exitScale: 1.03,
       })
     })
 
@@ -193,7 +193,7 @@ export default function App() {
             width="100%"
             height="auto"
             objectFit="contain"
-            filter="drop-shadow(0 30px 80px rgba(0,87,184,0.38))"
+            filter="drop-shadow(0 6px 18px rgba(0,0,0,0.75)) drop-shadow(0 0 28px rgba(0,87,184,0.55)) drop-shadow(0 0 60px rgba(0,87,184,0.2))"
             display="block"
           />
         </Box>
@@ -206,7 +206,7 @@ export default function App() {
             width="100%"
             height="auto"
             objectFit="contain"
-            filter="drop-shadow(0 30px 80px rgba(0,87,184,0.42))"
+            filter="drop-shadow(0 6px 18px rgba(0,0,0,0.6)) drop-shadow(0 0 28px rgba(0,87,184,0.45)) drop-shadow(0 0 60px rgba(0,87,184,0.18))"
             display="block"
           />
         </Box>

@@ -70,16 +70,16 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
       // Left text slides in from left
       tl.fromTo(
         textLeftRef.current,
-        { x: -80, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.4 },
+        { x: -60 },
+        { x: 0, duration: 0.4 },
         0.1
       )
 
       // Right text slides in from right
       tl.fromTo(
         textRightRef.current,
-        { x: 80, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.4 },
+        { x: 60 },
+        { x: 0, duration: 0.4 },
         0.2
       )
 
@@ -98,7 +98,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
       tl.to(
         [textLeftRef.current, textRightRef.current],
         { color: 'rgba(255,255,255,0.9)', duration: 0.3 },
-        0.5
+        0.62
       )
 
       // Tagline rises from below
@@ -182,7 +182,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
             flexDirection="column"
             justify="flex-end"
             pb={{ md: '80px', lg: '100px' }}
-            opacity={0}
+            color="rgba(20,28,38,0.84)"
           >
             <VStack align="flex-start" spacing={3}>
               <Text
@@ -288,7 +288,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
             justify="flex-end"
             pb={{ md: '80px', lg: '100px' }}
             textAlign="right"
-            opacity={0}
+            color="rgba(20,28,38,0.84)"
           >
             <VStack align="flex-end" spacing={3}>
               <Text

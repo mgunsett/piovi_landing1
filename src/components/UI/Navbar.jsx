@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Flex, Text, HStack } from '@chakra-ui/react'
+import { Box, Flex, Text, HStack, Link} from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const navLinks = [
-  { label: 'Perfil',   href: '#stats' },
   { label: 'Stats',    href: '#stats' },
   { label: 'Videos',   href: '#videos' },
+  { label: 'Fotos',   href: '#fotos' },
   { label: 'Prensa',   href: '#press' },
 ]
 
@@ -25,7 +25,7 @@ export default function Navbar() {
   useEffect(() => {
     gsap.fromTo(navRef.current,
       { y: -60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 2.8 }
+      { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.5 }
     )
   }, [])
 
@@ -47,16 +47,23 @@ export default function Navbar() {
     >
       <Flex align="center" justify="space-between">
         {/* Logo */}
-        <Text
-          fontFamily="'Bebas Neue', sans-serif"
-          fontSize="28px"
-          letterSpacing="0.08em"
-          color="white"
-          lineHeight="1"
+        <Box
+          as="a"
+          href="#hero"
+          style={{ textDecoration: 'none' }}
         >
-          GP
-          <Box as="span" color="brand.blue" ml="1px">_</Box>
-        </Text>
+          <Text
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="28px"
+            letterSpacing="0.08em"
+            color="white"
+            lineHeight="1"
+            cursor="pointer"
+          >
+            GP
+            <Box as="span" color="brand.blue" ml="1px">_</Box>
+          </Text>
+        </Box>
 
         {/* Nav links */}
         <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
