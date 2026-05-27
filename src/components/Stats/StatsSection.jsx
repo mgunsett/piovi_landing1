@@ -496,6 +496,7 @@ export default function StatsSection() {
 
                   {/* Club card */}
                   <Box
+                    h="180px"
                     p={4}
                     bg="rgba(255,255,255,0.025)"
                     border="1px solid rgba(255,255,255,0.06)"
@@ -548,9 +549,20 @@ export default function StatsSection() {
                       {club.years}
                     </Text>
 
-                    {club.titles.length > 0 && (
-                      <VStack spacing={1} align="stretch">
-                        {club.titles.map((title, ti) => (
+                    {club.info && (
+                      <Text
+                        fontFamily="'Barlow Condensed', sans-serif"
+                        fontSize="10px"
+                        color="rgba(255,255,255,0.7)"
+                        mb={club.titles.length > 0 ? 2 : 0}
+                      >
+                        {club.info}
+                      </Text>
+                    )}  
+
+                    {club.titles  && (
+                      <VStack spacing={club.titles.length > 1 ? 2 : 1} align="stretch">
+                        {club.titles.map((title, ti)  => (
                           <Flex key={ti} align="flex-start" gap="5px">
                             <Text fontSize="10px" mt="1px" flexShrink={0}>🏆</Text>
                             <Text

@@ -8,22 +8,38 @@ import photo3 from '../assets/galleryPhotos/photo3.jpg'
 import photo4 from '../assets/galleryPhotos/photo4.jpg'
 import video1 from '../assets/galleryVideos/video1.mp4'
 import bgCancha from '../assets/bg_cancha.jpg'
+import escudoCruzAzul from '../assets/escudos/cruzazul.png'
+import escudoRacing from '../assets/escudos/racing.png'
+import escudoColon from '../assets/escudos/colon.png'
+import escudoArgentinos from '../assets/escudos/argentinos.png'
+import escudoVelez from '../assets/escudos/velez.png'
+import escudoDefensa from '../assets/escudos/defensa.png'
+import escudoGimnasia from '../assets/escudos/gimnasia.png'
 
+const escudos = {
+  cruzazul: escudoCruzAzul,
+  racing: escudoRacing,
+  colon: escudoColon,
+  argentinos: escudoArgentinos,
+  velez: escudoVelez,
+  defensa: escudoDefensa,
+  gimnasia: escudoGimnasia,
+}
 
 export const playerData = {
   name: 'Piovi',
   fullName: 'Gonzalo Piovi',
-  number: 3,
-  position: 'Defensor',
+  number: 33,
+  position: 'Defensor Central',
   positionShort: 'DEF',
   nationality: 'Argentina',
   nationalityFlag: '🇦🇷',
-  age: 27,
-  height: '1.84m',
+  age: 31,
+  height: '1.81m',
   weight: '78kg',
   foot: 'Zurdo',
-  birthDate: '17 / 12 / 1996',
-  birthPlace: 'Santa Fe, Argentina',
+  birthDate: '08 / 09 / 1994',
+  birthPlace: 'Moron, Argentina',
   currentClub: 'Cruz Azul',
   quote: '"El trabajo diario es la base de todo lo que logramos."',
   image: pioviImage,
@@ -52,36 +68,40 @@ export const playerData = {
   // Historial de clubes (del más reciente al más antiguo)
   clubs: [
     {
+      name: 'Vélez Sarsfield',
+      country: 'Argentina',
+      years: '201 — 2015',
+      logo: escudos.velez,
+      titles: [], 
+      info: 'Debút profesional vs All Boys'
+    },
+    {
       name: 'Cruz Azul',
       country: 'México',
       years: '2023 — Presente',
-      logo: '/logos/cruzazul.png',
-      color: '#0057B8',
+      logo: escudos.cruzazul,
       titles: ['Liga MX 2024'],
     },
     {
       name: 'Racing Club',
       country: 'Argentina',
       years: '2021 — 2023',
-      logo: '/logos/racing.png',
-      color: '#1A1A1A',
-      titles: ['Copa Sudamericana 2022'],
+      logo: escudos.racing,
+      titles: ['Copa Sudamericana 2022', 'Supercopa Argentina 2022'],
     },
     {
       name: 'Colón de Santa Fe',
       country: 'Argentina',
       years: '2018 — 2021',
-      logo: '/logos/colon.png',
-      color: '#E53535',
+      logo: escudos.colon,
       titles: ['Copa de la Liga 2021'],
     },
     {
-      name: 'Unión de Santa Fe',
+      name: 'Argentinos Juniors',
       country: 'Argentina',
-      years: '2015 — 2018',
-      logo: '/logos/union.png',
-      color: '#CC0000',
-      titles: [],
+      years: '2016 — 2018',
+      logo: escudos.argentinos,
+      titles: ['Copa de la Liga 2018'],
     },
   ],
 
