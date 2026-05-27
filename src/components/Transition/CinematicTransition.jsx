@@ -124,6 +124,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
       ref={sectionRef}
       id="cinematic-transition-outer"
       position="relative"
+      zIndex={1}
       h="350vh"   // 100vh visible + 250vh of scrub distance
     >
       {/* ── Inner sticky viewport ─────────────────────────────── */}
@@ -273,7 +274,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
                   objectFit: 'contain',
                   position: 'relative',
                   zIndex: 1,
-                  filter: 'drop-shadow(0 40px 100px rgba(0,0,0,0.5))',
+                  filter: 'drop-shadow(0 6px 18px rgba(0,0,0,0.75)) drop-shadow(0 0 28px rgba(0,87,184,0.55)) drop-shadow(0 0 60px rgba(0,87,184,0.2))',
                 }}
               />
             </Box>

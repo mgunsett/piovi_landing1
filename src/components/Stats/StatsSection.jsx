@@ -5,6 +5,7 @@ import {
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import playerData from '../../data/playerData.js'
+import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -46,27 +47,29 @@ function StatBar({ label, value, index }) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: rowRef.current,
-        start: 'top 88%',
-        onEnter: () => {
-          gsap.fromTo(rowRef.current,
-            { opacity: 0, x: -16 },
-            { opacity: 1, x: 0, duration: 0.5, delay: index * 0.08, ease: 'power2.out' }
-          )
-          gsap.fromTo(barRef.current,
-            { scaleX: 0, transformOrigin: 'left' },
-            { scaleX: value / 100, duration: 1.1, delay: index * 0.08 + 0.1, ease: 'power3.out' }
-          )
-          gsap.fromTo(numRef.current,
-            { textContent: 0 },
-            { textContent: value, duration: 1.1, delay: index * 0.08 + 0.1, ease: 'power3.out', snap: { textContent: 1 } }
-          )
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: rowRef.current,
+          start: 'top 90%',
+          end: 'top 55%',
+          scrub: 1.2,
         },
       })
+      tl.fromTo(rowRef.current,
+        { opacity: 0, x: -16 },
+        { opacity: 1, x: 0 }
+      )
+      tl.fromTo(barRef.current,
+        { scaleX: 0, transformOrigin: 'left' },
+        { scaleX: value / 100 }
+      )
+      tl.fromTo(numRef.current,
+        { textContent: 0 },
+        { textContent: value, snap: { textContent: 1 } }
+      )
     })
     return () => ctx.revert()
-  }, [value, index])
+  }, [value])
 
   return (
     <Box ref={rowRef} opacity={0}>
@@ -106,13 +109,17 @@ function SeasonCard({ label, value, index }) {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(ref.current, { y: 28, opacity: 0 }, {
-        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
-        delay: index * 0.06,
-        scrollTrigger: { trigger: ref.current, start: 'top 88%' },
+        y: 0, opacity: 1,
+        scrollTrigger: {
+          trigger: ref.current,
+          start: 'top 90%',
+          end: 'top 60%',
+          scrub: 1.2,
+        },
       })
     })
     return () => ctx.revert()
-  }, [index])
+  }, [])
 
   return (
     <Box
@@ -161,17 +168,15 @@ export default function StatsSection() {
   const titleRef   = useRef(null)
   const timelineRef = useRef(null)
 
-  // Title entrance
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current,
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: titleRef.current, start: 'top 85%' } }
-      )
-    }, sectionRef)
-    return () => ctx.revert()
-  }, [])
+  useScrubReveal(sectionRef, {
+    elements: [
+      { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
+    ],
+    pin: false,
+    start: 'top 85%',
+    end: 'top 30%',
+    scrub: 1,
+  })
 
   // Drag-to-scroll for club timeline
   useEffect(() => {

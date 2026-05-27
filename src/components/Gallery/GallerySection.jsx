@@ -4,6 +4,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
 import playerData from '../../data/playerData.js'
+import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -33,15 +34,17 @@ function GalleryItem({ item, index, onClick }) {
         { opacity: 0, y: 24 },
         {
           opacity: 1, y: 0,
-          duration: 0.65,
-          ease: 'power2.out',
-          delay: (index % 4) * 0.07,
-          scrollTrigger: { trigger: boxRef.current, start: 'top 90%' },
+          scrollTrigger: {
+            trigger: boxRef.current,
+            start: 'top 92%',
+            end: 'top 60%',
+            scrub: 1.2,
+          },
         }
       )
     })
     return () => ctx.revert()
-  }, [index])
+  }, [])
 
   return (
     <Box
@@ -280,6 +283,7 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
 
 // ─── MAIN GALLERY SECTION ────────────────────────────────────────
 export default function GallerySection() {
+  const sectionRef = useRef(null)
   const titleRef   = useRef(null)
   const [lightbox, setLightbox] = useState(null) // null | index
 
@@ -290,17 +294,15 @@ export default function GallerySection() {
   const prevImage     = useCallback(()  => setLightbox(i => (i - 1 + images.length) % images.length), [images.length])
   const nextImage     = useCallback(()  => setLightbox(i => (i + 1) % images.length), [images.length])
 
-  // Title entrance
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current,
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: titleRef.current, start: 'top 85%' } }
-      )
-    })
-    return () => ctx.revert()
-  }, [])
+  useScrubReveal(sectionRef, {
+    elements: [
+      { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
+    ],
+    pin: false,
+    start: 'top 85%',
+    end: 'top 30%',
+    scrub: 1,
+  })
 
   // Split images into 3 columns (desktop) / 2 columns (tablet/mobile)
   const col1 = images.filter((_, i) => i % 3 === 0)
@@ -312,6 +314,7 @@ export default function GallerySection() {
 
   return (
     <Box
+      ref={sectionRef}
       as="section" id="gallery"
       bg="#080C12"
       pt={{ base: 20, md: 28 }}

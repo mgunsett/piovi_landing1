@@ -1,8 +1,33 @@
+import { useEffect, useRef } from 'react'
 import { Box, Flex, Text, HStack } from '@chakra-ui/react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function Footer() {
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(ref.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0,
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 90%',
+            end: 'top 70%',
+            scrub: 1,
+          },
+        }
+      )
+    })
+    return () => ctx.revert()
+  }, [])
+
   return (
     <Box
+      ref={ref}
       as="footer"
       bg="#050810"
       borderTop="1px solid rgba(255,255,255,0.05)"

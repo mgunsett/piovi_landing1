@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { Box, Flex, Text, VStack, HStack, Image } from '@chakra-ui/react'
+import { Box, Flex, Text, VStack, Image } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { motion } from 'framer-motion'
+
+import piovi4 from '../../assets/piovi4.svg'
 
 // ─── MARQUEE DATA ────────────────────────────────────────────────
 const marqueeItems = [
@@ -35,18 +37,15 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
     const onMove = (e) => {
       const rect = container.getBoundingClientRect()
-      const xn = (e.clientX - rect.left) / rect.width - 0.5   // -0.5 → 0.5
-      const yn = (e.clientY - rect.top)  / rect.height - 0.5
+      const xn = (e.clientX - rect.left) / rect.width - 0.5
+      const yn = (e.clientY - rect.top) / rect.height - 0.5
 
-      // Player image — most movement
       if (photoRef.current) {
         gsap.to(photoRef.current, { x: xn * 28, y: yn * 14, duration: 1, ease: 'power2.out' })
       }
-      // Foreground letters — medium layer
       if (lettersRef.current.length) {
         gsap.to(lettersRef.current, { x: xn * 12, y: yn * 6, duration: 1.2, ease: 'power2.out', stagger: 0.02 })
       }
-      // Background ghost letters — slowest layer
       if (bgLettersRef.current.length) {
         gsap.to(bgLettersRef.current, { x: xn * 5, y: yn * 3, duration: 1.6, ease: 'power2.out', stagger: 0.02 })
       }
@@ -60,22 +59,13 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
-      // Letters entrance — staggered from bottom
       tl.fromTo(
         lettersRef.current,
         { yPercent: 110, opacity: 0, rotateX: -40 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 1.1,
-          stagger: 0.08,
-          ease: 'expo.out',
-        },
+        { yPercent: 0, opacity: 1, rotateX: 0, duration: 1.1, stagger: 0.08, ease: 'expo.out' },
         0
       )
 
-      // Photo entrance — clip-path rise from ground + glow flash
       tl.fromTo(
         photoInnerRef.current,
         {
@@ -92,7 +82,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         },
         0.25
       )
-      // Glow flash burst at end of reveal
+
       tl.fromTo(
         glowFlashRef.current,
         { opacity: 0 },
@@ -107,7 +97,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         1.55
       )
 
-      // Number
       tl.fromTo(
         numberRef.current,
         { opacity: 0, x: -30 },
@@ -115,7 +104,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         0.6
       )
 
-      // Subtitle line
       tl.fromTo(
         lineRef.current,
         { scaleX: 0 },
@@ -123,7 +111,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         0.9
       )
 
-      // Subtitle text
       tl.fromTo(
         subtitleRef.current,
         { opacity: 0, y: 12 },
@@ -131,7 +118,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         1.1
       )
 
-      // Stats row
       tl.fromTo(
         statsRef.current,
         { opacity: 0, y: 16 },
@@ -142,6 +128,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
     return () => ctx.revert()
   }, [])
+
+  const imgSrc = playerImage || piovi4
 
   return (
     <Box
@@ -154,7 +142,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       overflow="hidden"
       display="flex"
       flexDirection="column"
-      
     >
       {/* Noise overlay */}
       <div className="noise-overlay" />
@@ -207,9 +194,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                 fontSize={{ base: '22vw', md: '18vw', lg: '40vw' }}
                 lineHeight="0.88"
                 color="transparent"
-                sx={{
-                  WebkitTextStroke: '1px rgba(255,255,255,0.08)',
-                }}
+                sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
                 display="inline-block"
                 userSelect="none"
               >
@@ -228,7 +213,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           display="flex"
           justifyContent="center"
           overflow="hidden"
-          zIndex={5}
+          zIndex={4}
           pointerEvents="none"
         >
           <Flex gap={{ base: '0.5vw', md: '0.8vw' }} align="baseline">
@@ -251,44 +236,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           </Flex>
         </Box>
 
-        {/* Player photo — centered */}
-        {!hidePlayerImage && (
-          <Box
-            ref={photoRef}
-            position="absolute"
-            bottom="0px"
-            left="50%"
-            transform="translateX(-50%)"
-            zIndex={6}
-            w={{ base: '280px', md: '400px', lg: '400px' }}
-          >
-            {/* Inner wrapper — clip-path animation target */}
-            <Box ref={photoInnerRef} position="relative">
-              <Image
-                src={playerImage || '/player.png'}
-                alt="Gonzalo Piovi"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0 40px 80px rgba(0,87,184,0.4))',
-                  display: 'block',
-                }}
-              />
-              {/* Glow flash overlay */}
-              <Box
-                ref={glowFlashRef}
-                position="absolute"
-                inset="0"
-                bg="radial-gradient(ellipse at 50% 80%, rgba(0,87,184,0.7) 0%, rgba(0,130,255,0.2) 50%, transparent 75%)"
-                pointerEvents="none"
-                opacity={0}
-                mixBlendMode="screen"
-              />
-            </Box>
-          </Box>
-        )}
-
         {/* Left info panel */}
         <Box
           position="absolute"
@@ -297,7 +244,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           zIndex={6}
           display={{ base: 'none', md: 'block' }}
         >
-          {/* Jersey number */}
           <HoverFloat intensity={1.2}>
             <Box ref={numberRef}>
               <Text
@@ -313,16 +259,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             </Box>
           </HoverFloat>
 
-          {/* Divider line */}
-          <Box
-            ref={lineRef}
-            h="1px"
-            w="80px"
-            bg="brand.blue"
-            mb={3}
-          />
+          <Box ref={lineRef} h="1px" w="80px" bg="brand.blue" mb={3} />
 
-          {/* Position & nationality */}
           <HoverFloat intensity={1}>
             <Box ref={subtitleRef}>
               <Text
@@ -360,20 +298,44 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           textAlign="right"
         >
           <Box ref={statsRef}>
-              <VStack spacing={3} align="flex-end">
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Edad" value="27" />
-                </HoverFloat>
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Club" value="Cruz Azul" accent />
-                </HoverFloat>
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Altura" value="1.84m" />
-                </HoverFloat>
-              </VStack>
-            </Box>
+            <VStack spacing={3} align="flex-end">
+              <HoverFloat intensity={1}>
+                <MiniStat label="Edad" value="27" />
+              </HoverFloat>
+              <HoverFloat intensity={1}>
+                <MiniStat label="Club" value="Cruz Azul" accent />
+              </HoverFloat>
+              <HoverFloat intensity={1}>
+                <MiniStat label="Altura" value="1.84m" />
+              </HoverFloat>
+            </VStack>
+          </Box>
         </Box>
       </Flex>
+
+      {/* Player photo — fixed at bottom, covered by CinematicTransition via z-index */}
+      {!hidePlayerImage && (
+          <Box
+            ref={photoRef}
+            position="absolute"
+            bottom="0"
+            left="50%"
+            transform="translateX(-50%)"
+            pointerEvents="none"
+            zIndex={20}
+            w={{ base: '280px', md: '400px', lg: '370px' }}
+          >
+            <Box ref={photoInnerRef} position="relative" zIndex={20}>
+              <Image
+                src={imgSrc}
+                alt="Gonzalo Piovi"
+                objectFit="contain"
+                w="100%"
+                h="auto"
+              />
+            </Box>
+          </Box>
+      )}
 
       {/* Marquee bottom bar */}
       <MarqueeBar />

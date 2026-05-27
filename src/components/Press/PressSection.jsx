@@ -3,6 +3,7 @@ import { Box, Flex, Grid, Text, VStack, HStack } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import playerData from '../../data/playerData.js'
+import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -16,17 +17,18 @@ function PressCard({ article, index }) {
       gsap.fromTo(ref.current,
         { y: 40, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
-          delay: index * 0.12,
+          y: 0, opacity: 1,
           scrollTrigger: {
             trigger: ref.current,
-            start: 'top 88%',
+            start: 'top 90%',
+            end: 'top 60%',
+            scrub: 1.2,
           },
         }
       )
     })
     return () => ctx.revert()
-  }, [index])
+  }, [])
 
   return (
     <Box
@@ -119,23 +121,22 @@ function PressCard({ article, index }) {
 }
 
 export default function PressSection() {
+  const sectionRef = useRef(null)
   const titleRef = useRef(null)
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current,
-        { y: 50, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: titleRef.current, start: 'top 85%' },
-        }
-      )
-    })
-    return () => ctx.revert()
-  }, [])
+  useScrubReveal(sectionRef, {
+    elements: [
+      { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
+    ],
+    pin: false,
+    start: 'top 80%',
+    end: 'top 30%',
+    scrub: 1,
+  })
 
   return (
     <Box
+      ref={sectionRef}
       as="section"
       id="press"
       bg="#0A0E16"

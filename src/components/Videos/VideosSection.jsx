@@ -8,6 +8,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion, AnimatePresence } from 'framer-motion'
 import playerData from '../../data/playerData.js'
+import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,17 +23,18 @@ function VideoCard({ video, index, onOpen }) {
       gsap.fromTo(cardRef.current,
         { y: 60, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
-          delay: index * 0.1,
+          y: 0, opacity: 1,
           scrollTrigger: {
             trigger: cardRef.current,
-            start: 'top 88%',
+            start: 'top 90%',
+            end: 'top 55%',
+            scrub: 1.2,
           },
         }
       )
     })
     return () => ctx.revert()
-  }, [index])
+  }, [])
 
   // Tilt 3D effect
   const handleMouseMove = (e) => {
@@ -321,6 +323,7 @@ function VideoModal({ video, isOpen, onClose }) {
 export default function VideosSection() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [selectedVideo, setSelectedVideo] = useState(null)
+  const sectionRef = useRef(null)
   const titleRef = useRef(null)
 
   const handleOpen = (video) => {
@@ -328,24 +331,19 @@ export default function VideosSection() {
     onOpen()
   }
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current,
-        { y: 50, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: {
-            trigger: titleRef.current,
-            start: 'top 85%',
-          },
-        }
-      )
-    })
-    return () => ctx.revert()
-  }, [])
+  useScrubReveal(sectionRef, {
+    elements: [
+      { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
+    ],
+    pin: false,
+    start: 'top 85%',
+    end: 'top 30%',
+    scrub: 1,
+  })
 
   return (
     <Box
+      ref={sectionRef}
       as="section"
       id="videos"
       bg="#080C12"

@@ -5,6 +5,7 @@ import {
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
+import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,7 +23,6 @@ export default function ContactSection() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Future: conectar con backend o EmailJS
     setSent(true)
     gsap.fromTo('.success-msg',
       { y: 20, opacity: 0 },
@@ -30,26 +30,16 @@ export default function ContactSection() {
     )
   }
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(titleRef.current,
-        { y: 50, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: titleRef.current, start: 'top 85%' },
-        }
-      )
-      gsap.fromTo(formRef.current,
-        { y: 40, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.8, ease: 'power3.out',
-          delay: 0.2,
-          scrollTrigger: { trigger: formRef.current, start: 'top 85%' },
-        }
-      )
-    }, sectionRef)
-    return () => ctx.revert()
-  }, [])
+  useScrubReveal(sectionRef, {
+    elements: [
+      { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
+      { ref: formRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 40, opacity: 0 }, position: '-=0.3' },
+    ],
+    pin: false,
+    start: 'top 85%',
+    end: 'top 25%',
+    scrub: 1,
+  })
 
   const inputStyle = {
     bg: 'transparent',
