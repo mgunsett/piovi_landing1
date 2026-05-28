@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  Box, Flex, Grid, Text, VStack,
+  Box, Flex, Grid, Text, VStack, Image
 } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -17,12 +17,11 @@ function ClubLogo({ src, name, color, size = '48px' }) {
     <Box
       w={size} h={size} borderRadius="50%"
       bg={color} flexShrink={0}
-      border="2px solid rgba(255,255,255,0.12)"
       overflow="hidden"
       display="flex" alignItems="center" justifyContent="center"
     >
       {!err && src ? (
-        <img
+        <Image
           src={src} alt={name}
           onError={() => setErr(true)}
           style={{ width: '72%', height: '72%', objectFit: 'contain' }}
@@ -512,7 +511,7 @@ export default function StatsSection() {
                         src={club.logo}
                         name={club.name}
                         color={club.color}
-                        size="44px"
+                        size="64px"
                       />
                       <Box minW={0}>
                         <Text

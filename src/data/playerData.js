@@ -70,38 +70,52 @@ export const playerData = {
     {
       name: 'Vélez Sarsfield',
       country: 'Argentina',
-      years: '201 — 2015',
+      years: '2013 — 2015',
       logo: escudos.velez,
       titles: [], 
       info: 'Debút profesional vs All Boys'
-    },
-    {
-      name: 'Cruz Azul',
-      country: 'México',
-      years: '2023 — Presente',
-      logo: escudos.cruzazul,
-      titles: ['Liga MX 2024'],
-    },
-    {
-      name: 'Racing Club',
-      country: 'Argentina',
-      years: '2021 — 2023',
-      logo: escudos.racing,
-      titles: ['Copa Sudamericana 2022', 'Supercopa Argentina 2022'],
-    },
-    {
-      name: 'Colón de Santa Fe',
-      country: 'Argentina',
-      years: '2018 — 2021',
-      logo: escudos.colon,
-      titles: ['Copa de la Liga 2021'],
     },
     {
       name: 'Argentinos Juniors',
       country: 'Argentina',
       years: '2016 — 2018',
       logo: escudos.argentinos,
-      titles: ['Copa de la Liga 2018'],
+      titles: ['Ascenso a Primera 2016'],
+    },
+    {
+      name: 'Racing Club',
+      country: 'Argentina',
+      years: '2018 / 2022-2023',
+      logo: escudos.racing,
+      titles: ['Trofeo de Campeones 2022', 'Supercopa Internacional 2022'],
+    },
+    {
+      name: 'Gimnasia y Esgrima La Plata',
+      country: 'Argentina',
+      years: '2018-2019 (préstamo)',
+      logo: escudos.gimnasia,
+      titles: [],
+    },
+    {
+      name: 'Defensa y Justicia',
+      country: 'Argentina',
+      years: '2019-2020 (préstamo)',
+      logo: escudos.defensa,
+      titles: [],
+    },
+    {
+      name: 'Colón de Santa Fe',
+      country: 'Argentina',
+      years: '2020-2022',
+      logo: escudos.colon,
+      titles: ['Copa de la Liga 2021'],
+    },
+    {
+      name: 'Cruz Azul',
+      country: 'México',
+      years: '2024 — Presente',
+      logo: escudos.cruzazul,
+      titles: ['Campeones Concacaf 2025'],
     },
   ],
 
@@ -189,6 +203,15 @@ export const playerData = {
     twitter: 'https://twitter.com/gonzapiovi',
     tiktok: 'https://tiktok.com/@gonzapiovi',
   },
+
+  // ─── MARQUEE DATA ────────────────────────────────────────────────
+  marqueeItems: [
+    'Cruz Azul', '·', 'Defensor', '·', 'Buenos Aires', '·', 'Argentina', '·',
+    '#33', '·', 'Liga MX', '·', 'Zurdo', '·', '1.81m', '·',
+    'Cruz Azul', '·', 'Defensor', '·', 'Buenos Aires',  '·', 'Argentina', '·',
+    '#33', '·', 'La Máquina', '·', 'Liga MX', '·',
+     '·', 'Zurdo', '·', '1.81m', '·',
+  ],
 }
 
 export default playerData

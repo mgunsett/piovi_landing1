@@ -15,38 +15,7 @@ body {
   font-family: 'Barlow', sans-serif;
 }
 
-/* ─── CUSTOM CURSOR ─────────────────────────────────────────── */
-body {
-  cursor: none;
-}
 
-*, a, button, [data-cursor-hover], input, textarea, select, label {
-  cursor: none !important;
-}
-
-.cursor {
-  width: 22px;
-  height: 24px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  color: #ffffff;
-  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.5));
-  transition: color 0.2s ease, transform 0.15s ease;
-}
-
-.cursor svg {
-  width: 22px;
-  height: 24px;
-  display: block;
-}
-
-.cursor.hover {
-  color: #0057B8;
-  transform: scale(1.1);
-}
 
 /* ─── MARQUEE ───────────────────────────────────────────────── */
 @keyframes marquee {

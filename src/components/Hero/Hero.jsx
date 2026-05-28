@@ -1,19 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { Box, Flex, Text, VStack, Image } from '@chakra-ui/react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
 
-import piovi4 from '../../assets/piovi4.svg'
+gsap.registerPlugin(ScrollTrigger)
 
-// ─── MARQUEE DATA ────────────────────────────────────────────────
-const marqueeItems = [
-  'Cruz Azul', '·', 'Defensor', '·', 'Argentina', '·',
-  '#3', '·', 'La Máquina', '·', 'Liga MX', '·',
-  'Santa Fe', '·', 'Zurdo', '·', '1.84m', '·',
-  'Cruz Azul', '·', 'Defensor', '·', 'Argentina', '·',
-  '#3', '·', 'La Máquina', '·', 'Liga MX', '·',
-  'Santa Fe', '·', 'Zurdo', '·', '1.84m', '·',
-]
+import piovi4 from '../../assets/piovi4.svg'
+import { playerData } from '../../data/playerData'
+
+
 
 // ─── HERO COMPONENT ──────────────────────────────────────────────
 export default function Hero({ playerImage, hidePlayerImage = false }) {
@@ -27,6 +23,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
   const numberRef = useRef(null)
   const photoInnerRef = useRef(null)
   const glowFlashRef = useRef(null)
+  const vignetteRef = useRef(null)
 
   const heroName = 'PIOVI'
 
@@ -53,6 +50,39 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
     container.addEventListener('mousemove', onMove)
     return () => container.removeEventListener('mousemove', onMove)
+  }, [])
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // ── Scroll fade & zoom out effect ───────────────────────────
+      gsap.to(containerRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom center',
+          scrub: 0.6,
+          markers: false,
+        },
+        opacity: 0.3,
+        scale: 0.85,
+        filter: 'blur(8px)',
+        ease: 'power2.inOut',
+      })
+
+      // ── Intensify vignette on scroll ────────────────────────────
+      gsap.to(vignetteRef.current, {
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom center',
+          scrub: 0.6,
+        },
+        backgroundImage: 'radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(8,12,18,0.4) 70%, rgba(8,12,18,0.8) 100%)',
+        ease: 'power2.inOut',
+      })
+    }, containerRef)
+
+    return () => ctx.revert()
   }, [])
 
   useEffect(() => {
@@ -142,9 +172,23 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       overflow="hidden"
       display="flex"
       flexDirection="column"
+      sx={{
+        maskImage: 'linear-gradient(to bottom, black 90%, transparent)',
+        WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent)',
+      }}
     >
       {/* Noise overlay */}
       <div className="noise-overlay" />
+
+      {/* Vignette overlay — intensifies on scroll */}
+      <Box
+        position="absolute"
+        inset="0"
+        zIndex={5}
+        pointerEvents="none"
+        bg="radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(8,12,18,0.2) 85%, rgba(8,12,18,0.5) 100%)"
+        ref={vignetteRef}
+      />
 
       {/* Background grid lines */}
       <GridLines />
@@ -254,7 +298,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                 sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
                 mb={4}
               >
-                3
+                33
               </Text>
             </Box>
           </HoverFloat>
@@ -338,7 +382,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       )}
 
       {/* Marquee bottom bar */}
-      <MarqueeBar />
+      <MarqueeBar playerData={playerData} />
 
       {/* Scroll indicator */}
       <ScrollIndicator />
@@ -374,7 +418,7 @@ function MiniStat({ label, value, accent }) {
   )
 }
 
-function MarqueeBar() {
+function MarqueeBar({ playerData }) {
   return (
     <Box
       position="relative"
@@ -387,7 +431,7 @@ function MarqueeBar() {
     >
       <Box display="flex" width="max-content">
         <Box className="marquee-track" display="flex" gap={6} whiteSpace="nowrap">
-          {marqueeItems.map((item, i) => (
+          {playerData.marqueeItems.map((item, i) => (
             <Text
               key={i}
               as="span"
@@ -401,7 +445,7 @@ function MarqueeBar() {
               {item}
             </Text>
           ))}
-          {marqueeItems.map((item, i) => (
+          {playerData.marqueeItems.map((item, i) => (
             <Text
               key={`b-${i}`}
               as="span"
