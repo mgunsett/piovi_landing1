@@ -39,7 +39,7 @@ export const playerData = {
   weight: '78kg',
   foot: 'Zurdo',
   birthDate: '08 / 09 / 1994',
-  birthPlace: 'Moron, Argentina',
+  birthPlace: 'Moron, Buenos Aires',
   currentClub: 'Cruz Azul',
   quote: '"El trabajo diario es la base de todo lo que logramos."',
   image: pioviImage,

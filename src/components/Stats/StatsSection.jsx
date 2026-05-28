@@ -292,7 +292,8 @@ export default function StatsSection() {
           <Box>
             <Text
               fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="10px" fontWeight="700"
+              fontSize="14px" 
+              fontWeight="700"
               letterSpacing="0.28em" textTransform="uppercase"
               color="rgba(255,255,255,0.35)" mb={4}
             >
@@ -361,7 +362,7 @@ export default function StatsSection() {
           <Box>
             <Text
               fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="10px" fontWeight="700"
+              fontSize="14px" fontWeight="700"
               letterSpacing="0.28em" textTransform="uppercase"
               color="rgba(255,255,255,0.35)" mb={4}
             >
@@ -401,7 +402,7 @@ export default function StatsSection() {
           <Box>
             <Text
               fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="10px" fontWeight="700"
+              fontSize="14px" fontWeight="700"
               letterSpacing="0.28em" textTransform="uppercase"
               color="rgba(255,255,255,0.35)" mb={4}
             >
