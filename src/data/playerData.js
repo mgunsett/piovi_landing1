@@ -16,15 +16,6 @@ import escudoVelez from '../assets/escudos/velez.png'
 import escudoDefensa from '../assets/escudos/defensa.png'
 import escudoGimnasia from '../assets/escudos/gimnasia.png'
 
-const escudos = {
-  cruzazul: escudoCruzAzul,
-  racing: escudoRacing,
-  colon: escudoColon,
-  argentinos: escudoArgentinos,
-  velez: escudoVelez,
-  defensa: escudoDefensa,
-  gimnasia: escudoGimnasia,
-}
 
 export const playerData = {
   name: 'Piovi',
@@ -41,6 +32,7 @@ export const playerData = {
   birthDate: '08 / 09 / 1994',
   birthPlace: 'Moron, Buenos Aires',
   currentClub: 'Cruz Azul',
+  logoCurrentClub: escudoCruzAzul,
   quote: '"El trabajo diario es la base de todo lo que logramos."',
   image: pioviImage,
   bg: bgCancha,
@@ -71,7 +63,7 @@ export const playerData = {
       name: 'Vélez Sarsfield',
       country: 'Argentina',
       years: '2013 — 2015',
-      logo: escudos.velez,
+      logo: escudoVelez,
       titles: [], 
       info: 'Debút profesional vs All Boys'
     },
@@ -79,42 +71,42 @@ export const playerData = {
       name: 'Argentinos Juniors',
       country: 'Argentina',
       years: '2016 — 2018',
-      logo: escudos.argentinos,
+      logo: escudoArgentinos,
       titles: ['Ascenso a Primera 2016'],
     },
     {
       name: 'Racing Club',
       country: 'Argentina',
       years: '2018 / 2022-2023',
-      logo: escudos.racing,
+      logo: escudoRacing,
       titles: ['Trofeo de Campeones 2022', 'Supercopa Internacional 2022'],
     },
     {
       name: 'Gimnasia y Esgrima La Plata',
       country: 'Argentina',
       years: '2018-2019 (préstamo)',
-      logo: escudos.gimnasia,
+      logo: escudoGimnasia,
       titles: [],
     },
     {
       name: 'Defensa y Justicia',
       country: 'Argentina',
       years: '2019-2020 (préstamo)',
-      logo: escudos.defensa,
+      logo: escudoDefensa,
       titles: [],
     },
     {
       name: 'Colón de Santa Fe',
       country: 'Argentina',
       years: '2020-2022',
-      logo: escudos.colon,
+      logo: escudoColon,
       titles: ['Copa de la Liga 2021'],
     },
     {
       name: 'Cruz Azul',
       country: 'México',
       years: '2024 — Presente',
-      logo: escudos.cruzazul,
+      logo: escudoCruzAzul,
       titles: ['Campeones Concacaf 2025'],
     },
   ],
@@ -190,12 +182,6 @@ export const playerData = {
     { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
     { id: 3, src: photo3, alt: 'Entrenamiento Cruz Azul',     caption: 'Sesión de entrenamiento · Ciudad Deportiva', category: 'Entrenamiento', aspect: 'square' },
     { id: 4, src: photo4, alt: 'Duelo aéreo en la cancha',   caption: 'Duelo aéreo · Torneo Clausura',              category: 'Partido',       aspect: 'tall'   },
-    { id: 1, src: photo1, alt: 'Cruz Azul vs América 2024',  caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',       aspect: 'tall'   },
-    { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
-    { id: 3, src: photo3, alt: 'Entrenamiento Cruz Azul',     caption: 'Sesión de entrenamiento · Ciudad Deportiva', category: 'Entrenamiento', aspect: 'square' },
-    { id: 4, src: photo4, alt: 'Duelo aéreo en la cancha',   caption: 'Duelo aéreo · Torneo Clausura',              category: 'Partido',       aspect: 'tall'   },
-     { id: 1, src: photo1, alt: 'Cruz Azul vs América 2024',  caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',       aspect: 'tall'   },
-    { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
   ],
 
   socialMedia: {
@@ -209,8 +195,7 @@ export const playerData = {
     'Cruz Azul', '·', 'Defensor', '·', 'Buenos Aires', '·', 'Argentina', '·',
     '#33', '·', 'Liga MX', '·', 'Zurdo', '·', '1.81m', '·',
     'Cruz Azul', '·', 'Defensor', '·', 'Buenos Aires',  '·', 'Argentina', '·',
-    '#33', '·', 'La Máquina', '·', 'Liga MX', '·',
-     '·', 'Zurdo', '·', '1.81m', '·',
+    '#33', '·', 'La Máquina', '·', 'Liga MX', '·', 'Zurdo', '·', '1.81m', '·',
   ],
 }
 

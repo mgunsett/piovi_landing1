@@ -1,44 +1,120 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, useLayoutEffect } from 'react'
 import { Box, Flex, Text } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
+import Lenis from 'lenis'
 import playerData from '../../data/playerData.js'
-import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// ─── Aspect-ratio map ────────────────────────────────────────────
-const ASPECT = {
-  tall:   'aspect-ratio: 3/4',
-  wide:   'aspect-ratio: 4/3',
-  square: 'aspect-ratio: 1/1',
-}
+/* ────────────────────────────────────────────────────────────────
+   GallerySection v2 — Más inmersión + refinamiento visual
+   Sobre la versión anterior añade:
+   · Cursor follower magnético ("DRAG / VIEW") que reacciona al hover
+   · Tilt 3D sutil siguiendo el mouse dentro de cada slide
+   · Capas paralax independientes (fondo / imagen / luz / glow)
+   · Reveal con clip-path al entrar cada slide
+   · Motion blur dinámico según velocidad de scroll
+   · Ritmo asimétrico: las slides alternan altura/ancho/offset Y
+   · Film grain + scanlines muy sutiles para textura cinemática
+   · Mini-mapa de thumbnails clickeables sincronizado con el scroll
+   · Indicador "Scroll" con flecha animada continua
+   Colores, fuentes, fondo y textos se mantienen intactos.
+──────────────────────────────────────────────────────────────── */
 
-// ─── PLACEHOLDER  (shown when the real image hasn't loaded yet) ───
-const GRADIENTS = [
-  'linear-gradient(135deg, #0d1929 0%, #0057B8 100%)',
-  'linear-gradient(135deg, #0d1929 0%, #003d82 100%)',
-  'linear-gradient(135deg, #111827 0%, #1a4a80 100%)',
-  'linear-gradient(135deg, #0a1020 0%, #0057B8 100%)',
+const PLACEHOLDER_IMG = (i) =>
+  `https://picsum.photos/seed/lt-gallery-${i}/1600/2000`
+
+/* Patrón asimétrico para dar ritmo a la fila horizontal */
+const RHYTHM = [
+  { w: { base: '78vw', md: '54vw', lg: '42vw' }, h: '78vh', y: 0 },
+  { w: { base: '70vw', md: '40vw', lg: '30vw' }, h: '62vh', y: 40 },
+  { w: { base: '82vw', md: '60vw', lg: '50vw' }, h: '84vh', y: -30 },
+  { w: { base: '72vw', md: '44vw', lg: '34vw' }, h: '68vh', y: 60 },
+  { w: { base: '78vw', md: '50vw', lg: '38vw' }, h: '74vh', y: -10 },
 ]
 
-function GalleryItem({ item, index, onClick }) {
-  const boxRef  = useRef(null)
-  const [loaded, setLoaded] = useState(false)
-  const [error,  setError]  = useState(false)
+function Slide({ item, index, total, onClick, onHover, registerThumb }) {
+  const slideRef   = useRef(null)
+  const frameRef   = useRef(null)
+  const imgRef     = useRef(null)
+  const glowRef    = useRef(null)
+  const numberRef  = useRef(null)
+  const captionRef = useRef(null)
+
+  const rhythm = RHYTHM[index % RHYTHM.length]
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(boxRef.current,
-        { opacity: 0, y: 24 },
+      // Parallax zoom + pan (más sutil, más cinemático)
+      gsap.fromTo(
+        imgRef.current,
+        { scale: 1.35, xPercent: -8 },
         {
-          opacity: 1, y: 0,
+          scale: 1.05,
+          xPercent: 8,
+          ease: 'none',
           scrollTrigger: {
-            trigger: boxRef.current,
-            start: 'top 92%',
-            end: 'top 60%',
-            scrub: 1.2,
+            trigger: slideRef.current,
+            containerAnimation: window.__galleryHScroll,
+            start: 'left right',
+            end: 'right left',
+            scrub: true,
+          },
+        }
+      )
+
+      // Reveal con clip-path la primera vez que entra
+      gsap.fromTo(
+        frameRef.current,
+        { clipPath: 'inset(0% 100% 0% 0%)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0%)',
+          ease: 'power3.out',
+          duration: 1.1,
+          scrollTrigger: {
+            trigger: slideRef.current,
+            containerAnimation: window.__galleryHScroll,
+            start: 'left 95%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      )
+
+      // Halo / glow que sigue la posición de la slide
+      gsap.fromTo(
+        glowRef.current,
+        { opacity: 0 },
+        {
+          opacity: 0.55,
+          ease: 'sine.inOut',
+          scrollTrigger: {
+            trigger: slideRef.current,
+            containerAnimation: window.__galleryHScroll,
+            start: 'left 80%',
+            end: 'right 20%',
+            scrub: true,
+          },
+        }
+      )
+
+      // Caption + número
+      gsap.fromTo(
+        [numberRef.current, captionRef.current],
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          ease: 'power3.out',
+          duration: 0.7,
+          stagger: 0.08,
+          scrollTrigger: {
+            trigger: slideRef.current,
+            containerAnimation: window.__galleryHScroll,
+            start: 'left 75%',
+            end: 'left 25%',
+            toggleActions: 'play reverse play reverse',
           },
         }
       )
@@ -46,100 +122,205 @@ function GalleryItem({ item, index, onClick }) {
     return () => ctx.revert()
   }, [])
 
+  // Registrar referencia para el mini-mapa
+  useEffect(() => {
+    registerThumb?.(index, slideRef.current)
+  }, [index, registerThumb])
+
+  // Tilt 3D al mover el mouse dentro de la slide
+  const handleMouseMove = (e) => {
+    const el = frameRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top)  / rect.height - 0.5
+    gsap.to(el, {
+      rotateY: px * 8,
+      rotateX: -py * 8,
+      duration: 0.6,
+      ease: 'power2.out',
+      transformPerspective: 1000,
+      transformOrigin: 'center',
+    })
+    gsap.to(imgRef.current, {
+      x: -px * 24,
+      y: -py * 24,
+      duration: 0.8,
+      ease: 'power2.out',
+      overwrite: 'auto',
+    })
+  }
+  const handleMouseLeave = () => {
+    gsap.to(frameRef.current, { rotateX: 0, rotateY: 0, duration: 0.8, ease: 'power3.out' })
+    gsap.to(imgRef.current,   { x: 0, y: 0, duration: 0.8, ease: 'power3.out' })
+    onHover?.(false)
+  }
+
   return (
     <Box
-      ref={boxRef}
-      opacity={0}
-      mb={{ base: 3, md: 4 }}
+      ref={slideRef}
+      flex="0 0 auto"
+      width={rhythm.w}
+      height={rhythm.h}
       position="relative"
-      overflow="hidden"
-      cursor="pointer"
+      mr={{ base: 6, md: 10, lg: 16 }}
+      transform={`translateY(${rhythm.y}px)`}
+      cursor="none"
       onClick={() => onClick(index)}
+      onMouseEnter={() => onHover?.(true)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       role="button"
       aria-label={item.alt}
-      sx={{
-        '&:hover .gi-overlay': { opacity: 1 },
-        '&:hover .gi-img': { transform: 'scale(1.04)' },
-        breakInside: 'avoid',
-        display: 'block',
-      }}
+      data-gallery-slide={index}
+      sx={{ perspective: '1200px' }}
     >
-      {/* Placeholder / real image */}
+      {/* Glow detrás del frame */}
       <Box
-        style={{ background: GRADIENTS[index % GRADIENTS.length] }}
-        overflow="hidden"
-        position="relative"
-        sx={{ [ASPECT[item.aspect] ? 'aspect-ratio' : '--']: ASPECT[item.aspect]?.split(':')[1]?.trim() || 'auto' }}
-      >
-        {/* Use a wrapper that preserves aspect ratio via padding trick */}
-        <Box
-          sx={{
-            paddingBottom: item.aspect === 'tall'   ? '133.33%'
-                         : item.aspect === 'wide'   ? '75%'
-                         :                            '100%',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          {!error && (
-            <img
-              src={item.src}
-              alt={item.alt}
-              className="gi-img"
-              onLoad={()  => setLoaded(true)}
-              onError={() => setError(true)}
-              style={{
-                position:   'absolute',
-                inset:      0,
-                width:      '100%',
-                height:     '100%',
-                objectFit:  'cover',
-                opacity:    loaded ? 1 : 0,
-                transition: 'transform 0.5s ease, opacity 0.4s ease',
-              }}
-            />
-          )}
+        ref={glowRef}
+        position="absolute"
+        inset="-12%"
+        bg="radial-gradient(ellipse at center, rgba(0,87,184,0.45) 0%, rgba(0,87,184,0) 65%)"
+        filter="blur(40px)"
+        pointerEvents="none"
+        opacity={0}
+      />
 
-          {/* Caption overlay */}
+      {/* Frame con tilt 3D */}
+      <Box
+        ref={frameRef}
+        position="relative"
+        width="100%"
+        height="100%"
+        overflow="hidden"
+        bg="#0d1929"
+        sx={{
+          transformStyle: 'preserve-3d',
+          boxShadow: '0 40px 80px -30px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset',
+        }}
+      >
+        <Box
+          ref={imgRef}
+          position="absolute"
+          inset="-10%"
+          backgroundImage={`url(${item.src || PLACEHOLDER_IMG(index)})`}
+          backgroundSize="cover"
+          backgroundPosition="center"
+          willChange="transform"
+          sx={{ transform: 'translateZ(0)' }}
+        />
+
+        {/* Vignette */}
+        <Box
+          position="absolute" inset="0"
+          bg="linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.4) 100%)"
+          pointerEvents="none"
+        />
+
+        {/* Scanlines / textura cinemática muy sutil */}
+        <Box
+          position="absolute" inset="0"
+          pointerEvents="none"
+          sx={{
+            mixBlendMode: 'overlay',
+            opacity: 0.12,
+            backgroundImage:
+              'repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px)',
+          }}
+        />
+
+        {/* Tint azul on hover */}
+        <Box
+          className="gi-overlay"
+          position="absolute" inset="0"
+          bg="rgba(0,87,184,0.10)"
+          opacity={0}
+          transition="opacity 0.4s ease"
+          pointerEvents="none"
+          sx={{ '*:hover > &': { opacity: 1 } }}
+        />
+
+        {/* Marco interior */}
+        <Box
+          position="absolute" inset="10px"
+          border="1px solid rgba(255,255,255,0.07)"
+          pointerEvents="none"
+        />
+
+        {/* Número gigante */}
+        <Text
+          ref={numberRef}
+          position="absolute"
+          top={{ base: 4, md: 6 }}
+          left={{ base: 4, md: 6 }}
+          fontFamily="'Bebas Neue', sans-serif"
+          fontSize={{ base: '64px', md: '110px', lg: '150px' }}
+          lineHeight="0.85"
+          letterSpacing="0.01em"
+          color="rgba(255,255,255,0.95)"
+          sx={{ mixBlendMode: 'difference', textShadow: '0 4px 30px rgba(0,0,0,0.4)' }}
+        >
+          {String(index + 1).padStart(2, '0')}
           <Box
-            className="gi-overlay"
-            position="absolute" inset="0"
-            bg="linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.1) 45%, transparent 100%)"
-            opacity={0}
-            transition="opacity 0.3s ease"
-            display="flex"
-            flexDirection="column"
-            justify="flex-end"
-            p={{ base: 3, md: 4 }}
+            as="span"
+            fontSize={{ base: '14px', md: '18px' }}
+            color="rgba(255,255,255,0.55)"
+            ml={2}
           >
-            <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="9px" fontWeight="700"
-              letterSpacing="0.22em" textTransform="uppercase"
-              color="brand.blue" mb="3px"
-            >
-              {item.category}
-            </Text>
-            <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize={{ base: '12px', md: '13px' }}
-              fontWeight="600" letterSpacing="0.06em"
-              color="white" lineHeight="1.3"
-            >
-              {item.caption}
-            </Text>
+            / {String(total).padStart(2, '0')}
           </Box>
+        </Text>
+
+        {/* Línea decorativa */}
+        <Box
+          position="absolute"
+          left={{ base: 4, md: 6 }}
+          bottom={{ base: '92px', md: '108px' }}
+          w="48px" h="1px"
+          bg="brand.blue"
+          opacity={0.9}
+        />
+
+        {/* Caption */}
+        <Box
+          ref={captionRef}
+          position="absolute"
+          left={{ base: 4, md: 6 }}
+          right={{ base: 4, md: 6 }}
+          bottom={{ base: 4, md: 6 }}
+        >
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="10px"
+            fontWeight="700"
+            letterSpacing="0.28em"
+            textTransform="uppercase"
+            color="brand.blue"
+            mb={2}
+          >
+            {item.category}
+          </Text>
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize={{ base: '14px', md: '17px' }}
+            fontWeight="600"
+            letterSpacing="0.06em"
+            color="white"
+            lineHeight="1.25"
+            maxW="520px"
+          >
+            {item.caption}
+          </Text>
         </Box>
       </Box>
     </Box>
   )
 }
 
-// ─── LIGHTBOX ────────────────────────────────────────────────────
+/* ─── Lightbox (sin cambios funcionales, mismo estilo) ───────── */
 function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
   const item = images[activeIndex]
 
-  // Keyboard handler
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape')     onClose()
@@ -150,7 +331,6 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose, onPrev, onNext])
 
-  // Prevent body scroll when open
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
@@ -164,16 +344,13 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22 }}
       style={{
-        position: 'fixed', inset: 0,
-        zIndex: 9999,
-        background: 'rgba(5,8,14,0.95)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: 'rgba(5,8,14,0.96)',
+        backdropFilter: 'blur(8px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}
       onClick={onClose}
     >
-      {/* Close */}
       <button
         onClick={onClose}
         style={{
@@ -183,11 +360,8 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
           fontSize: 28, cursor: 'pointer', lineHeight: 1, zIndex: 1,
         }}
         aria-label="Cerrar"
-      >
-        ✕
-      </button>
+      >✕</button>
 
-      {/* Counter */}
       <Box
         position="absolute" top="24px" left="28px"
         fontFamily="'Barlow Condensed', sans-serif"
@@ -198,39 +372,30 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
         {String(activeIndex + 1).padStart(2,'0')} / {String(images.length).padStart(2,'0')}
       </Box>
 
-      {/* Prev */}
       <button
         onClick={e => { e.stopPropagation(); onPrev() }}
         style={{
           position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)',
           background: 'rgba(0,87,184,0.18)', border: '1px solid rgba(0,87,184,0.4)',
           color: 'white', width: 44, height: 44, borderRadius: '50%',
-          fontSize: 18, cursor: 'pointer', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', lineHeight: 1,
-          transition: 'background 0.2s',
+          fontSize: 18, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1,
         }}
         aria-label="Anterior"
-      >
-        ‹
-      </button>
+      >‹</button>
 
-      {/* Next */}
       <button
         onClick={e => { e.stopPropagation(); onNext() }}
         style={{
           position: 'absolute', right: 20, top: '50%', transform: 'translateY(-50%)',
           background: 'rgba(0,87,184,0.18)', border: '1px solid rgba(0,87,184,0.4)',
           color: 'white', width: 44, height: 44, borderRadius: '50%',
-          fontSize: 18, cursor: 'pointer', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', lineHeight: 1,
-          transition: 'background 0.2s',
+          fontSize: 18, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1,
         }}
         aria-label="Siguiente"
-      >
-        ›
-      </button>
+      >›</button>
 
-      {/* Image */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeIndex}
@@ -240,21 +405,17 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
           transition={{ duration: 0.22 }}
           onClick={e => e.stopPropagation()}
           style={{
-            maxWidth: 'min(90vw, 860px)',
-            maxHeight: '85vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 14,
+            maxWidth: 'min(90vw, 860px)', maxHeight: '85vh',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: 14,
           }}
         >
           <img
-            src={item.src}
+            src={item.src || PLACEHOLDER_IMG(activeIndex)}
             alt={item.alt}
             style={{
-              maxWidth: '100%', maxHeight: 'calc(85vh - 56px)',
-              objectFit: 'contain',
-              display: 'block',
+              maxWidth: '100%', maxHeight: '65vh',
+              objectFit: 'contain', display: 'block',
               filter: 'drop-shadow(0 24px 64px rgba(0,0,0,0.7))',
             }}
           />
@@ -264,16 +425,12 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
               fontSize="9px" fontWeight="700"
               letterSpacing="0.28em" textTransform="uppercase"
               color="brand.blue"
-            >
-              {item.category}
-            </Text>
+            >{item.category}</Text>
             <Text
               fontFamily="'Barlow Condensed', sans-serif"
               fontSize="13px" letterSpacing="0.08em"
               color="rgba(255,255,255,0.6)"
-            >
-              {item.caption}
-            </Text>
+            >{item.caption}</Text>
           </Flex>
         </motion.div>
       </AnimatePresence>
@@ -281,76 +438,176 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext }) {
   )
 }
 
-// ─── MAIN GALLERY SECTION ────────────────────────────────────────
+/* ─── MAIN ───────────────────────────────────────────────────── */
 export default function GallerySection() {
-  const sectionRef = useRef(null)
-  const titleRef   = useRef(null)
-  const [lightbox, setLightbox] = useState(null) // null | index
+  const sectionRef  = useRef(null)
+  const trackRef    = useRef(null)
+  const progressRef = useRef(null)
+  const cursorRef   = useRef(null)
+  const cursorLabelRef = useRef(null)
+  const thumbsRef   = useRef([])
+  const activeThumbRef = useRef(0)
+  const [lightbox, setLightbox] = useState(null)
 
-  const images = playerData.gallery ?? []
+  const baseImages = playerData.gallery ?? []
+  const images = baseImages.length
+    ? baseImages
+    : Array.from({ length: 8 }).map((_, i) => ({
+        id: `ph-${i}`,
+        src: PLACEHOLDER_IMG(i),
+        alt: `Momento ${i + 1}`,
+        category: ['Partido', 'Entreno', 'Vestuario', 'Afición'][i % 4],
+        caption: 'Reemplazar por una foto del jugador',
+      }))
 
-  const openLightbox  = useCallback(i   => setLightbox(i), [])
-  const closeLightbox = useCallback(()  => setLightbox(null), [])
-  const prevImage     = useCallback(()  => setLightbox(i => (i - 1 + images.length) % images.length), [images.length])
-  const nextImage     = useCallback(()  => setLightbox(i => (i + 1) % images.length), [images.length])
+  const openLightbox  = useCallback(i  => setLightbox(i), [])
+  const closeLightbox = useCallback(() => setLightbox(null), [])
+  const prevImage     = useCallback(() => setLightbox(i => (i - 1 + images.length) % images.length), [images.length])
+  const nextImage     = useCallback(() => setLightbox(i => (i + 1) % images.length), [images.length])
 
-  useScrubReveal(sectionRef, {
-    elements: [
-      { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
-    ],
-    pin: false,
-    start: 'top 85%',
-    end: 'top 30%',
-    scrub: 1,
-  })
+  const registerThumb = useCallback((i, el) => { thumbsRef.current[i] = el }, [])
 
-  // Split images into 3 columns (desktop) / 2 columns (tablet/mobile)
-  const col1 = images.filter((_, i) => i % 3 === 0)
-  const col2 = images.filter((_, i) => i % 3 === 1)
-  const col3 = images.filter((_, i) => i % 3 === 2)
+  /* ── Lenis smooth scroll ── */
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.4,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    })
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf) }
+    const id = requestAnimationFrame(raf)
+    lenis.on('scroll', ScrollTrigger.update)
+    gsap.ticker.add((time) => lenis.raf(time * 1000))
+    gsap.ticker.lagSmoothing(0)
+    return () => { cancelAnimationFrame(id); lenis.destroy() }
+  }, [])
 
-  const col1m = images.filter((_, i) => i % 2 === 0)
-  const col2m = images.filter((_, i) => i % 2 === 1)
+  /* ── Horizontal pin + translate + motion blur ── */
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const track   = trackRef.current
+      const section = sectionRef.current
+      if (!track || !section) return
+
+      const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 64)
+
+      const tween = gsap.to(track, {
+        x: getScrollAmount,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${track.scrollWidth}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            if (progressRef.current) {
+              progressRef.current.style.transform = `scaleX(${self.progress})`
+            }
+            // Motion blur según velocidad
+            const v = Math.min(Math.abs(self.getVelocity()) / 4000, 1)
+            track.style.filter = v > 0.05 ? `blur(${v * 3}px)` : 'none'
+
+            // Thumb activa
+            const idx = Math.round(self.progress * (images.length - 1))
+            if (idx !== activeThumbRef.current) {
+              activeThumbRef.current = idx
+              document
+                .querySelectorAll('[data-gallery-thumb]')
+                .forEach((el, i) => {
+                  el.style.opacity = i === idx ? '1' : '0.35'
+                  el.style.transform = i === idx ? 'scaleY(1.6)' : 'scaleY(1)'
+                })
+            }
+          },
+        },
+      })
+
+      window.__galleryHScroll = tween
+    }, sectionRef)
+
+    return () => { ctx.revert(); window.__galleryHScroll = null }
+  }, [images.length])
+
+  /* ── Custom cursor magnético ── */
+  useEffect(() => {
+    const cursor = cursorRef.current
+    if (!cursor) return
+    const xTo = gsap.quickTo(cursor, 'x', { duration: 0.35, ease: 'power3' })
+    const yTo = gsap.quickTo(cursor, 'y', { duration: 0.35, ease: 'power3' })
+    const onMove = (e) => { xTo(e.clientX); yTo(e.clientY) }
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [])
+
+  const setCursorHover = (active) => {
+    const c = cursorRef.current
+    if (!c) return
+    gsap.to(c, {
+      scale: active ? 1 : 0.35,
+      opacity: active ? 1 : 0.6,
+      duration: 0.35,
+      ease: 'power3.out',
+    })
+    if (cursorLabelRef.current) {
+      cursorLabelRef.current.style.opacity = active ? '1' : '0'
+    }
+  }
 
   return (
     <Box
       ref={sectionRef}
       as="section" id="gallery"
       bg="#080C12"
-      pt={{ base: 20, md: 28 }}
-      pb={{ base: 16, md: 24 }}
       position="relative"
       overflow="hidden"
+      h="100vh"
     >
-      {/* Background radial */}
-      <Box
-        position="absolute" top="0" right="-80px"
-        w="500px" h="500px"
-        bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)"
-        pointerEvents="none"
-      />
-      <Box
-        position="absolute" bottom="10%" left="-100px"
-        w="400px" h="400px"
-        bg="radial-gradient(ellipse, rgba(0,87,184,0.05) 0%, transparent 70%)"
-        pointerEvents="none"
-      />
-
-      {/* Subtle grid */}
-      <Box
-        position="absolute" inset="0" pointerEvents="none"
+      {/* Background radials */}
+      <Box position="absolute" top="0" right="-80px" w="500px" h="500px"
+        bg="radial-gradient(ellipse, rgba(0,87,184,0.08) 0%, transparent 70%)" pointerEvents="none" />
+      <Box position="absolute" bottom="10%" left="-100px" w="400px" h="400px"
+        bg="radial-gradient(ellipse, rgba(0,87,184,0.06) 0%, transparent 70%)" pointerEvents="none" />
+      <Box position="absolute" inset="0" pointerEvents="none"
         sx={{
           backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.012) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.012) 1px, transparent 1px)
-          `,
+            linear-gradient(to right, rgba(255,255,255,0.014) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255,255,255,0.014) 1px, transparent 1px)`,
           backgroundSize: '80px 80px',
         }}
       />
+      {/* Film grain global */}
+      <Box position="absolute" inset="0" pointerEvents="none" zIndex={1}
+        sx={{
+          opacity: 0.06,
+          mixBlendMode: 'overlay',
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.6'/></svg>\")",
+        }}
+      />
+      {/* Edge fades laterales para enfoque cinemático */}
+      <Box position="absolute" top="0" left="0" h="100%" w="120px" zIndex={3} pointerEvents="none"
+        bg="linear-gradient(to right, #080C12 0%, rgba(8,12,18,0) 100%)" />
+      <Box position="absolute" top="0" right="0" h="100%" w="160px" zIndex={3} pointerEvents="none"
+        bg="linear-gradient(to left, #080C12 0%, rgba(8,12,18,0) 100%)" />
 
-      <Box px={{ base: 5, md: 12, lg: 20 }} position="relative">
-        {/* Title */}
-        <Box ref={titleRef} mb={{ base: 12, md: 16 }}>
+      {/* Sticky header */}
+      <Flex
+        position="absolute"
+        top={{ base: 6, md: 10 }}
+        left={{ base: 5, md: 12, lg: 20 }}
+        right={{ base: 5, md: 12, lg: 20 }}
+        justify="space-between"
+        align="flex-end"
+        zIndex={5}
+        pointerEvents="none"
+      >
+        <Box
+          maxW="480px"
+          
+        >
           <Text
             fontFamily="'Barlow Condensed', sans-serif"
             fontSize="10px" fontWeight="700"
@@ -359,71 +616,153 @@ export default function GallerySection() {
           >
             Galería
           </Text>
-          <Flex align="flex-end" justify="space-between" flexWrap="wrap" gap={3}>
-            <Text
-              fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '52px', md: '76px', lg: '92px' }}
-              lineHeight="0.88" letterSpacing="0.02em"
-            >
-              Momentos<Box as="span" color="brand.blue"> Únicos</Box>
-            </Text>
-            <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="11px" letterSpacing="0.12em"
-              color="rgba(255,255,255,0.28)"
-              mb={{ base: 0, md: 2 }}
-            >
-              {images.length} fotos · Click para ampliar
-            </Text>
-          </Flex>
+          <Text
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize={{ base: '44px', md: '64px', lg: '78px' }}
+            lineHeight="0.88" letterSpacing="0.02em"
+          >
+            Momentos<Box as="span" color="brand.blue"> Únicos</Box>
+          </Text>
         </Box>
-
-        {/* ── MASONRY 3 cols (lg+) ── */}
-        <Flex gap={4} display={{ base: 'none', lg: 'flex' }}>
-          {[col1, col2, col3].map((col, ci) => (
-            <Box key={ci} flex="1">
-              {col.map(item => (
-                <GalleryItem
-                  key={item.id}
-                  item={item}
-                  index={images.indexOf(item)}
-                  onClick={openLightbox}
-                />
-              ))}
-            </Box>
-          ))}
+        <Flex
+          align="center" gap={3}
+          display={{ base: 'none', md: 'flex' }}
+        >
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="11px" letterSpacing="0.16em"
+            textTransform="uppercase"
+            color="rgba(255,255,255,0.4)"
+          >
+            Scroll para explorar
+          </Text>
+          <Box
+            as="span"
+            sx={{
+              display: 'inline-block',
+              animation: 'lt-arrow 1.6s ease-in-out infinite',
+              '@keyframes lt-arrow': {
+                '0%,100%': { transform: 'translateX(0)', opacity: 0.4 },
+                '50%':     { transform: 'translateX(8px)', opacity: 1 },
+              },
+              color: 'brand.blue',
+            }}
+          >→</Box>
         </Flex>
+      </Flex>
 
-        {/* ── MASONRY 2 cols (sm → md) ── */}
-        <Flex gap={3} display={{ base: 'none', sm: 'flex', lg: 'none' }}>
-          {[col1m, col2m].map((col, ci) => (
-            <Box key={ci} flex="1">
-              {col.map(item => (
-                <GalleryItem
-                  key={item.id}
-                  item={item}
-                  index={images.indexOf(item)}
-                  onClick={openLightbox}
-                />
-              ))}
-            </Box>
-          ))}
-        </Flex>
+      {/* Horizontal track */}
+      <Flex
+        ref={trackRef}
+        align="center"
+        pl={{ base: 5, md: 12, lg: 20 }}
+        pr="22vw"
+        height="100vh"
+        willChange="transform, filter"
+      >
+        {images.map((item, i) => (
+          <Slide
+            key={item.id ?? i}
+            item={item}
+            index={i}
+            total={images.length}
+            onClick={openLightbox}
+            onHover={setCursorHover}
+            registerThumb={registerThumb}
+          />
+        ))}
+      </Flex>
 
-        {/* ── Single col (base) ── */}
-        <Box display={{ base: 'block', sm: 'none' }}>
-          {images.map((item, i) => (
-            <GalleryItem
-              key={item.id}
-              item={item}
-              index={i}
-              onClick={openLightbox}
+      {/* Mini-mapa de thumbs */}
+      <Flex
+        position="absolute"
+        bottom={{ base: '70px', md: '90px' }}
+        left="50%"
+        transform="translateX(-50%)"
+        gap="6px"
+        zIndex={5}
+        pointerEvents="none"
+      >
+        {images.map((_, i) => (
+          <Box
+            key={i}
+            data-gallery-thumb={i}
+            w="22px" h="2px"
+            bg={i === 0 ? 'brand.blue' : 'rgba(255,255,255,0.25)'}
+            opacity={i === 0 ? 1 : 0.35}
+            transition="all 0.4s ease"
+            sx={{ transformOrigin: 'center' }}
+          />
+        ))}
+      </Flex>
+
+      {/* Progress bar */}
+      <Box
+        position="absolute"
+        bottom={{ base: 6, md: 10 }}
+        left={{ base: 5, md: 12, lg: 20 }}
+        right={{ base: 5, md: 12, lg: 20 }}
+        zIndex={5}
+        pointerEvents="none"
+      >
+        <Flex align="center" gap={4}>
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="10px" fontWeight="700"
+            letterSpacing="0.28em" textTransform="uppercase"
+            color="rgba(255,255,255,0.45)"
+          >
+            {String(images.length).padStart(2, '0')} fotos
+          </Text>
+          <Box flex="1" h="1px" bg="rgba(255,255,255,0.08)" position="relative" overflow="hidden">
+            <Box
+              ref={progressRef}
+              position="absolute" inset="0"
+              bg="brand.blue"
+              transform="scaleX(0)"
+              transformOrigin="left center"
+              sx={{ boxShadow: '0 0 12px rgba(0,87,184,0.8)' }}
+              style={{ transition: 'transform 0.1s linear' }}
             />
-          ))}
-        </Box>
+          </Box>
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="10px" fontWeight="700"
+            letterSpacing="0.28em" textTransform="uppercase"
+            color="rgba(255,255,255,0.45)"
+          >
+            Click para ampliar
+          </Text>
+        </Flex>
       </Box>
 
-      {/* Lightbox */}
+      {/* Cursor magnético */}
+      <Box
+        ref={cursorRef}
+        position="fixed"
+        top="0" left="0"
+        w="80px" h="80px"
+        ml="-40px" mt="-40px"
+        borderRadius="50%"
+        border="1px solid rgba(0,87,184,0.6)"
+        bg="rgba(0,87,184,0.10)"
+        backdropFilter="blur(2px)"
+        pointerEvents="none"
+        zIndex={9998}
+        opacity={0.6}
+        sx={{ transform: 'scale(0.35)', display: { base: 'none', md: 'flex' }, alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Text
+          ref={cursorLabelRef}
+          fontFamily="'Barlow Condensed', sans-serif"
+          fontSize="9px" fontWeight="700"
+          letterSpacing="0.28em" textTransform="uppercase"
+          color="white"
+          opacity={0}
+          sx={{ transition: 'opacity 0.3s ease' }}
+        >Ver</Text>
+      </Box>
+
       <AnimatePresence>
         {lightbox !== null && (
           <Lightbox

@@ -313,7 +313,7 @@ export default function StatsSection() {
                 sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.1)' }}
                 userSelect="none" pointerEvents="none"
               >
-                0{playerData.number}
+                #{playerData.number}
               </Text>
               <Text
                 fontFamily="'Bebas Neue', sans-serif"

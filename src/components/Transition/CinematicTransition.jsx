@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { Box, Text, VStack, Flex } from '@chakra-ui/react'
+import { Box, Text, VStack, Flex, Image } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import  playerData  from '../../data/playerData.js'
+
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -33,6 +35,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
   const textRightRef    = useRef(null)
   const overlayRef      = useRef(null)
   const taglineRef      = useRef(null)
+  const logoRef         = useRef(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -57,6 +60,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
         0
       )
 
+
       // Photo enters from slightly below (only for local / non-shared)
       if (!useSharedImage && photoRef.current) {
         tl.fromTo(
@@ -64,6 +68,16 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
           { scale: 0.85, opacity: 0.6 },
           { scale: 1.0, opacity: 1, duration: 0.3 },
           0
+        )
+      }
+
+      // Logo fades in with a slight delay
+      if (logoRef.current) {
+        tl.fromTo(
+          logoRef.current,
+          { opacity: 0, y: -10 },
+          { opacity: 1, y: 0, duration: 0.3 },
+          0.15
         )
       }
 
@@ -194,6 +208,14 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
                 textTransform="uppercase"
                 opacity={0.5}
               >
+                <Image
+                ref={logoRef}
+                src={playerData.logoCurrentClub}  
+                width={8} 
+                height={8} 
+                style={{ display: 'inline-block', marginRight: '6px', verticalAlign: 'middle' }}
+                
+                />
                 Cruz Azul · Liga MX
               </Text>
               <Text
@@ -236,7 +258,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
                 whiteSpace="nowrap"
                 pointerEvents="none"
               >
-                03
+                33
               </Text>
             </Box>
           ) : (
@@ -262,7 +284,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
                 zIndex={0}
                 whiteSpace="nowrap"
               >
-                03
+                33
               </Text>
 
               <img
@@ -300,7 +322,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
                 textTransform="uppercase"
                 opacity={0.5}
               >
-                #3 · Defensor
+                #33 · Defensor
               </Text>
               <Text
                 fontFamily="'Bebas Neue', sans-serif"
@@ -335,7 +357,7 @@ export default function CinematicTransition({ playerImage, useSharedImage = fals
             textTransform="uppercase"
             color="rgba(255,255,255,0.7)"
           >
-            El muro inquebrantable
+            Un muro inquebrantable
           </Text>
         </Box>
 
