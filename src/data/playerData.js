@@ -6,6 +6,10 @@ import photo1 from '../assets/galleryPhotos/photo1.jpg'
 import photo2 from '../assets/galleryPhotos/photo2.jpg'
 import photo3 from '../assets/galleryPhotos/photo3.jpg'
 import photo4 from '../assets/galleryPhotos/photo4.jpg'
+import photo5 from '../assets/galleryPhotos/photo5.webp'
+import photo6 from '../assets/galleryPhotos/photo6.webp'
+import photo7 from '../assets/galleryPhotos/photo7.webp'
+import photo8 from '../assets/galleryPhotos/photo8.webp'
 import video1 from '../assets/galleryVideos/video1.mp4'
 import bgCancha from '../assets/bg_cancha.jpg'
 import escudoCruzAzul from '../assets/escudos/cruzazul.png'
@@ -178,10 +182,14 @@ export const playerData = {
 
   // Galería de fotos — colocar archivos reales en src/assets/galleryPhotos/
   gallery: [
-    { id: 1, src: photo1, alt: 'Cruz Azul vs América 2024',  caption: 'Cruz Azul vs América · Liga MX 2024',        category: 'Partido',       aspect: 'tall'   },
-    { id: 2, src: photo2, alt: 'Festejo de gol',              caption: 'Festejo tras anotar',                        category: 'Partido',       aspect: 'wide'   },
-    { id: 3, src: photo3, alt: 'Entrenamiento Cruz Azul',     caption: 'Sesión de entrenamiento · Ciudad Deportiva', category: 'Entrenamiento', aspect: 'square' },
-    { id: 4, src: photo4, alt: 'Duelo aéreo en la cancha',   caption: 'Duelo aéreo · Torneo Clausura',              category: 'Partido',       aspect: 'tall'   },
+    { id: 1, src: photo8, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',   caption: 'Campeón junto a su familia · La Final · Clausura 2025',               category: 'Familia',       aspect: 'tall'   },
+    { id: 2, src: photo7, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',             caption: 'Conexión con la afición · Ciudad Deportiva · Cruz Azul',              category: 'Afición',       aspect: 'wide'   },
+    { id: 3, src: photo6, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',               caption: 'Enfoque total antes de la batalla · La Final · Clausura 2025',        category: 'Partido',       aspect: 'square' },
+    { id: 4, src: photo5, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',                caption: 'Salida limpia desde el fondo · Camiseta alternativa · Liga MX',       category: 'Partido',       aspect: 'tall'   },
+    { id: 5, src: photo4, alt: 'Piovi levanta el trofeo sentado en el trono dorado tras el título de Clausura 2025',  caption: 'El Rey de La Máquina · Campeón Clausura 2025',                       category: 'Título',        aspect: 'tall'   },
+    { id: 6, src: photo3, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',                              caption: 'Precisión en cada balón · Cruz Azul vs Chivas · Liga MX',            category: 'Partido',       aspect: 'wide'   },
+    { id: 7, src: photo2, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',             caption: 'Unidos de cara al partido · Estadio Ciudad de los Deportes',         category: 'Equipo',        aspect: 'square' },
+    { id: 8, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028', caption: 'Bienvenido a La Máquina · Contrato hasta 2028 · Cruz Azul',          category: 'Presentación',  aspect: 'tall'   },
   ],
 
   socialMedia: {

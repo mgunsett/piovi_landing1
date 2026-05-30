@@ -1,60 +1,38 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-  Box, Flex, Grid, Text, VStack, Input, Textarea, Button,
-} from '@chakra-ui/react'
+import { useRef } from 'react'
+import { Box, Grid, Text } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { motion } from 'framer-motion'
 import useScrubReveal from '../../hooks/useScrubReveal.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const WHATSAPP_NUMBER = '5491100000000' // reemplazar por número real
+
 const socialLinks = [
   { label: 'Instagram', handle: '@gonzapiovi', url: 'https://instagram.com/gonzapiovi' },
-  { label: 'Twitter / X',handle: '@gonzapiovi', url: 'https://twitter.com/gonzapiovi' },
-  { label: 'TikTok',   handle: '@gonzapiovi', url: 'https://tiktok.com/@gonzapiovi' },
+  { label: 'Twitter / X', handle: '@gonzapiovi', url: 'https://twitter.com/gonzapiovi' },
+  { label: 'TikTok', handle: '@gonzapiovi', url: 'https://tiktok.com/@gonzapiovi' },
 ]
 
 export default function ContactSection() {
   const sectionRef = useRef(null)
   const titleRef = useRef(null)
-  const formRef = useRef(null)
-  const [sent, setSent] = useState(false)
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setSent(true)
-    gsap.fromTo('.success-msg',
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }
-    )
-  }
+  const ctaRef = useRef(null)
+  const ledsRef = useRef(null)
+  const socialRef = useRef(null)
 
   useScrubReveal(sectionRef, {
     elements: [
       { ref: titleRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 50, opacity: 0 } },
-      { ref: formRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 40, opacity: 0 }, position: '-=0.3' },
+      { ref: ctaRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 40, opacity: 0 }, position: '-=0.3' },
+      { ref: ledsRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 30, opacity: 0 }, position: '-=0.2' },
+      { ref: socialRef, vars: { y: 0, opacity: 1 }, fromVars: { y: 30, opacity: 0 }, position: '-=0.2' },
     ],
     pin: false,
     start: 'top 85%',
     end: 'top 25%',
     scrub: 1,
   })
-
-  const inputStyle = {
-    bg: 'transparent',
-    border: '1px solid',
-    borderColor: 'rgba(255,255,255,0.1)',
-    borderRadius: '0',
-    color: 'white',
-    fontFamily: "'Barlow', sans-serif",
-    fontSize: '14px',
-    py: 6,
-    px: 4,
-    _placeholder: { color: 'whiteAlpha.400', fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: '0.1em', fontSize: '13px', textTransform: 'uppercase' },
-    _focus: { borderColor: 'brand.blue', boxShadow: 'none', outline: 'none' },
-    _hover: { borderColor: 'rgba(255,255,255,0.2)' },
-  }
 
   return (
     <Box
@@ -70,11 +48,11 @@ export default function ContactSection() {
       {/* Big background text */}
       <Text
         position="absolute"
-        bottom="-40px"
-        left="50%"
+        bottom="-80px"
+        left="70%"
         transform="translateX(-50%)"
         fontFamily="'Bebas Neue', sans-serif"
-        fontSize={{ base: '20vw', md: '16vw' }}
+        fontSize={{ base: '20vw', md: '30vw' }}
         color="transparent"
         sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.03)' }}
         whiteSpace="nowrap"
@@ -86,6 +64,7 @@ export default function ContactSection() {
       </Text>
 
       <Box position="relative" zIndex={1}>
+
         {/* Title */}
         <Box ref={titleRef} mb={{ base: 12, md: 20 }}>
           <Text
@@ -109,169 +88,246 @@ export default function ContactSection() {
           </Text>
         </Box>
 
-        <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={16}>
-          {/* Form */}
-          <Box ref={formRef} opacity={0}>
-            {!sent ? (
-              <VStack as="form" onSubmit={handleSubmit} spacing={4} align="stretch">
-                <Grid templateColumns="1fr 1fr" gap={4}>
-                  <Input {...inputStyle} placeholder="Nombre" required />
-                  <Input {...inputStyle} placeholder="Empresa / Medio" />
-                </Grid>
-                <Input {...inputStyle} type="email" placeholder="Email" required />
-                <Input {...inputStyle} placeholder="Asunto" />
-                <Textarea
-                  {...inputStyle}
-                  placeholder="Mensaje"
-                  rows={5}
-                  resize="none"
-                  required
-                />
-                <Box>
-                  <Button
-                    type="submit"
-                    bg="transparent"
-                    border="1px solid"
-                    borderColor="brand.blue"
-                    color="white"
-                    fontFamily="'Barlow Condensed', sans-serif"
-                    fontWeight="700"
-                    fontSize="13px"
-                    letterSpacing="0.2em"
-                    textTransform="uppercase"
-                    px={10}
-                    py={6}
-                    borderRadius="0"
-                    cursor="none"
-                    _hover={{ bg: 'brand.blue' }}
-                    transition="all 0.3s ease"
-                    data-cursor-hover
-                  >
-                    Enviar mensaje →
-                  </Button>
-                </Box>
-              </VStack>
-            ) : (
-              <Box
-                className="success-msg"
-                p={10}
-                border="1px solid rgba(0,87,184,0.4)"
-                opacity={0}
+        {/* Email + WhatsApp CTAs */}
+        <Box ref={ctaRef} opacity={0} mb={4}>
+          <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={4}>
+
+            {/* Email */}
+            <Box
+              as="a"
+              href="mailto:contacto@gonzalopiovi.com"
+              p={{ base: 8, md: 10 }}
+              border="1px solid rgba(255,255,255,0.07)"
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              minH="190px"
+              transition="all 0.4s ease"
+              _hover={{ borderColor: 'rgba(0,87,184,0.5)', bg: 'rgba(0,87,184,0.06)' }}
+            >
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="10px"
+                fontWeight="700"
+                letterSpacing="0.3em"
+                textTransform="uppercase"
+                color="whiteAlpha.400"
               >
+                Contacto directo
+              </Text>
+              <Box>
                 <Text
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize="36px"
-                  color="brand.blue"
-                  mb={2}
+                  fontSize={{ base: '32px', md: '42px' }}
+                  lineHeight="1"
+                  letterSpacing="0.02em"
+                  color="white"
+                  mb={3}
                 >
-                  ¡Mensaje enviado!
+                  Email
                 </Text>
-                <Text
-                  fontFamily="'Barlow', sans-serif"
-                  fontSize="14px"
-                  color="whiteAlpha.600"
-                >
-                  Nos pondremos en contacto a la brevedad. Gracias.
-                </Text>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <Text
+                    fontFamily="'Barlow Condensed', sans-serif"
+                    fontSize={{ base: '13px', md: '14px' }}
+                    fontWeight="500"
+                    color="whiteAlpha.600"
+                    letterSpacing="0.03em"
+                  >
+                    contacto@gonzalopiovi.com
+                  </Text>
+                  <Text color="brand.blue" fontSize="22px" lineHeight="1">→</Text>
+                </Box>
               </Box>
-            )}
-          </Box>
+            </Box>
 
-          {/* Info lateral */}
-          <VStack align="flex-start" spacing={10}>
-            {/* Contact info */}
+            {/* WhatsApp */}
+            <Box
+              as="a"
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              p={{ base: 8, md: 10 }}
+              border="1px solid rgba(255,255,255,0.07)"
+              display="flex"
+              flexDirection="column"
+              justifyContent="space-between"
+              minH="190px"
+              transition="all 0.4s ease"
+              _hover={{ borderColor: 'rgba(0,87,184,0.5)', bg: 'rgba(0,87,184,0.06)' }}
+            >
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="10px"
+                fontWeight="700"
+                letterSpacing="0.3em"
+                textTransform="uppercase"
+                color="whiteAlpha.400"
+              >
+                Consultas rápidas
+              </Text>
+              <Box>
+                <Text
+                  fontFamily="'Bebas Neue', sans-serif"
+                  fontSize={{ base: '32px', md: '42px' }}
+                  lineHeight="1"
+                  letterSpacing="0.02em"
+                  color="white"
+                  mb={3}
+                >
+                  WhatsApp
+                </Text>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                  <Text
+                    fontFamily="'Barlow Condensed', sans-serif"
+                    fontSize="14px"
+                    fontWeight="500"
+                    color="whiteAlpha.600"
+                    letterSpacing="0.03em"
+                  >
+                    Enviar mensaje
+                  </Text>
+                  <Text color="brand.blue" fontSize="22px" lineHeight="1">→</Text>
+                </Box>
+              </Box>
+            </Box>
+
+          </Grid>
+        </Box>
+
+        {/* LEDSPORTS — Representante de Marketing Deportivo */}
+        <Box ref={ledsRef} opacity={0} mb={4}>
+          <Box
+            as="a"
+            href="https://ledsportsmarketing.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            p={{ base: 8, md: 10 }}
+            border="1px solid rgba(201,168,76,0.18)"
+            display="flex"
+            flexDirection={{ base: 'column', md: 'row' }}
+            justifyContent="space-between"
+            alignItems={{ base: 'flex-start', md: 'center' }}
+            gap={{ base: 6, md: 0 }}
+            transition="all 0.4s ease"
+            position="relative"
+            overflow="hidden"
+            _hover={{ borderColor: 'rgba(201,168,76,0.42)', bg: 'rgba(201,168,76,0.04)' }}
+          >
+            {/* Gold accent bar */}
+            <Box position="absolute" left={0} top={0} bottom={0} w="2px" bg="brand.gold" />
+
             <Box>
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
                 fontSize="10px"
                 fontWeight="700"
-                letterSpacing="0.25em"
+                letterSpacing="0.3em"
                 textTransform="uppercase"
-                color="whiteAlpha.400"
-                mb={4}
+                color="brand.gold"
+                mb={3}
               >
-                Representante
+                Representante de Marketing Deportivo
               </Text>
               <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="16px"
-                fontWeight="600"
+                fontFamily="'Bebas Neue', sans-serif"
+                fontSize={{ base: '36px', md: '56px' }}
+                lineHeight="0.9"
+                letterSpacing="0.02em"
                 color="white"
-                mb={1}
               >
-                contacto@gonzalopiovi.com
+                LEDSPORTS
               </Text>
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="14px"
-                color="whiteAlpha.500"
+                fontSize="13px"
+                color="whiteAlpha.400"
+                letterSpacing="0.05em"
+                mt={2}
               >
-                Respuesta en menos de 48hs
+                ledsportsmarketing.com
               </Text>
             </Box>
 
-            {/* Social media */}
-            <Box w="100%">
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={3}
+              flexShrink={0}
+            >
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="10px"
+                fontSize="11px"
                 fontWeight="700"
                 letterSpacing="0.25em"
                 textTransform="uppercase"
-                color="whiteAlpha.400"
-                mb={4}
+                color="brand.gold"
               >
-                Redes Sociales
+                Ir al sitio
               </Text>
-              <VStack spacing={2} align="stretch">
-                {socialLinks.map((social) => (
-                  <Box
-                    key={social.label}
-                    as="a"
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    p={4}
-                    border="1px solid rgba(255,255,255,0.06)"
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    cursor="none"
-                    data-cursor-hover
-                    transition="all 0.3s ease"
-                    _hover={{
-                      borderColor: 'rgba(0,87,184,0.4)',
-                      bg: 'rgba(0,87,184,0.08)',
-                    }}
-                  >
-                    <Box>
-                      <Text
-                        fontFamily="'Barlow Condensed', sans-serif"
-                        fontSize="11px"
-                        fontWeight="700"
-                        letterSpacing="0.15em"
-                        textTransform="uppercase"
-                        color="whiteAlpha.500"
-                        mb={0.5}
-                      >
-                        {social.label}
-                      </Text>
-                      <Text
-                        fontFamily="'Barlow Condensed', sans-serif"
-                        fontSize="16px"
-                        fontWeight="600"
-                        color="white"
-                      >
-                        {social.handle}
-                      </Text>
-                    </Box>
-                    <Text color="brand.blue" fontSize="18px">→</Text>
-                  </Box>
-                ))}
-              </VStack>
+              <Text color="brand.gold" fontSize="20px" lineHeight="1">→</Text>
             </Box>
-          </VStack>
-        </Grid>
+          </Box>
+        </Box>
+
+        {/* Social media */}
+        <Box ref={socialRef} opacity={0}>
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="10px"
+            fontWeight="700"
+            letterSpacing="0.25em"
+            textTransform="uppercase"
+            color="whiteAlpha.300"
+            mb={4}
+          >
+            Redes Sociales
+          </Text>
+          <Grid templateColumns={{ base: '1fr', sm: 'repeat(3, 1fr)' }} gap={4}>
+            {socialLinks.map((social) => (
+              <Box
+                key={social.label}
+                as="a"
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                p={5}
+                border="1px solid rgba(255,255,255,0.06)"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                
+                transition="all 0.3s ease"
+                _hover={{ borderColor: 'rgba(0,87,184,0.4)', bg: 'rgba(0,87,184,0.08)' }}
+              >
+                <Box>
+                  <Text
+                    fontFamily="'Barlow Condensed', sans-serif"
+                    fontSize="10px"
+                    fontWeight="700"
+                    letterSpacing="0.2em"
+                    textTransform="uppercase"
+                    color="whiteAlpha.400"
+                    mb={1}
+                  >
+                    {social.label}
+                  </Text>
+                  <Text
+                    fontFamily="'Barlow Condensed', sans-serif"
+                    fontSize="16px"
+                    fontWeight="600"
+                    color="white"
+                    letterSpacing="0.04em"
+                  >
+                    {social.handle}
+                  </Text>
+                </Box>
+                <Text color="brand.blue" fontSize="18px">→</Text>
+              </Box>
+            ))}
+          </Grid>
+        </Box>
+
       </Box>
     </Box>
   )

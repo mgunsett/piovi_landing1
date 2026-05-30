@@ -405,7 +405,7 @@ export default function VideosSection() {
           lineHeight="1.6"
           pb={2}
         >
-          Hacé click para ver el video completo. Los fragmentos se reproducen automáticamente al pasar el cursor.
+          Hacé click para ver el video completo.
         </Text>
       </Flex>
 
