@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger)
 const navLinks = [
   { label: 'Stats',    href: '#stats' },
   { label: 'Videos',   href: '#videos' },
-  { label: 'Fotos',   href: '#fotos' },
+  { label: 'Fotos',   href: '#gallery' },
   { label: 'Prensa',   href: '#press' },
 ]
 
