@@ -267,7 +267,7 @@ export default function StatsSection() {
               fontSize={{ base: '52px', md: '76px', lg: '92px' }}
               lineHeight="0.88" letterSpacing="0.02em"
             >
-              Datos del<Box as="span" color="brand.blue"> Jugador</Box>
+              ESTADIS<Box as="span" color="brand.blue">TICAS</Box>
             </Text>
             <Text
               fontFamily="'Barlow Condensed', sans-serif"
@@ -297,7 +297,7 @@ export default function StatsSection() {
               letterSpacing="0.28em" textTransform="uppercase"
               color="rgba(255,255,255,0.35)" mb={4}
             >
-              Perfil del Jugador
+              Perfil
             </Text>
             <Box
               border="1px solid rgba(0,87,184,0.22)"

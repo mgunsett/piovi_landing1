@@ -9,7 +9,6 @@ import Footer from './components/UI/Footer'
 
 // Sections
 import Hero from './components/Hero/Hero'
-import CinematicTransition from './components/Transition/CinematicTransition'
 import StatsSection from './components/Stats/StatsSection'
 import GallerySection from './components/Gallery/GallerySection'
 import VideosSection from './components/Videos/VideosSection'
@@ -21,8 +20,14 @@ export default function App() {
     <Box bg="#080C12" minH="100vh" position="relative">
       <Navbar />
       <Hero />
-      <CinematicTransition playerImage={piovi3} />
-      <StatsSection />
+
+      {/* StatsSection is pulled up −100vh so it slides over the still-pinned
+          Hero (the "section reveal" cover). This −100vh mirrors the 100vh
+          cover phase reserved by the Hero's tall sticky wrapper. zIndex 21
+          guarantees it paints above the Hero (zIndex 1). */}
+      <Box position="relative" zIndex={21} mt={{ base: '-100vh', md: '-100vh' }}>
+        <StatsSection />
+      </Box>
       <VideosSection />
       <GallerySection />    
       <PressSection />

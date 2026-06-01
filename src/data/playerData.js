@@ -1,7 +1,9 @@
-// ─── DATOS DEL JUGADOR ────────────────────────────────────────
-// Reemplazar con datos reales de Piovi
+// ─── DATOS DEL JUGADOR ───────────────────────────────────────
 
+//Foto Principal
 import pioviImage from '../assets/piovi2.png'
+
+//Gallery Photos
 import photo1 from '../assets/galleryPhotos/photo1.jpg'
 import photo2 from '../assets/galleryPhotos/photo2.jpg'
 import photo3 from '../assets/galleryPhotos/photo3.jpg'
@@ -10,8 +12,11 @@ import photo5 from '../assets/galleryPhotos/photo5.webp'
 import photo6 from '../assets/galleryPhotos/photo6.webp'
 import photo7 from '../assets/galleryPhotos/photo7.webp'
 import photo8 from '../assets/galleryPhotos/photo8.webp'
+
+//Videos
 import video1 from '../assets/galleryVideos/video1.mp4'
-import bgCancha from '../assets/bg_cancha.jpg'
+
+//Escudos 
 import escudoCruzAzul from '../assets/escudos/cruzazul.png'
 import escudoRacing from '../assets/escudos/racing.png'
 import escudoColon from '../assets/escudos/colon.png'
@@ -20,10 +25,13 @@ import escudoVelez from '../assets/escudos/velez.png'
 import escudoDefensa from '../assets/escudos/defensa.png'
 import escudoGimnasia from '../assets/escudos/gimnasia.png'
 
+//Icons
+import { FaInstagram, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
+
 
 export const playerData = {
-  name: 'Piovi',
-  fullName: 'Gonzalo Piovi',
+  name: 'Gonzalo',
+  fullName: 'Piovi',
   number: 33,
   position: 'Defensor Central',
   positionShort: 'DEF',
@@ -37,9 +45,8 @@ export const playerData = {
   birthPlace: 'Moron, Buenos Aires',
   currentClub: 'Cruz Azul',
   logoCurrentClub: escudoCruzAzul,
-  quote: '"El trabajo diario es la base de todo lo que logramos."',
   image: pioviImage,
-  bg: bgCancha,
+
 
   // Stats técnicas (0-100)
   stats: [
@@ -122,37 +129,12 @@ export const playerData = {
       title: 'Mejor temporada Cruz Azul 2024',
       duration: '3:42',
       thumbnail: video1,
+      cover: photo3,          // foto de portada del video (acción en cancha)
       src: video1,
       previewSrc: video1,
       category: 'Highlights',
     },
-    {
-      id: 2,
-      title: 'Goles & Asistencias 2023',
-      duration: '2:15',
-      thumbnail: '/videos/thumb2.jpg',
-      src: '/videos/highlight2.mp4',
-      previewSrc: '/videos/preview2.mp4',
-      category: 'Goles',
-    },
-    {
-      id: 3,
-      title: 'Defensa élite — temporada completa',
-      duration: '4:08',
-      thumbnail: '/videos/thumb3.jpg',
-      src: '/videos/highlight3.mp4',
-      previewSrc: '/videos/preview3.mp4',
-      category: 'Defensa',
-    },
-    {
-      id: 4,
-      title: 'Copa Sudamericana 2022',
-      duration: '5:30',
-      thumbnail: '/videos/thumb4.jpg',
-      src: '/videos/highlight4.mp4',
-      previewSrc: '/videos/preview4.mp4',
-      category: 'Copas',
-    },
+
   ],
 
   // Prensa & menciones
@@ -192,11 +174,15 @@ export const playerData = {
     { id: 8, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028', caption: 'Bienvenido a La Máquina · Contrato hasta 2028 · Cruz Azul',          category: 'Presentación',  aspect: 'tall'   },
   ],
 
-  socialMedia: {
-    instagram: 'https://instagram.com/gonzapiovi',
-    twitter: 'https://twitter.com/gonzapiovi',
-    tiktok: 'https://tiktok.com/@gonzapiovi',
-  },
+  socialMedia: [
+    { label: 'Instagram', icon: FaInstagram, handle: '@gonzalopiovi', url: 'https://www.instagram.com/gonzalopiovi/', hoverColor: 'rgba(225, 48, 108, 0.35)' },
+  ],
+
+  contact: [
+    { title: 'Representante Deportivo', label: 'Email',    icon: FaEnvelope,  handle: 'representante@gonzalopiovi.com', url: 'mailto:contacto@gonzalopiovi.com', hoverColor: 'rgba(0, 87, 184, 0.4)' },
+    { title: 'Mensajes', label: 'WhatsApp', icon: FaWhatsapp,  handle: '@gonzalopiovi', url: 'https://wa.me/5491100000000', hoverColor: 'rgba(37, 211, 102, 0.38)' },
+  ],
+
 
   // ─── MARQUEE DATA ────────────────────────────────────────────────
   marqueeItems: [

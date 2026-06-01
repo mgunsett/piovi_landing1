@@ -9,25 +9,36 @@ gsap.registerPlugin(ScrollTrigger)
 import piovi4 from '../../assets/piovi4.svg'
 import { playerData } from '../../data/playerData'
 
-
-
 // ─── HERO COMPONENT ──────────────────────────────────────────────
 export default function Hero({ playerImage, hidePlayerImage = false }) {
-  const containerRef = useRef(null)
-  const lettersRef = useRef([])
-  const bgLettersRef = useRef([])
-  const photoRef = useRef(null)
+  // Layout refs
+  const outerRef     = useRef(null)  // 200vh scroll-space wrapper
+  const containerRef = useRef(null)  // sticky 100vh inner viewport
+
+  // Parallax layer refs (scroll-driven Y)
+  const bgLayerRef    = useRef(null)  // ghost text + grid — slowest
+  const midLayerRef   = useRef(null)  // white PIOVI letters — medium
+  const photoLayerRef = useRef(null)  // player photo — fastest (foreground)
+
+  // Individual element refs (mouse parallax + entry animation)
+  const lettersRef    = useRef([])   // white PIOVI letters inside midLayer
+  const bgLettersRef  = useRef([])   // ghost PIOVI letters inside bgLayer
+  const gonzaloRef    = useRef(null) // ghost GONZALO text
+  const photoRef      = useRef(null) // photo container inside photoLayer
+  const photoInnerRef = useRef(null) // photo inner (clip entry animation)
+  const glowFlashRef  = useRef(null)
+  const vignetteRef   = useRef(null)
+
+  // Static UI refs (no parallax)
   const subtitleRef = useRef(null)
-  const statsRef = useRef(null)
-  const lineRef = useRef(null)
-  const numberRef = useRef(null)
-  const photoInnerRef = useRef(null)
-  const glowFlashRef = useRef(null)
-  const vignetteRef = useRef(null)
+  const statsRef    = useRef(null)
+  const lineRef     = useRef(null)
+  const numberRef   = useRef(null)
 
   const heroName = 'PIOVI'
 
-  // ── Global mouse parallax ─────────────────────────────────────
+  // ── Mouse parallax on individual elements within each layer ────
+  // Layers handle scroll-Y; elements handle mouse-X/Y — no conflict
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -37,14 +48,17 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       const xn = (e.clientX - rect.left) / rect.width - 0.5
       const yn = (e.clientY - rect.top) / rect.height - 0.5
 
-      if (photoRef.current) {
-        gsap.to(photoRef.current, { x: xn * 28, y: yn * 14, duration: 1, ease: 'power2.out' })
-      }
-      if (lettersRef.current.length) {
-        gsap.to(lettersRef.current, { x: xn * 12, y: yn * 6, duration: 1.2, ease: 'power2.out', stagger: 0.02 })
+      if (gonzaloRef.current) {
+        gsap.to(gonzaloRef.current, { x: xn * 4, y: yn * 2, duration: 1.8, ease: 'power2.out' })
       }
       if (bgLettersRef.current.length) {
-        gsap.to(bgLettersRef.current, { x: xn * 5, y: yn * 3, duration: 1.6, ease: 'power2.out', stagger: 0.02 })
+        gsap.to(bgLettersRef.current, { x: xn * 6, y: yn * 3, duration: 1.6, ease: 'power2.out', stagger: 0.02 })
+      }
+      if (lettersRef.current.length) {
+        gsap.to(lettersRef.current, { x: xn * 14, y: yn * 7, duration: 1.2, ease: 'power2.out', stagger: 0.02 })
+      }
+      if (photoRef.current) {
+        gsap.to(photoRef.current, { x: xn * 28, y: yn * 14, duration: 1.0, ease: 'power2.out' })
       }
     }
 
@@ -52,39 +66,47 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
     return () => container.removeEventListener('mousemove', onMove)
   }, [])
 
+  // ── Scroll parallax — 3 layers at different Y speeds ──────────
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // ── Scroll fade & zoom out effect ───────────────────────────
-      gsap.to(containerRef.current, {
+      // Scrub tied to the tall wrapper. The inner viewport is pinned via
+      // CSS sticky for the whole [0 → wrapperH−100vh] window, so these
+      // layers keep drifting BOTH while the Hero is alone (advance phase)
+      // AND while StatsSection rises to cover it (cover phase).
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: containerRef.current,
+          trigger: outerRef.current,
           start: 'top top',
-          end: 'bottom center',
-          scrub: 0.6,
-          markers: false,
+          end: 'bottom bottom',
+          scrub: 1.2,
+          invalidateOnRefresh: true,
         },
-        opacity: 0.3,
-        scale: 0.85,
-        filter: 'blur(8px)',
-        ease: 'power2.inOut',
       })
 
-      // ── Intensify vignette on scroll ────────────────────────────
-      gsap.to(vignetteRef.current, {
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top top',
-          end: 'bottom center',
-          scrub: 0.6,
-        },
-        backgroundImage: 'radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(8,12,18,0.4) 70%, rgba(8,12,18,0.8) 100%)',
-        ease: 'power2.inOut',
-      })
-    }, containerRef)
+      // force3D → GPU-composited translate3d, no layout reflow → 60fps
+      // Depth is created by the TEXT layers sliding up BEHIND a static
+      // player — the photo stays anchored, so no bottom gap and no top crop.
+      // Ghost text drifts up slowly — feels far away
+      tl.to(bgLayerRef.current, { yPercent: -14, ease: 'none', force3D: true }, 0)
+
+      // White PIOVI letters at medium depth — biggest travel = parallax depth
+      tl.to(midLayerRef.current, { yPercent: -32, ease: 'none', force3D: true }, 0)
+
+      // Player photo (foreground) stays STATIC — anchored at the bottom.
+      // No scroll tween here on purpose; only mouse parallax moves it subtly.
+
+      // Vignette deepens as scroll advances
+      tl.to(vignetteRef.current, {
+        background:
+          'radial-gradient(ellipse at center, transparent 0%, transparent 28%, rgba(8,12,18,0.55) 58%, rgba(8,12,18,0.97) 100%)',
+        ease: 'none',
+      }, 0)
+    }, outerRef)
 
     return () => ctx.revert()
   }, [])
 
+  // ── Entry animation (page load) ───────────────────────────────
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
@@ -113,47 +135,26 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         0.25
       )
 
-      tl.fromTo(
-        glowFlashRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.18,
-          ease: 'power2.in',
-          onComplete: () => {
-            gsap.to(glowFlashRef.current, { opacity: 0, duration: 0.55, ease: 'power2.out' })
+      if (glowFlashRef.current) {
+        tl.fromTo(
+          glowFlashRef.current,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: 0.18,
+            ease: 'power2.in',
+            onComplete: () => {
+              gsap.to(glowFlashRef.current, { opacity: 0, duration: 0.55, ease: 'power2.out' })
+            },
           },
-        },
-        1.55
-      )
+          1.55
+        )
+      }
 
-      tl.fromTo(
-        numberRef.current,
-        { opacity: 0, x: -30 },
-        { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' },
-        0.6
-      )
-
-      tl.fromTo(
-        lineRef.current,
-        { scaleX: 0 },
-        { scaleX: 1, duration: 0.7, transformOrigin: 'left', ease: 'power3.inOut' },
-        0.9
-      )
-
-      tl.fromTo(
-        subtitleRef.current,
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        1.1
-      )
-
-      tl.fromTo(
-        statsRef.current,
-        { opacity: 0, y: 16 },
-        { opacity: 1, y: 0, duration: 0.6 },
-        1.3
-      )
+      tl.fromTo(numberRef.current,   { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }, 0.6)
+      tl.fromTo(lineRef.current,     { scaleX: 0 },           { scaleX: 1, duration: 0.7, transformOrigin: 'left', ease: 'power3.inOut' }, 0.9)
+      tl.fromTo(subtitleRef.current, { opacity: 0, y: 12 },   { opacity: 1, y: 0, duration: 0.6 }, 1.1)
+      tl.fromTo(statsRef.current,    { opacity: 0, y: 16 },   { opacity: 1, y: 0, duration: 0.6 }, 1.3)
     }, containerRef)
 
     return () => ctx.revert()
@@ -162,237 +163,323 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
   const imgSrc = playerImage || piovi4
 
   return (
+    // ── Outer wrapper — tall scroll space that gives the inner its
+    //    sticky "pin" duration. With inner = 100vh, the inner stays
+    //    pinned for [0 → wrapperH − 100vh].
+    //    · base 250vh → ~50vh advance phase  + 100vh cover phase
+    //    · md   300vh → ~100vh advance phase + 100vh cover phase
+    //    The 100vh cover phase is mirrored by StatsSection's −100vh
+    //    top margin in App.jsx, so Stats slides up over the STILL-pinned
+    //    Hero — the Hero never scrolls away, it gets tucked behind. ──
     <Box
-      ref={containerRef}
+      ref={outerRef}
       as="section"
       id="hero"
       position="relative"
-      minH="100vh"
-      bg="#080C12"
-      overflow="hidden"
-      display="flex"
-      flexDirection="column"
-      sx={{
-        maskImage: 'linear-gradient(to bottom, black 90%, transparent)',
-        WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent)',
-      }}
+      zIndex={1}
+      h={{ base: '250vh', md: '300vh' }}
     >
-      {/* Noise overlay */}
-      <div className="noise-overlay" />
-
-      {/* Vignette overlay — intensifies on scroll */}
+      {/* ── Inner sticky viewport — pinned while Stats covers it ── */}
       <Box
-        position="absolute"
-        inset="0"
-        zIndex={5}
-        pointerEvents="none"
-        bg="radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(8,12,18,0.2) 85%, rgba(8,12,18,0.5) 100%)"
-        ref={vignetteRef}
-      />
-
-      {/* Background grid lines */}
-      <GridLines />
-
-      {/* Blue glow behind player */}
-      <Box
-        position="absolute"
-        bottom="0"
-        left="50%"
-        transform="translateX(-50%)"
-        w={{ base: '400px', md: '700px' }}
-        h={{ base: '400px', md: '700px' }}
-        bg="radial-gradient(ellipse at bottom, rgba(0,87,184,0.22) 0%, transparent 70%)"
-        pointerEvents="none"
+        ref={containerRef}
+        position="sticky"
+        top={0}
+        h="100vh"
+        bg="#080C12"
+        overflow="hidden"
+        display="flex"
+        flexDirection="column"
         zIndex={1}
-      />
-
-      {/* Main content */}
-      <Flex
-        flex="1"
-        position="relative"
-        zIndex={2}
-        align="center"
-        justify="center"
-        px={{ base: 4, md: 8, lg: 16 }}
-        pt="80px"
       >
-        {/* Giant name — background layer */}
+        {/* Noise texture (above layers, below vignette) */}
+        <div className="noise-overlay" style={{ zIndex: 22 }} />
+
+        {/* Vignette — intensifies on scroll */}
         <Box
+          ref={vignetteRef}
           position="absolute"
-          bottom={{ base: '160px', md: '10px' }}
-          left="0"
-          right="0"
-          display="flex"
-          justifyContent="center"
-          overflow="hidden"
-          zIndex={3}
+          inset="0"
+          zIndex={24}
           pointerEvents="none"
-        >
-          <Flex gap={{ base: '0.5vw', md: '0.8vw' }} align="baseline">
-            {heroName.split('').map((letter, i) => (
-              <Box
-                key={i}
-                ref={(el) => (bgLettersRef.current[i] = el)}
-                as="span"
-                fontFamily="'Bebas Neue', sans-serif"
-                fontSize={{ base: '22vw', md: '18vw', lg: '40vw' }}
-                lineHeight="0.88"
-                color="transparent"
-                sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
-                display="inline-block"
-                userSelect="none"
-              >
-                {letter}
-              </Box>
-            ))}
-          </Flex>
-        </Box>
+          bg="radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(8,12,18,0.2) 85%, rgba(8,12,18,0.5) 100%)"
+        />
 
-        {/* Foreground name — visible */}
+        {/* ═══════════════════════════════════════════════════════
+            LAYER 1 — BACKGROUND (slowest)
+            Ghost "GONZALO / PIOVI" text + grid + blue glow
+        ══════════════════════════════════════════════════════════ */}
         <Box
+          ref={bgLayerRef}
           position="absolute"
-          bottom={{ base: '160px', md: '320px' }}
-          left="0"
-          right="0"
-          display="flex"
-          justifyContent="center"
-          overflow="hidden"
-          zIndex={4}
+          inset={0}
+          zIndex={1}
           pointerEvents="none"
+          willChange="transform"
         >
-          <Flex gap={{ base: '0.5vw', md: '0.8vw' }} align="baseline">
-            {heroName.split('').map((letter, i) => (
-              <Box
-                key={i}
-                ref={(el) => { lettersRef.current[i] = el }}
-                as="span"
-                fontFamily="'Bebas Neue', sans-serif"
-                fontSize={{ base: '22vw', md: '18vw', lg: '20vw' }}
-                lineHeight="0.88"
-                letterSpacing="30px"
-                color="white"
-                display="inline-block"
-                userSelect="none"
-              >
-                {letter}
-              </Box>
-            ))}
-          </Flex>
-        </Box>
+          <GridLines />
 
-        {/* Left info panel */}
-        <Box
-          position="absolute"
-          left={{ base: 6, md: 12, lg: 20 }}
-          bottom={{ base: '200px', md: '160px' }}
-          zIndex={6}
-          display={{ base: 'none', md: 'block' }}
-        >
-          <HoverFloat intensity={1.2}>
-            <Box ref={numberRef}>
-              <Text
-                fontFamily="'Bebas Neue', sans-serif"
-                fontSize={{ md: '120px', lg: '160px' }}
-                lineHeight="0.85"
-                color="transparent"
-                sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
-                mb={4}
-              >
-                33
-              </Text>
-            </Box>
-          </HoverFloat>
-
-          <Box ref={lineRef} h="1px" w="80px" bg="brand.blue" mb={3} />
-
-          <HoverFloat intensity={1}>
-            <Box ref={subtitleRef}>
-              <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="13px"
-                fontWeight="600"
-                letterSpacing="0.18em"
-                textTransform="uppercase"
-                color="whiteAlpha.600"
-                mb={1}
-              >
-                Defensor Central
-              </Text>
-              <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="13px"
-                fontWeight="600"
-                letterSpacing="0.18em"
-                textTransform="uppercase"
-                color="brand.blue"
-              >
-                🇦🇷 Argentina
-              </Text>
-            </Box>
-          </HoverFloat>
-        </Box>
-
-        {/* Right info panel */}
-        <Box
-          position="absolute"
-          right={{ base: 6, md: 12, lg: 20 }}
-          bottom={{ base: '200px', md: '200px' }}
-          zIndex={6}
-          display={{ base: 'none', md: 'block' }}
-          textAlign="right"
-        >
-          <Box ref={statsRef}>
-            <VStack spacing={3} align="flex-end">
-              <HoverFloat intensity={1}>
-                <MiniStat label="Edad" value="27" />
-              </HoverFloat>
-              <HoverFloat intensity={1}>
-                <MiniStat label="Club" value="Cruz Azul" accent />
-              </HoverFloat>
-              <HoverFloat intensity={1}>
-                <MiniStat label="Altura" value="1.84m" />
-              </HoverFloat>
-            </VStack>
-          </Box>
-        </Box>
-      </Flex>
-
-      {/* Player photo — fixed at bottom, covered by CinematicTransition via z-index */}
-      {!hidePlayerImage && (
+          {/* Blue radial glow behind the player */}
           <Box
-            ref={photoRef}
             position="absolute"
             bottom="0"
             left="50%"
             transform="translateX(-50%)"
-            pointerEvents="none"
-            zIndex={20}
-            w={{ base: '280px', md: '400px', lg: '370px' }}
+            w={{ base: '400px', md: '700px' }}
+            h={{ base: '400px', md: '700px' }}
+            bg="radial-gradient(ellipse at bottom, rgba(0,87,184,0.22) 0%, transparent 70%)"
+          />
+
+          {/* Ghost name block: GONZALO (small) above PIOVI (huge) */}
+          <Box
+            position="absolute"
+            bottom={{ base: '0px', md: '-10px' }}
+            left="0"
+            right="0"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            overflow="hidden"
           >
-            <Box ref={photoInnerRef} position="relative" zIndex={20}>
-              <Image
-                src={imgSrc}
-                alt="Gonzalo Piovi"
-                objectFit="contain"
-                w="100%"
-                h="auto"
-              />
+            {/* GONZALO — smaller first name */}
+            <Text
+              ref={gonzaloRef}
+              fontFamily="'Bebas Neue', sans-serif"
+              fontSize={{ base: '13vw', md: '10vw', lg: '12.5vw' }}
+              lineHeight="0.85"
+              letterSpacing={{ base: '0.55em', md: '0.35em' }}
+              color="transparent"
+              sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.055)' }}
+              userSelect="none"
+              display="block"
+              mb={{ base: '-0.8em', md: '-35px' }}
+            >
+              {playerData.name.toUpperCase()}
+            </Text>
+
+            {/* PIOVI — giant ghost stroke */}
+            <Flex gap={{ base: '0.5vw', md: '3vw' }} align="baseline">
+              {heroName.split('').map((letter, i) => (
+                <Box
+                  key={i}
+                  ref={(el) => (bgLettersRef.current[i] = el)}
+                  as="span"
+                  fontFamily="'Bebas Neue', sans-serif"
+                  fontSize={{ base: '22vw', md: '18vw', lg: '40vw' }}
+                  lineHeight="0.88"
+                  color="transparent"
+                  sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
+                  display="inline-block"
+                  userSelect="none"
+                >
+                  {letter}
+                </Box>
+              ))}
+            </Flex>
+          </Box>
+        </Box>
+
+        {/* ═══════════════════════════════════════════════════════
+            LAYER 2 — MID-GROUND (medium speed)
+            Visible white "PIOVI" letters — float between photo and bg
+        ══════════════════════════════════════════════════════════ */}
+        <Box
+          ref={midLayerRef}
+          position="absolute"
+          inset={0}
+          zIndex={5}
+          pointerEvents="none"
+          willChange="transform"
+        >
+          <Flex
+            flexDirection="column"
+            alignItems="center"
+            position="absolute"
+            bottom={{ base: '120px', md: '270px' }}
+            left="0"
+            right="0"
+            display="flex"
+            justifyContent="center"
+            overflow="hidden"
+          >
+            <Text
+              
+              fontFamily="'Bebas Neue', sans-serif"
+              fontSize={{ base: '13vw', md: '10vw', lg: '8vw' }}
+              lineHeight="0.85"
+              letterSpacing={{ base: '0.55em', md: '0.35em' }}
+              color="white"
+              userSelect="none"
+              display="inline-block"
+              mb={{ base: '-0.8em', md: '-35px' }}
+            >
+              {playerData.name.toUpperCase()}
+            </Text>
+            <Flex gap={{ base: '0.5vw', md: '3vw' }} align="baseline">
+              {heroName.split('').map((letter, i) => (
+                <Box
+                  key={i}
+                  ref={(el) => { lettersRef.current[i] = el }}
+                  as="span"
+                  fontFamily="'Bebas Neue', sans-serif"
+                  fontSize={{ base: '22vw', md: '18vw', lg: '20vw' }}
+                  lineHeight="0.88"
+                  letterSpacing="30px"
+                  color="white"
+                  display="inline-block"
+                  userSelect="none"
+                >
+                  {letter}
+                </Box>
+              ))}
+            </Flex>
+          </Flex>
+        </Box>
+
+        {/* ═══════════════════════════════════════════════════════
+            LAYER 3 — FOREGROUND (STATIC)
+            Player photo — anchored at the bottom, no scroll travel.
+            Depth comes from the text layers moving behind it, so the
+            feet stay pinned to the bottom and the head never crops.
+        ══════════════════════════════════════════════════════════ */}
+        {!hidePlayerImage && (
+          <Box
+            ref={photoLayerRef}
+            position="absolute"
+            inset={0}
+            zIndex={10}
+            pointerEvents="none"
+          >
+            <Box
+              ref={photoRef}
+              position="absolute"
+              bottom="0"
+              left="50%"
+              transform="translateX(-50%)"
+              w={{ base: '280px', md: '400px', lg: '370px' }}
+            >
+              <Box ref={photoInnerRef} position="relative">
+                <Image
+                  src={imgSrc}
+                  alt="Gonzalo Piovi"
+                  objectFit="contain"
+                  w="100%"
+                  h="auto"
+                />
+              </Box>
             </Box>
           </Box>
-      )}
+        )}
 
-      {/* Marquee bottom bar */}
-      <MarqueeBar playerData={playerData} />
+        {/* ── Static UI — info panels, no parallax ─────────────── */}
+        <Flex
+          flex="1"
+          position="relative"
+          zIndex={15}
+          align="center"
+          justify="center"
+          px={{ base: 4, md: 8, lg: 16 }}
+          pt="80px"
+        >
+          {/* Left info panel */}
+          <Box
+            position="absolute"
+            left={{ base: 6, md: 12, lg: 20 }}
+            bottom={{ base: '200px', md: '160px' }}
+            display={{ base: 'none', md: 'block' }}
+          >
+            <HoverFloat intensity={1.2}>
+              <Box ref={numberRef}>
+                <Text
+                  fontFamily="'Bebas Neue', sans-serif"
+                  fontSize={{ md: '120px', lg: '160px' }}
+                  lineHeight="0.85"
+                  color="transparent"
+                  sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
+                  mb={4}
+                >
+                  {playerData.number}
+                </Text>
+              </Box>
+            </HoverFloat>
 
-      {/* Scroll indicator */}
-      <ScrollIndicator />
+            <Box ref={lineRef} h="1px" w="80px" bg="brand.blue" mb={3} />
+
+            <HoverFloat intensity={1}>
+              <Box ref={subtitleRef}>
+                <Text
+                  fontFamily="'Barlow Condensed', sans-serif"
+                  fontSize="13px"
+                  fontWeight="600"
+                  letterSpacing="0.18em"
+                  textTransform="uppercase"
+                  color="whiteAlpha.600"
+                  mb={1}
+                >
+                  {playerData.position}
+                </Text>
+                <Text
+                  fontFamily="'Barlow Condensed', sans-serif"
+                  fontSize="13px"
+                  fontWeight="600"
+                  letterSpacing="0.18em"
+                  textTransform="uppercase"
+                  color="brand.blue"
+                >
+                  {playerData.nationalityFlag} {playerData.nationality}
+                </Text>
+              </Box>
+            </HoverFloat>
+          </Box>
+
+          {/* Right info panel */}
+          <Box
+            position="absolute"
+            right={{ base: 6, md: 12, lg: 20 }}
+            bottom={{ base: '200px', md: '200px' }}
+            zIndex={6}
+            display={{ base: 'none', md: 'block' }}
+            textAlign="right"
+          >
+            <Box ref={statsRef}>
+              <VStack spacing={3} align="flex-end">
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Edad" value={playerData.age} />
+                </HoverFloat>
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
+                </HoverFloat>
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Altura" value={playerData.height} />
+                </HoverFloat>
+              </VStack>
+            </Box>
+          </Box>
+        </Flex>
+
+        {/* Entry glow flash */}
+        <Box
+          ref={glowFlashRef}
+          position="absolute"
+          inset={0}
+          zIndex={20}
+          pointerEvents="none"
+          bg="radial-gradient(ellipse at center bottom, rgba(0,87,184,0.4) 0%, transparent 60%)"
+          opacity={0}
+        />
+
+        {/* Marquee bottom bar */}
+        <MarqueeBar playerData={playerData} />
+
+        {/* Scroll indicator */}
+        <ScrollIndicator />
+      </Box>
     </Box>
   )
 }
 
 // ─── SUB-COMPONENTS ──────────────────────────────────────────────
 
-function MiniStat({ label, value, accent }) {
+function MiniStat({ label, value, accent, logo }) {
   return (
     <VStack spacing={0} align="flex-end">
       <Text
@@ -405,15 +492,27 @@ function MiniStat({ label, value, accent }) {
       >
         {label}
       </Text>
-      <Text
-        fontFamily="'Bebas Neue', sans-serif"
-        fontSize="22px"
-        letterSpacing="0.05em"
-        color={accent ? 'brand.blue' : 'white'}
-        lineHeight="1.1"
-      >
-        {value}
-      </Text>
+      {/* Value + logo (optional), aligned to the right edge */}
+      <Flex align="center" justify="flex-end" gap="8px">
+        <Text
+          fontFamily="'Bebas Neue', sans-serif"
+          fontSize="22px"
+          letterSpacing="0.05em"
+          color={accent ? 'brand.blue' : 'white'}
+          
+        >
+          {value}
+        </Text>
+        {logo && (
+          <Image
+            src={logo}
+            alt={typeof value === 'string' ? value : 'logo'}
+            boxSize="26px"
+            objectFit="contain"
+            flexShrink={0}
+          />
+        )}
+      </Flex>
     </VStack>
   )
 }
@@ -422,7 +521,7 @@ function MarqueeBar({ playerData }) {
   return (
     <Box
       position="relative"
-      zIndex={10}
+      zIndex={18}
       borderTop="1px solid rgba(255,255,255,0.06)"
       borderBottom="1px solid rgba(255,255,255,0.06)"
       bg="rgba(0,87,184,0.08)"
@@ -491,7 +590,7 @@ function HoverFloat({ children, intensity = 1 }) {
     const el = ref.current
     if (!el) return
     const r = el.getBoundingClientRect()
-    const dx = ((e.clientX - r.left) / r.width  - 0.5) * 2  // -1 → 1
+    const dx = ((e.clientX - r.left) / r.width  - 0.5) * 2
     const dy = ((e.clientY - r.top)  / r.height - 0.5) * 2
     gsap.to(el, {
       x: dx * 7 * intensity,
@@ -531,7 +630,7 @@ function ScrollIndicator() {
         position: 'absolute',
         bottom: '80px',
         right: '24px',
-        zIndex: 10,
+        zIndex: 18,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

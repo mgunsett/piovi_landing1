@@ -11,15 +11,26 @@ export default function Footer() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // One-shot reveal (NOT scrub): the footer is the last, short element
+      // on the page, so the scroll can't travel far enough to finish a
+      // scrubbed tween → it would freeze at partial opacity (blurry look).
+      // Playing once to completion guarantees it's always fully visible.
       gsap.fromTo(ref.current,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          force3D: false, // avoid a leftover 3D layer that blurs text
           scrollTrigger: {
             trigger: ref.current,
-            start: 'top 90%',
-            end: 'top 70%',
-            scrub: 1,
+            start: 'top 95%',
+            toggleActions: 'play none none none',
+            once: true,
           },
+          // strip the inline transform once done → text renders crisp
+          onComplete: () => gsap.set(ref.current, { clearProps: 'transform' }),
         }
       )
     })

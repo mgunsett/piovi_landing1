@@ -164,8 +164,7 @@ export default function PressSection() {
           lineHeight="0.9"
           letterSpacing="0.02em"
         >
-          Lo que
-          <Box as="span" color="brand.blue"> dicen</Box>
+          entre<Box as="span" color="brand.blue">vistas</Box>
         </Text>
       </Box>
 
