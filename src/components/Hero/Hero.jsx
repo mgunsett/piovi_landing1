@@ -83,17 +83,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         },
       })
 
-      // force3D → GPU-composited translate3d, no layout reflow → 60fps
-      // Depth is created by the TEXT layers sliding up BEHIND a static
-      // player — the photo stays anchored, so no bottom gap and no top crop.
-      // Ghost text drifts up slowly — feels far away
-      tl.to(bgLayerRef.current, { yPercent: -14, ease: 'none', force3D: true }, 0)
-
-      // White PIOVI letters at medium depth — biggest travel = parallax depth
-      tl.to(midLayerRef.current, { yPercent: -32, ease: 'none', force3D: true }, 0)
-
-      // Player photo (foreground) stays STATIC — anchored at the bottom.
-      // No scroll tween here on purpose; only mouse parallax moves it subtly.
+      // All layers (title + player photo) remain static on scroll.
+      // Only the vignette deepens — no vertical parallax travel.
 
       // Vignette deepens as scroll advances
       tl.to(vignetteRef.current, {
@@ -177,7 +168,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       id="hero"
       position="relative"
       zIndex={1}
-      h={{ base: '250vh', md: '300vh' }}
+      h={{ base: '200vh', md: '200vh' }}
     >
       {/* ── Inner sticky viewport — pinned while Stats covers it ── */}
       <Box

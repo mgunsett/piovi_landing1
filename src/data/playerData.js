@@ -12,6 +12,7 @@ import photo5 from '../assets/galleryPhotos/photo5.webp'
 import photo6 from '../assets/galleryPhotos/photo6.webp'
 import photo7 from '../assets/galleryPhotos/photo7.webp'
 import photo8 from '../assets/galleryPhotos/photo8.webp'
+import photo9 from '../assets/photo9.jpg'
 
 //Videos
 import video1 from '../assets/galleryVideos/video1.mp4'
@@ -129,7 +130,7 @@ export const playerData = {
       title: 'Mejor temporada Cruz Azul 2024',
       duration: '3:42',
       thumbnail: video1,
-      cover: photo3,          // foto de portada del video (acción en cancha)
+      cover: photo9,          // foto de portada del video (acción en cancha)
       src: video1,
       previewSrc: video1,
       category: 'Highlights',

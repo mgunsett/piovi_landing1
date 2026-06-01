@@ -373,29 +373,6 @@ export default function StatsSection() {
                 <SeasonCard key={stat.label} label={stat.label} value={stat.value} index={i} />
               ))}
             </Grid>
-            {/* Quote */}
-            <Box
-              borderLeft="2px solid" borderColor="brand.blue"
-              pl={5} py={3}
-              bg="rgba(0,87,184,0.04)"
-            >
-              <Text
-                fontFamily="'Barlow', sans-serif"
-                fontSize={{ base: '13px', md: '14px' }}
-                fontWeight="300" fontStyle="italic"
-                lineHeight="1.65" color="whiteAlpha.700"
-              >
-                {playerData.quote}
-              </Text>
-              <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="10px" fontWeight="700"
-                letterSpacing="0.2em" textTransform="uppercase"
-                color="brand.blue" mt={2}
-              >
-                — {playerData.fullName}
-              </Text>
-            </Box>
           </Box>
 
           {/* Col 3 — Technical skills */}
