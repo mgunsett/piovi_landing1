@@ -325,7 +325,7 @@ export default function StatsSection() {
               <Grid templateColumns="1fr 1fr" gap={3} position="relative" zIndex={1}>
                 {[
                   { label: 'Posición',      value: playerData.position },
-                  { label: 'Pie dominante', value: playerData.foot },
+                  { label: 'Pie hábil', value: playerData.foot },
                   { label: 'Edad',          value: `${playerData.age} años` },
                   { label: 'Altura',        value: playerData.height },
                   { label: 'Peso',          value: playerData.weight },
@@ -402,7 +402,7 @@ export default function StatsSection() {
         >
           <Text
             fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="10px" fontWeight="700"
+            fontSize="14px" fontWeight="700"
             letterSpacing="0.28em" textTransform="uppercase"
             color="rgba(255,255,255,0.35)"
           >

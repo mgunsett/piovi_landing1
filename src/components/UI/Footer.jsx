@@ -11,10 +11,6 @@ export default function Footer() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // One-shot reveal (NOT scrub): the footer is the last, short element
-      // on the page, so the scroll can't travel far enough to finish a
-      // scrubbed tween → it would freeze at partial opacity (blurry look).
-      // Playing once to completion guarantees it's always fully visible.
       gsap.fromTo(ref.current,
         { opacity: 0, y: 30 },
         {
@@ -43,24 +39,31 @@ export default function Footer() {
       as="footer"
       bg="#050810"
       borderTop="1px solid rgba(255,255,255,0.05)"
-      py={8}
+      py={16}
       px={{ base: 6, md: 12, lg: 20 }}
     >
       <Flex
+        direction={{ base: 'column', md: 'row' }}
         align="center"
         justify="space-between"
         flexWrap="wrap"
         gap={4}
       >
-        <Text
-          fontFamily="'Bebas Neue', sans-serif"
-          fontSize="24px"
-          letterSpacing="0.08em"
-          color="white"
+        <Box
+          as="a"
+          href="#hero"
+          style={{ textDecoration: 'none' }}
         >
-          GP
-          <Box as="span" color="brand.blue" ml="1px">_</Box>
-        </Text>
+          <Text
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="24px"
+            letterSpacing="0.08em"
+            color="white"
+          >
+            GP
+            <Box as="span" color="brand.blue" ml="1px">_</Box>
+          </Text>
+        </Box>
 
         <Text
           fontFamily="'Barlow Condensed', sans-serif"
@@ -70,7 +73,7 @@ export default function Footer() {
           color="whiteAlpha.300"
           textAlign="center"
         >
-          © 2024 Gonzalo Piovi · Todos los derechos reservados
+          © 2026 Gonzalo Piovi · Todos los derechos reservados
         </Text>
 
         <Text fontSize="12px" color="rgba(255,255,255,0.3)" letterSpacing="0.05em">

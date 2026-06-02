@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { ChakraProvider } from '@chakra-ui/react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
+import AdminPage from './pages/AdminPage.jsx'
 import theme from './theme.js'
 import './styles/globals.css'
 
@@ -38,12 +40,25 @@ function SmoothScrollProvider({ children }) {
   return children
 }
 
+// Landing pública con smooth-scroll. El AdminPage usa scroll nativo
+// (es un formulario), por eso Lenis vive solo acá.
+function Landing() {
+  return (
+    <SmoothScrollProvider>
+      <App />
+    </SmoothScrollProvider>
+  )
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <SmoothScrollProvider>
-        <App />
-      </SmoothScrollProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/AdminPage" element={<AdminPage />} />
+        </Routes>
+      </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>,
 )

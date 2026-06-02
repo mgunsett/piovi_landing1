@@ -68,17 +68,7 @@ export default function ContactSection() {
 
         {/* Social media */}
         <Box ref={socialRef} opacity={0} mb={4}>
-          <Text
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="10px"
-            fontWeight="700"
-            letterSpacing="0.25em"
-            textTransform="uppercase"
-            color="whiteAlpha.300"
-            mb={4}
-          >
-            Redes Sociales
-          </Text>
+            
           <Grid templateColumns={{ base: '1fr', sm: '1fr' }} gap={4}>
             {playerData.socialMedia && playerData.socialMedia.map((social) => (
               <Box

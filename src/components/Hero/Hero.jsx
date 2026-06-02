@@ -8,6 +8,8 @@ gsap.registerPlugin(ScrollTrigger)
 
 import piovi4 from '../../assets/piovi4.svg'
 import { playerData } from '../../data/playerData'
+import MatchBox from './MatchBox'
+import { useMatches } from '../../hooks/useMatches'
 
 // ─── HERO COMPONENT ──────────────────────────────────────────────
 export default function Hero({ playerImage, hidePlayerImage = false }) {
@@ -36,6 +38,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
   const numberRef   = useRef(null)
 
   const heroName = 'PIOVI'
+
+  // Datos de partidos (último resultado + próximo) — Supabase con fallback local
+  const { matches } = useMatches()
 
   // ── Mouse parallax on individual elements within each layer ────
   // Layers handle scroll-Y; elements handle mouse-X/Y — no conflict
@@ -226,7 +231,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             bottom={{ base: '0px', md: '-10px' }}
             left="0"
             right="0"
-            display="flex"
+            display={{ base: 'none', md: 'flex' }}
             flexDirection="column"
             alignItems="center"
             overflow="hidden"
@@ -235,9 +240,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Text
               ref={gonzaloRef}
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '13vw', md: '10vw', lg: '12.5vw' }}
+              fontSize={{ base: '9vw', md: '10vw', lg: '12.5vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.55em', md: '0.35em' }}
+              letterSpacing={{ base: '0.3em', md: '0.35em' }}
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.055)' }}
               userSelect="none"
@@ -255,7 +260,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   ref={(el) => (bgLettersRef.current[i] = el)}
                   as="span"
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ base: '22vw', md: '18vw', lg: '40vw' }}
+                  fontSize={{ base: '17vw', md: '18vw', lg: '40vw' }}
                   lineHeight="0.88"
                   color="transparent"
                   sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
@@ -285,7 +290,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             flexDirection="column"
             alignItems="center"
             position="absolute"
-            bottom={{ base: '120px', md: '270px' }}
+            bottom={{ base: '195px', md: '270px' }}
             left="0"
             right="0"
             display="flex"
@@ -295,12 +300,12 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Text
               
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '13vw', md: '10vw', lg: '8vw' }}
+              fontSize={{ base: '9vw', md: '10vw', lg: '8vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.55em', md: '0.35em' }}
+              letterSpacing={{ base: '0.3em', md: '0.35em' }}
               color="white"
               userSelect="none"
-              display="inline-block"
+              display={{ base: 'none', md: 'inline-block' }}
               mb={{ base: '-0.8em', md: '-35px' }}
             >
               {playerData.name.toUpperCase()}
@@ -312,9 +317,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   ref={(el) => { lettersRef.current[i] = el }}
                   as="span"
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ base: '22vw', md: '18vw', lg: '20vw' }}
+                  fontSize={{ base: '17vw', md: '18vw', lg: '20vw' }}
                   lineHeight="0.88"
-                  letterSpacing="30px"
+                  letterSpacing={{ base: '6px', md: '30px' }}
                   color="white"
                   display="inline-block"
                   userSelect="none"
@@ -326,12 +331,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           </Flex>
         </Box>
 
-        {/* ═══════════════════════════════════════════════════════
-            LAYER 3 — FOREGROUND (STATIC)
-            Player photo — anchored at the bottom, no scroll travel.
-            Depth comes from the text layers moving behind it, so the
-            feet stay pinned to the bottom and the head never crops.
-        ══════════════════════════════════════════════════════════ */}
+
         {!hidePlayerImage && (
           <Box
             ref={photoLayerRef}
@@ -343,7 +343,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Box
               ref={photoRef}
               position="absolute"
-              bottom="0"
+              bottom={{ base: '265px', md: '0' }}
               left="50%"
               transform="translateX(-50%)"
               w={{ base: '280px', md: '400px', lg: '370px' }}
@@ -375,7 +375,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           <Box
             position="absolute"
             left={{ base: 6, md: 12, lg: 20 }}
-            bottom={{ base: '200px', md: '160px' }}
+            bottom={{ base: '200px', md: '260px' }}
             display={{ base: 'none', md: 'block' }}
           >
             <HoverFloat intensity={1.2}>
@@ -396,7 +396,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Box ref={lineRef} h="1px" w="80px" bg="brand.blue" mb={3} />
 
             <HoverFloat intensity={1}>
-              <Box ref={subtitleRef}>
+              <Box ref={subtitleRef} display="flex" flexDirection="column" gap={1}>
                 <Text
                   fontFamily="'Barlow Condensed', sans-serif"
                   fontSize="13px"
@@ -415,14 +415,81 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   letterSpacing="0.18em"
                   textTransform="uppercase"
                   color="brand.blue"
+                  mb={4}
                 >
                   {playerData.nationalityFlag} {playerData.nationality}
                 </Text>
+                <HoverFloat intensity={1}>
+                  <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
+                </HoverFloat>
               </Box>
             </HoverFloat>
           </Box>
 
-          {/* Right info panel */}
+          {/* ── Info compacta — MOBILE (subconjunto del panel izquierdo) ── */}
+          <Box
+            display={{ base: 'flex', md: 'none' }}
+            position="absolute"
+            top="76px"
+            left={6}
+            zIndex={15}
+            alignItems="flex-start"
+            gap={3}
+          >
+            <Text
+              fontFamily="'Bebas Neue', sans-serif"
+              fontSize="50px"
+              lineHeight="0.78"
+              color="transparent"
+              sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.55)' }}
+            >
+              {playerData.number}
+            </Text>
+            <Box pt="3px">
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="11px"
+                fontWeight="600"
+                letterSpacing="0.14em"
+                textTransform="uppercase"
+                color="whiteAlpha.700"
+                lineHeight="1.25"
+              >
+                {playerData.position}
+              </Text>
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="11px"
+                fontWeight="600"
+                letterSpacing="0.14em"
+                textTransform="uppercase"
+                color="brand.blue"
+                lineHeight="1.25"
+                mb={2}
+              >
+                {playerData.nationalityFlag} {playerData.nationality}
+              </Text>
+              <Flex align="center" gap="6px">
+                <Image
+                  src={playerData.logoCurrentClub}
+                  alt={playerData.currentClub}
+                  boxSize="20px"
+                  objectFit="contain"
+                />
+                <Text
+                  fontFamily="'Bebas Neue', sans-serif"
+                  fontSize="18px"
+                  letterSpacing="0.04em"
+                  color="white"
+                  lineHeight="1"
+                >
+                  {playerData.currentClub}
+                </Text>
+              </Flex>
+            </Box>
+          </Box>
+
+          {/* Right info panel
           <Box
             position="absolute"
             right={{ base: 6, md: 12, lg: 20 }}
@@ -432,20 +499,32 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             textAlign="right"
           >
             <Box ref={statsRef}>
-              <VStack spacing={3} align="flex-end">
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Edad" value={playerData.age} />
-                </HoverFloat>
+              <VStack spacing={3} align="flex-start">
+                
                 <HoverFloat intensity={1}>
                   <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
                 </HoverFloat>
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Altura" value={playerData.height} />
-                </HoverFloat>
+                
               </VStack>
             </Box>
+          </Box> */}
+
+          {/* Match box — abajo-derecha (desktop). En mobile se muestra
+              como franja full-width debajo del contenido (ver abajo). */}
+          <Box
+            position="absolute"
+            right={{ md: 8, lg: 20 }}
+            bottom={{ md: '36px', lg: '52px' }}
+            zIndex={16}
+            display={{ base: 'none', md: 'block' }}
+          >
+            <MatchBox last={matches.last} next={matches.next} />
           </Box>
         </Flex>
+
+        <Box display={{ base: 'block', md: 'none' }} position="relative" zIndex={16}>
+          <MatchBox last={matches.last} next={matches.next} variant="strip" />
+        </Box>
 
         {/* Entry glow flash */}
         <Box
@@ -461,8 +540,11 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         {/* Marquee bottom bar */}
         <MarqueeBar playerData={playerData} />
 
-        {/* Scroll indicator */}
-        <ScrollIndicator />
+        {/* Scroll indicator (desktop only — en mobile la franja de
+            partidos ocupa la base del Hero) */}
+        <Box display={{ base: 'none', md: 'block' }}>
+          <ScrollIndicator />
+        </Box>
       </Box>
     </Box>
   )
@@ -472,7 +554,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
 function MiniStat({ label, value, accent, logo }) {
   return (
-    <VStack spacing={0} align="flex-end">
+    <VStack spacing={0} align="flex-start">
       <Text
         fontFamily="'Barlow Condensed', sans-serif"
         fontSize="10px"
@@ -485,15 +567,6 @@ function MiniStat({ label, value, accent, logo }) {
       </Text>
       {/* Value + logo (optional), aligned to the right edge */}
       <Flex align="center" justify="flex-end" gap="8px">
-        <Text
-          fontFamily="'Bebas Neue', sans-serif"
-          fontSize="22px"
-          letterSpacing="0.05em"
-          color={accent ? 'brand.blue' : 'white'}
-          
-        >
-          {value}
-        </Text>
         {logo && (
           <Image
             src={logo}
@@ -503,6 +576,15 @@ function MiniStat({ label, value, accent, logo }) {
             flexShrink={0}
           />
         )}
+        <Text
+          fontFamily="'Bebas Neue', sans-serif"
+          fontSize="22px"
+          letterSpacing="0.05em"
+          color={accent ? 'brand.blue' : 'white'}
+          
+        >
+          {value}
+        </Text>
       </Flex>
     </VStack>
   )
@@ -620,7 +702,7 @@ function ScrollIndicator() {
       style={{
         position: 'absolute',
         bottom: '80px',
-        right: '24px',
+        left: '24px',
         zIndex: 18,
         display: 'flex',
         flexDirection: 'column',

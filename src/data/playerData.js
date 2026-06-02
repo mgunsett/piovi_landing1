@@ -27,7 +27,11 @@ import escudoDefensa from '../assets/escudos/defensa.png'
 import escudoGimnasia from '../assets/escudos/gimnasia.png'
 
 //Icons
-import { FaInstagram, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
+import { FaInstagram, FaEnvelope } from 'react-icons/fa'
+import { IoMdStats } from "react-icons/io";
+
+
+
 
 
 export const playerData = {
@@ -56,16 +60,16 @@ export const playerData = {
     { label: 'Defensa',       value: 88 },
     { label: 'Pase',          value: 75 },
     { label: 'Cabezazo',      value: 79 },
-    { label: 'Anticipación',  value: 85 },
+    { label: 'Anticipación',  value: 90 },
   ],
 
   // Stats de temporada actuales
   seasonStats: [
-    { label: 'Partidos',      value: 32 },
-    { label: 'Goles',         value: 2 },
-    { label: 'Asistencias',   value: 3 },
-    { label: 'Duelos ganados',value: '68%' },
-    { label: 'Intercepciones',value: 47 },
+    { label: 'Partidos',      value: 44 },
+    { label: 'Goles',         value: 1 },
+    { label: 'Asistencias',   value: 2 },
+    { label: 'Duelos ganados',value: '78%' },
+    { label: 'Intercepciones',value: '72%' },
     { label: 'Precisión pase',value: '87%' },
   ],
 
@@ -127,7 +131,7 @@ export const playerData = {
   videos: [
     {
       id: 1,
-      title: 'Mejor temporada Cruz Azul 2024',
+      title: 'Cruz Azul Temporada 2026',
       duration: '3:42',
       thumbnail: video1,
       cover: photo9,          // foto de portada del video (acción en cancha)
@@ -141,25 +145,25 @@ export const playerData = {
   // Prensa & menciones
   press: [
     {
-      media: 'ESPN',
+      media: 'Marca México',
       logo: '/logos/espn.png',
-      title: 'Piovi, el muro del Cruz Azul que enamora a la Liga MX',
-      date: 'Marzo 2024',
-      url: '#',
+      title: 'Piovi sobre Messi: "El mejor del mundo tuvo la intención de llevarme"',
+      date: 'Septiembre 2025',
+      url: 'https://www.marca.com/mx/futbol/liga-mx/2025/09/04/68b92c6eca474126788b45e9.html',
     },
     {
-      media: 'TyC Sports',
+      media: 'Excélsior',
       logo: '/logos/tyc.png',
-      title: 'El argentino que conquistó México: la historia de Piovi',
-      date: 'Enero 2024',
-      url: '#',
+      title: 'Aspiraba a esto y estoy muy contento y orgulloso de haber llegado a esta familia que es Cruz Azul',
+      date: 'Marzo 2026',
+      url: 'https://www.excelsior.com.mx/deportes/cruz-azul-gonzalo-piovi-habla-regreso-olimpico-universitario-para-enfrentar-pumas',
     },
     {
-      media: 'Olé',
+      media: 'Récord México',
       logo: '/logos/ole.png',
-      title: '"Quiero llegar a la Selección": la ambición de Piovi',
-      date: 'Noviembre 2023',
-      url: '#',
+      title: '”Tenemos que estar preparados, sabemos los jugadores que tienen, estamos convencidos de que con nuestra gente va a empujar”',
+      date: 'Abril 2026',
+      url: 'https://www.record.com.mx/historia/podemos-remontar-piovi-lanza-alentador-mensaje-previo-a-la-vuelta-ante-lafc-2026041323580152451',
     },
   ],
 
@@ -180,8 +184,8 @@ export const playerData = {
   ],
 
   contact: [
-    { title: 'Representante Deportivo', label: 'Email',    icon: FaEnvelope,  handle: 'representante@gonzalopiovi.com', url: 'mailto:contacto@gonzalopiovi.com', hoverColor: 'rgba(0, 87, 184, 0.4)' },
-    { title: 'Mensajes', label: 'WhatsApp', icon: FaWhatsapp,  handle: '@gonzalopiovi', url: 'https://wa.me/5491100000000', hoverColor: 'rgba(37, 211, 102, 0.38)' },
+    { title: 'Representante Deportivo', label: 'DODICI Sports',    icon: FaEnvelope,  handle: '@dodici_sm', url: 'https://www.instagram.com/dodici_sm/', hoverColor: 'rgba(0, 87, 184, 0.4)' },
+    { title: 'Estadísticas', label: 'TransferMarkt', icon: IoMdStats,  handle: '@pioviprofile', url: 'https://www.transfermarkt.es/gonzalo-piovi/profil/spieler/284120', hoverColor: 'rgba(138, 211, 207, 0.53)' },
   ],
 
 

@@ -44,7 +44,7 @@ function PressCard({ article, index }) {
       position="relative"
       overflow="hidden"
       transition="all 0.3s ease"
-      cursor="none"
+      cursor="pointer"
       _hover={{
         borderColor: 'rgba(0,87,184,0.4)',
         transform: 'translateY(-4px)',
