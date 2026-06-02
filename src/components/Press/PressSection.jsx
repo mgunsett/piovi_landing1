@@ -140,7 +140,8 @@ export default function PressSection() {
       as="section"
       id="press"
       bg="#0A0E16"
-      py={{ base: 20, md: 32 }}
+      pt={{ base: 20, md: 32 }}
+      pb={10}
       px={{ base: 6, md: 12, lg: 20 }}
       position="relative"
       overflow="hidden"
@@ -156,7 +157,7 @@ export default function PressSection() {
           color="brand.blue"
           mb={3}
         >
-          Medios & Prensa
+          Medios
         </Text>
         <Text
           fontFamily="'Bebas Neue', sans-serif"
@@ -164,7 +165,7 @@ export default function PressSection() {
           lineHeight="0.9"
           letterSpacing="0.02em"
         >
-          entre<Box as="span" color="brand.blue">vistas</Box>
+          PRE<Box as="span" color="brand.blue">NSA</Box>
         </Text>
       </Box>
 
@@ -182,7 +183,7 @@ export default function PressSection() {
       {/* Media logos marquee */}
       <Box
         borderTop="1px solid rgba(255,255,255,0.05)"
-        pt={10}
+        pt={6}
         overflow="hidden"
       >
         <Text

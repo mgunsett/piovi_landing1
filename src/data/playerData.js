@@ -76,19 +76,11 @@ export const playerData = {
   // Historial de clubes (del más reciente al más antiguo)
   clubs: [
     {
-      name: 'Vélez Sarsfield',
-      country: 'Argentina',
-      years: '2013 — 2015',
-      logo: escudoVelez,
-      titles: [], 
-      info: 'Debút profesional vs All Boys'
-    },
-    {
-      name: 'Argentinos Juniors',
-      country: 'Argentina',
-      years: '2016 — 2018',
-      logo: escudoArgentinos,
-      titles: ['Ascenso a Primera 2016'],
+      name: 'Cruz Azul',
+      country: 'México',
+      years: '2024 — Presente',
+      logo: escudoCruzAzul,
+      titles: ['Campeones Concacaf 2025', 'Liga MX Clausura 2026'],
     },
     {
       name: 'Racing Club',
@@ -98,11 +90,11 @@ export const playerData = {
       titles: ['Trofeo de Campeones 2022', 'Supercopa Internacional 2022'],
     },
     {
-      name: 'Gimnasia y Esgrima La Plata',
+      name: 'Colón de Santa Fe',
       country: 'Argentina',
-      years: '2018-2019 (préstamo)',
-      logo: escudoGimnasia,
-      titles: [],
+      years: '2020-2022',
+      logo: escudoColon,
+      titles: ['Copa de la Liga 2021'],
     },
     {
       name: 'Defensa y Justicia',
@@ -112,18 +104,26 @@ export const playerData = {
       titles: [],
     },
     {
-      name: 'Colón de Santa Fe',
+      name: 'Gimnasia y Esgrima La Plata',
       country: 'Argentina',
-      years: '2020-2022',
-      logo: escudoColon,
-      titles: ['Copa de la Liga 2021'],
+      years: '2018-2019 (préstamo)',
+      logo: escudoGimnasia,
+      titles: [],
     },
     {
-      name: 'Cruz Azul',
-      country: 'México',
-      years: '2024 — Presente',
-      logo: escudoCruzAzul,
-      titles: ['Campeones Concacaf 2025'],
+      name: 'Argentinos Juniors',
+      country: 'Argentina',
+      years: '2016 — 2018',
+      logo: escudoArgentinos,
+      titles: ['Ascenso a Primera 2016'],
+    },
+    {
+      name: 'Vélez Sarsfield',
+      country: 'Argentina',
+      years: '2013 — 2015',
+      logo: escudoVelez,
+      titles: [], 
+      info: 'Debút profesional vs All Boys'
     },
   ],
 
@@ -169,14 +169,14 @@ export const playerData = {
 
   // Galería de fotos — colocar archivos reales en src/assets/galleryPhotos/
   gallery: [
-    { id: 1, src: photo8, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',   caption: 'Campeón junto a su familia · La Final · Clausura 2025',               category: 'Familia',       aspect: 'tall'   },
-    { id: 2, src: photo7, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',             caption: 'Conexión con la afición · Ciudad Deportiva · Cruz Azul',              category: 'Afición',       aspect: 'wide'   },
-    { id: 3, src: photo6, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',               caption: 'Enfoque total antes de la batalla · La Final · Clausura 2025',        category: 'Partido',       aspect: 'square' },
-    { id: 4, src: photo5, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',                caption: 'Salida limpia desde el fondo · Camiseta alternativa · Liga MX',       category: 'Partido',       aspect: 'tall'   },
-    { id: 5, src: photo4, alt: 'Piovi levanta el trofeo sentado en el trono dorado tras el título de Clausura 2025',  caption: 'El Rey de La Máquina · Campeón Clausura 2025',                       category: 'Título',        aspect: 'tall'   },
-    { id: 6, src: photo3, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',                              caption: 'Precisión en cada balón · Cruz Azul vs Chivas · Liga MX',            category: 'Partido',       aspect: 'wide'   },
-    { id: 7, src: photo2, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',             caption: 'Unidos de cara al partido · Estadio Ciudad de los Deportes',         category: 'Equipo',        aspect: 'square' },
-    { id: 8, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028', caption: 'Bienvenido a La Máquina · Contrato hasta 2028 · Cruz Azul',          category: 'Presentación',  aspect: 'tall'   },
+    { id: 1, src: photo8, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',   caption: 'Final - Liga MX Clausura 2026', category: 'Festejo', aspect: 'tall'   },
+    { id: 2, src: photo7, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',             caption: 'Entrenamiento · Ciudad Deportiva · Cruz Azul', category: 'Afición', aspect: 'wide'   },
+    { id: 3, src: photo6, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',               caption: 'Campeón - Liga MX Clausura 2026', category: 'Partido', aspect: 'square' },
+    { id: 4, src: photo5, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',                caption: 'Final - Liga MX Clausura 2026', category: 'Partido', aspect: 'tall'   },
+    { id: 5, src: photo4, alt: 'Piovi levanta el trofeo sentado en el trono dorado tras el título de Clausura 2025',  caption: 'Campeón - Liga MX Clausura 2026', category: 'Festejo', aspect: 'tall'   },
+    { id: 6, src: photo3, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',                              caption: 'Semifinal · Cruz Azul vs Chivas · Liga MX 2026', category: 'Partido', aspect: 'wide'   },
+    { id: 7, src: photo2, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',             caption: 'Semifinal · Cruz Azul vs Chivas · Liga MX 2026', category: 'Equipo', aspect: 'square' },
+    { id: 8, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028', caption: 'Renovación de contrato hasta 2028 · Cruz Azul', category: 'Renovación', aspect: 'tall'   },
   ],
 
   socialMedia: [
