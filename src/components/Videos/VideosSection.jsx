@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Flex, Text } from '@chakra-ui/react'
+import { Box, Flex, Text, Button } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion, AnimatePresence } from 'framer-motion'
 import playerData from '../../data/playerData.js'
 
 gsap.registerPlugin(ScrollTrigger)
+
+
+const MotionButton = motion(Button)
 
 const video = playerData.videos?.[0]
 
@@ -119,38 +122,43 @@ function PlayButton({ onClick }) {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <motion.button
+    <MotionButton
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       animate={{ scale: hovered ? 1.08 : 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      style={{
-        position: 'absolute', top: '50%', left: '50%',
-        transform: 'translate(-50%, -50%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: 'clamp(64px, 7vw, 96px)',
-        height: 'clamp(64px, 7vw, 96px)',
-        borderRadius: '50%',
-        border: `1.5px solid ${hovered ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)'}`,
-        background: hovered ? 'rgba(0,87,184,0.35)' : 'rgba(0,0,0,0.25)',
-        backdropFilter: 'blur(6px)',
-        cursor: 'pointer',
-        transition: 'background 0.3s ease, border-color 0.3s ease',
-        zIndex: 10,
-      }}
+      style={{ x: '-50%', y: '-50%' }}
+      position="absolute"
+      top="50%"
+      left="50%"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      w="clamp(64px, 7vw, 96px)"
+      h="clamp(64px, 7vw, 96px)"
+      borderRadius="50%"
+      border="1.5px solid"
+      borderColor={hovered ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)'}
+      bg={hovered ? 'rgba(0,87,184,0.35)' : 'rgba(0,0,0,0.25)'}
+      backdropFilter="blur(6px)"
+      cursor="pointer"
+      zIndex={10}
+      sx={{ transition: 'background 0.3s ease, border-color 0.3s ease' }}
       aria-label="Reproducir video"
     >
-      {/* Triangle */}
-      <div style={{
-        width: 0, height: 0,
-        borderTop: 'clamp(9px, 1.1vw, 14px) solid transparent',
-        borderBottom: 'clamp(9px, 1.1vw, 14px) solid transparent',
-        borderLeft: `clamp(16px, 2vw, 24px) solid ${hovered ? 'white' : 'rgba(255,255,255,0.85)'}`,
-        marginLeft: '4px',
-        transition: 'border-color 0.3s ease',
-      }} />
-    </motion.button>
+      <Box
+        w={0}
+        h={0}
+        ml="4px"
+        sx={{
+          borderTop: 'clamp(9px, 1.1vw, 14px) solid transparent',
+          borderBottom: 'clamp(9px, 1.1vw, 14px) solid transparent',
+          borderLeft: `clamp(16px, 2vw, 24px) solid ${hovered ? 'white' : 'rgba(255,255,255,0.85)'}`,
+          transition: 'border-color 0.3s ease',
+        }}
+      />
+    </MotionButton>
   )
 }
 
@@ -273,7 +281,8 @@ export default function VideosSection() {
       display="flex"
       flexDirection="column"
       justifyContent="center"
-      py={{ base: 20, md: 0 }}
+      pt={{ base: 40, md: 0 }}
+      pb={{ base: 8, md: 0 }}
     >
       {/* ── Decorative elements ── */}
       <Box position="absolute" inset="0" pointerEvents="none"
@@ -343,7 +352,7 @@ export default function VideosSection() {
 
       {/* ── Video block ── */}
       <Box
-        px={{ base: 6, md: 12, lg: 20 }}
+        px={{ base: 2, md: 12, lg: 20 }}
         zIndex={2}
         position="relative"
       >

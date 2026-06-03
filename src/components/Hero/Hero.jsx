@@ -429,7 +429,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
           {/* ── Info compacta — MOBILE (subconjunto del panel izquierdo) ── */}
           <Box
-            display='block'
+            display={{ base: 'block', md: 'none' }}
             position="absolute"
             bottom='100px'
             left={6}

@@ -24,6 +24,8 @@ function SmoothScrollProvider({ children }) {
       wheelMultiplier: 1,
     })
 
+    window.__lenis = lenis
+
     lenis.on('scroll', ScrollTrigger.update)
 
     gsap.ticker.add((time) => {
@@ -33,6 +35,7 @@ function SmoothScrollProvider({ children }) {
 
     return () => {
       lenis.destroy()
+      window.__lenis = null
       gsap.ticker.lagSmoothing(1)
     }
   }, [])
