@@ -157,7 +157,7 @@ export default function PressSection() {
           color="brand.blue"
           mb={3}
         >
-          Medios & Prensa
+          Medios
         </Text>
         <Text
           fontFamily="'Bebas Neue', sans-serif"
@@ -165,7 +165,7 @@ export default function PressSection() {
           lineHeight="0.9"
           letterSpacing="0.02em"
         >
-          entre<Box as="span" color="brand.blue">vistas</Box>
+          PRE<Box as="span" color="brand.blue">NSA</Box>
         </Text>
       </Box>
 

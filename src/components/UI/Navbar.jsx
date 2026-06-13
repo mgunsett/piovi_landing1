@@ -16,6 +16,15 @@ const navLinks = [
   { label: 'Contacto', href: '#contact' },
 ]
 
+function scrollToSection(href) {
+  const lenis = window.__lenis
+  if (lenis) {
+    lenis.scrollTo(href, { offset: 0 })
+  } else {
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 export default function Navbar() {
   const navRef = useRef(null)
   const [scrolled, setScrolled] = useState(false)
@@ -66,7 +75,11 @@ export default function Navbar() {
         py={4}
       >
         {/* Logo */}
-        <Box as="a" href="#hero" style={{ textDecoration: 'none' }} onClick={() => setMenuOpen(false)}>
+        <Box
+          as="button"
+          style={{ textDecoration: 'none', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+          onClick={() => { setMenuOpen(false); scrollToSection('#hero') }}
+        >
           <Text
             fontFamily="'Bebas Neue', sans-serif"
             fontSize="28px"
@@ -91,8 +104,8 @@ export default function Navbar() {
 
         {/* CTA — desktop */}
         <Box
-          as="a"
-          href="#contact"
+          as="button"
+          onClick={() => scrollToSection('#contact')}
           fontFamily="'Barlow Condensed', sans-serif"
           fontWeight="600"
           fontSize="12px"
@@ -104,6 +117,8 @@ export default function Navbar() {
           borderColor="brand.blue"
           color="white"
           display={{ base: 'none', md: 'block' }}
+          bg="transparent"
+          cursor="pointer"
           _hover={{ bg: 'brand.blue', color: 'white' }}
           transition="all 0.3s ease"
         >
@@ -177,12 +192,15 @@ export default function Navbar() {
                   transition={{ delay: 0.08 + i * 0.06, duration: 0.3 }}
                 >
                   <Flex
-                    as="a"
-                    href={link.href}
-                    onClick={() => setMenuOpen(false)}
+                    as="button"
+                    onClick={() => { setMenuOpen(false); scrollToSection(link.href) }}
                     align="center"
                     gap={4}
                     py={3}
+                    w="100%"
+                    bg="transparent"
+                    border="none"
+                    cursor="pointer"
                     role="group"
                   >
                     <Text
@@ -221,8 +239,8 @@ export default function Navbar() {
 function NavAnchor({ href, children }) {
   return (
     <Box
-      as="a"
-      href={href}
+      as="button"
+      onClick={() => scrollToSection(href)}
       fontFamily="'Barlow Condensed', sans-serif"
       fontWeight="600"
       fontSize="13px"
@@ -230,6 +248,9 @@ function NavAnchor({ href, children }) {
       textTransform="uppercase"
       color="whiteAlpha.700"
       position="relative"
+      bg="transparent"
+      border="none"
+      cursor="pointer"
       _hover={{ color: 'white' }}
       transition="color 0.2s"
       sx={{

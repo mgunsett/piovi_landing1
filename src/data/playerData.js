@@ -82,19 +82,11 @@ export const playerData = {
   // Historial de clubes (del más reciente al más antiguo)
   clubs: [
     {
-      name: 'Vélez Sarsfield',
-      country: 'Argentina',
-      years: '2013 — 2015',
-      logo: escudoVelez,
-      titles: [], 
-      info: 'Debút profesional vs All Boys'
-    },
-    {
-      name: 'Argentinos Juniors',
-      country: 'Argentina',
-      years: '2016 — 2018',
-      logo: escudoArgentinos,
-      titles: ['Ascenso a Primera 2016'],
+      name: 'Cruz Azul',
+      country: 'México',
+      years: '2024 — Presente',
+      logo: escudoCruzAzul,
+      titles: ['Campeones Concacaf 2025', 'Liga MX Clausura 2026'],
     },
     {
       name: 'Racing Club',
@@ -104,11 +96,11 @@ export const playerData = {
       titles: ['Trofeo de Campeones 2022', 'Supercopa Internacional 2022'],
     },
     {
-      name: 'Gimnasia y Esgrima La Plata',
+      name: 'Colón de Santa Fe',
       country: 'Argentina',
-      years: '2018-2019 (préstamo)',
-      logo: escudoGimnasia,
-      titles: [],
+      years: '2020-2022',
+      logo: escudoColon,
+      titles: ['Copa de la Liga 2021'],
     },
     {
       name: 'Defensa y Justicia',
@@ -118,18 +110,26 @@ export const playerData = {
       titles: [],
     },
     {
-      name: 'Colón de Santa Fe',
+      name: 'Gimnasia y Esgrima La Plata',
       country: 'Argentina',
-      years: '2020-2022',
-      logo: escudoColon,
-      titles: ['Copa de la Liga 2021'],
+      years: '2018-2019 (préstamo)',
+      logo: escudoGimnasia,
+      titles: [],
     },
     {
-      name: 'Cruz Azul',
-      country: 'México',
-      years: '2024 — Presente',
-      logo: escudoCruzAzul,
-      titles: ['Campeones Concacaf 2025'],
+      name: 'Argentinos Juniors',
+      country: 'Argentina',
+      years: '2016 — 2018',
+      logo: escudoArgentinos,
+      titles: ['Ascenso a Primera 2016'],
+    },
+    {
+      name: 'Vélez Sarsfield',
+      country: 'Argentina',
+      years: '2013 — 2015',
+      logo: escudoVelez,
+      titles: [], 
+      info: 'Debút profesional vs All Boys'
     },
   ],
 
@@ -137,7 +137,7 @@ export const playerData = {
   videos: [
     {
       id: 1,
-      title: 'Cruz Azul Temporada 2026',
+      title: "Temporada",
       duration: '3:42',
       thumbnail: video1,
       cover: photoVideo,          // foto de portada del video (acción en cancha)

@@ -226,10 +226,10 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           {/* Ghost name block: GONZALO (small) above PIOVI (huge) */}
           <Box
             position="absolute"
-            bottom={{ base: '0px', md: '-10px' }}
+            bottom={{ base: '450px', md: '-10px' }}
             left="0"
             right="0"
-            display={{ base: 'none', md: 'flex' }}
+            display="flex"
             flexDirection="column"
             alignItems="center"
             overflow="hidden"
@@ -238,27 +238,28 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Text
               ref={gonzaloRef}
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '9vw', md: '10vw', lg: '12.5vw' }}
+              fontSize={{ base: '14vw', md: '10vw', lg: '12.5vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.3em', md: '0.35em' }}
+              letterSpacing={{ base: '0.60em', md: '0.35em' }}
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.055)' }}
               userSelect="none"
               display="block"
-              mb={{ base: '-0.8em', md: '-35px' }}
+              mb={{ base: '-0.2em', md: '-35px' }}
+              
             >
               {playerData.name.toUpperCase()}
             </Text>
 
             {/* PIOVI — giant ghost stroke */}
-            <Flex gap={{ base: '0.5vw', md: '3vw' }} align="baseline">
+            <Flex gap={{ base: '8vw', md: '3vw' }} align="baseline">
               {heroName.split('').map((letter, i) => (
                 <Box
                   key={i}
                   ref={(el) => (bgLettersRef.current[i] = el)}
                   as="span"
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ base: '17vw', md: '18vw', lg: '40vw' }}
+                  fontSize={{ base: '38vw', md: '18vw', lg: '40vw' }}
                   lineHeight="0.88"
                   color="transparent"
                   sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
@@ -288,23 +289,23 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             flexDirection="column"
             alignItems="center"
             position="absolute"
-            bottom={{ base: '195px', md: '270px' }}
+            bottom={{ base: 'none', md: '270px' }}
+            top={{ base: '12%', md: 'none' }}
             left="0"
             right="0"
             display="flex"
             justifyContent="center"
             overflow="hidden"
           >
-            <Text
-              
+            <Text      
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '9vw', md: '10vw', lg: '8vw' }}
+              fontSize={{ base: '12vw', md: '10vw', lg: '8vw' }}
               lineHeight="0.85"
               letterSpacing={{ base: '0.3em', md: '0.35em' }}
               color="white"
               userSelect="none"
-              display={{ base: 'none', md: 'inline-block' }}
-              mb={{ base: '-0.8em', md: '-35px' }}
+              display={'inline-block'}
+              mb={{ base: '-0.2em', md: '-35px' }}
             >
               {playerData.name.toUpperCase()}
             </Text>
@@ -315,9 +316,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   ref={(el) => { lettersRef.current[i] = el }}
                   as="span"
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ base: '17vw', md: '18vw', lg: '20vw' }}
+                  fontSize={{ base: '52vw', md: '18vw', lg: '20vw' }}
                   lineHeight="0.88"
-                  letterSpacing={{ base: '6px', md: '30px' }}
+                  letterSpacing={{ base: '14px', md: '30px' }}
                   color="white"
                   display="inline-block"
                   userSelect="none"
@@ -332,26 +333,26 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
         {!hidePlayerImage && (
           <Box
-            ref={photoLayerRef}
+            ref={{base:'none', md:photoLayerRef}}
             position="absolute"
             inset={0}
             zIndex={10}
             pointerEvents="none"
           >
             <Box
-              ref={photoRef}
+              ref={{base:'none', md:photoRef}}
               position="absolute"
-              bottom={{ base: '265px', md: '0' }}
+              bottom={{ base: '210px', md: '0' }}
               left="50%"
               transform="translateX(-50%)"
               w={{ base: '280px', md: '400px', lg: '370px' }}
             >
-              <Box ref={photoInnerRef} position="relative">
+              <Box ref={{base:'none', md:photoInnerRef}} position="relative">
                 <Image
                   src={imgSrc}
                   alt="Gonzalo Piovi"
                   objectFit="contain"
-                  w="100%"
+                  w={{base: "95%", md: "100%"}}
                   h="auto"
                 />
               </Box>
@@ -426,9 +427,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
           {/* ── Info compacta — MOBILE (subconjunto del panel izquierdo) ── */}
           <Box
-            display={{ base: 'flex', md: 'none' }}
+            display={{ base: 'block', md: 'none' }}
             position="absolute"
-            top="76px"
+            bottom='100px'
             left={6}
             zIndex={15}
             alignItems="flex-start"
@@ -436,7 +437,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           >
             <Text
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize="50px"
+              fontSize="60px"
               lineHeight="0.78"
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.55)' }}
@@ -446,7 +447,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Box pt="3px">
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="11px"
+                fontSize="8px"
                 fontWeight="600"
                 letterSpacing="0.14em"
                 textTransform="uppercase"
@@ -476,7 +477,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                 />
                 <Text
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize="18px"
+                  fontSize="14px"
                   letterSpacing="0.04em"
                   color="white"
                   lineHeight="1"
@@ -527,7 +528,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
         {/* Entry glow flash */}
         <Box
-          ref={glowFlashRef}
+          ref={{base:'none', md:glowFlashRef}}
           position="absolute"
           inset={0}
           zIndex={20}
@@ -601,7 +602,7 @@ function MarqueeBar({ playerData }) {
       overflow="hidden"
     >
       <Box display="flex" width="max-content">
-        <Box className="marquee-track" display="flex" gap={6} whiteSpace="nowrap">
+        <Box className={{base:'none', md:"marquee-track"}} display="flex" gap={6} whiteSpace="nowrap">
           {playerData.marqueeItems.map((item, i) => (
             <Text
               key={i}
