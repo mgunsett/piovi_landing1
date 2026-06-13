@@ -230,17 +230,6 @@ export default function StatsSection() {
       borderTopRightRadius={{ base: '14px', md: '22px' }}
       boxShadow="0 -24px 80px rgba(0,0,0,0.65)"
     >
-      {/* Subtle background grid */}
-      <Box
-        position="absolute" inset="0" pointerEvents="none"
-        sx={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.013) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.013) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-        }}
-      />
       <Box position="absolute" top="-80px" left="-100px" w="500px" h="500px"
         bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)"
         pointerEvents="none" />
@@ -308,21 +297,15 @@ export default function StatsSection() {
               <Text
                 position="absolute" top="-6px" right="12px"
                 fontFamily="'Bebas Neue', sans-serif"
-                fontSize="110px" lineHeight="1"
+                fontSize="200px" lineHeight="1"
                 color="transparent"
                 sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.1)' }}
                 userSelect="none" pointerEvents="none"
               >
                 #{playerData.number}
               </Text>
-              <Text
-                fontFamily="'Bebas Neue', sans-serif"
-                fontSize="26px" letterSpacing="0.04em"
-                mb={5} lineHeight="1" position="relative" zIndex={1}
-              >
-                {playerData.fullName}
-              </Text>
-              <Grid templateColumns="1fr 1fr" gap={3} position="relative" zIndex={1}>
+              
+              <Grid templateColumns="1fr 1fr" gap={6} position="relative" zIndex={1} pb={10}>
                 {[
                   { label: 'Posición',      value: playerData.position },
                   { label: 'Pie hábil', value: playerData.foot },
@@ -339,7 +322,7 @@ export default function StatsSection() {
                   >
                     <Text
                       fontFamily="'Barlow Condensed', sans-serif"
-                      fontSize="9px" fontWeight="700"
+                      fontSize="10px" fontWeight="700"
                       letterSpacing="0.22em" textTransform="uppercase"
                       color="rgba(255,255,255,0.35)" mb="2px"
                     >
@@ -347,7 +330,7 @@ export default function StatsSection() {
                     </Text>
                     <Text
                       fontFamily="'Barlow Condensed', sans-serif"
-                      fontSize="13px" fontWeight="600"
+                      fontSize="16px" fontWeight="600"
                       color="white" lineHeight="1.2"
                     >
                       {item.value}

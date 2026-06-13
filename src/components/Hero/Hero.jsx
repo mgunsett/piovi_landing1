@@ -212,8 +212,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           pointerEvents="none"
           willChange="transform"
         >
-          <GridLines />
-
           {/* Blue radial glow behind the player */}
           <Box
             position="absolute"
@@ -489,8 +487,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             </Box>
           </Box>
 
-          {/* Right info panel
-          <Box
+           {/*Right info panel*/}
+          {/* <Box
             position="absolute"
             right={{ base: 6, md: 12, lg: 20 }}
             bottom={{ base: '200px', md: '200px' }}
@@ -507,7 +505,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                 
               </VStack>
             </Box>
-          </Box> */}
+          </Box>  */}
 
           {/* Match box — abajo-derecha (desktop). En mobile se muestra
               como franja full-width debajo del contenido (ver abajo). */}
@@ -521,7 +519,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <MatchBox last={matches.last} next={matches.next} />
           </Box>
         </Flex>
-
+      {/*)---------------------Match box para mobile -----------*/} 
+      
         <Box display={{ base: 'block', md: 'none' }} position="relative" zIndex={16}>
           <MatchBox last={matches.last} next={matches.next} variant="strip" />
         </Box>
@@ -637,24 +636,6 @@ function MarqueeBar({ playerData }) {
   )
 }
 
-function GridLines() {
-  return (
-    <Box
-      position="absolute"
-      inset="0"
-      zIndex={0}
-      pointerEvents="none"
-      sx={{
-        backgroundImage: `
-          linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)
-        `,
-        backgroundSize: '80px 80px',
-      }}
-    />
-  )
-}
-
 // ─── HOVER FLOAT ─────────────────────────────────────────────────
 function HoverFloat({ children, intensity = 1 }) {
   const ref = useRef(null)
@@ -729,4 +710,4 @@ function ScrollIndicator() {
       </Text>
     </motion.div>
   )
-}
+} 

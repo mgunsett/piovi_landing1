@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react'
 
 // Images
-import piovi3 from './assets/piovi3.png'
+import piovi3 from './assets/piovi3.webp'
 
 // UI
 import Navbar from './components/UI/Navbar'

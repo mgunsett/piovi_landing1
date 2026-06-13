@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Box, Grid, Text, Flex, Icon } from '@chakra-ui/react'
+import { Box, Grid, Text, Flex, Icon, Image } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import playerData from '../../data/playerData.js'
@@ -106,6 +106,26 @@ export default function ContactSection() {
                       _groupHover={{ color: social.hoverColor }}
                     />
                   )}
+                  {social.image && (
+                    <Image
+                      src={social.image}
+                      position="absolute"
+                      right="5%"
+                      top="50%"
+                      transform="translateY(-50%)"
+                      w={{ base: '160px', md: '260px' }}
+                      h="auto"
+                      opacity={0.07}
+                      filter="grayscale(1) brightness(1.5)"
+                      objectFit="contain"
+                      zIndex={0}
+                      pointerEvents="none"
+                      userSelect="none"
+                      aria-hidden
+                      transition="opacity 0.4s ease, filter 0.4s ease"
+                      _groupHover={{ opacity: 0.22, filter: 'grayscale(0) brightness(1)' }}
+                    />
+                  )}
                   
                 {/* Text content — above the watermark icon */}
                 <Box position="relative" zIndex={1}>
@@ -183,6 +203,26 @@ export default function ContactSection() {
                       aria-hidden
                       transition="color 0.4s ease"
                       _groupHover={{ color: contact.hoverColor }}
+                    />
+                  )}
+                  {contact.image && (
+                    <Image
+                      src={contact.image}
+                      position="absolute"
+                      right="-5%"
+                      top="50%"
+                      transform="translateY(-50%)"
+                      w={{ base: '160px', md: '200px' }}
+                      h="auto"
+                      opacity={0.07}
+                      filter="grayscale(1) brightness(1.5)"
+                      objectFit="contain"
+                      zIndex={0}
+                      pointerEvents="none"
+                      userSelect="none"
+                      aria-hidden
+                      transition="opacity 0.4s ease, filter 0.4s ease"
+                      _groupHover={{ opacity: 0.22, filter: 'grayscale(0) brightness(1)' }}
                     />
                   )}
                   
