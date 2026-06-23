@@ -32,3 +32,4 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+*SUPABASE_SETUP.md

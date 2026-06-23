@@ -175,7 +175,7 @@ export const playerData = {
 
   // Galería de fotos — colocar archivos reales en src/assets/galleryPhotos/
   gallery: [
-    { id: 1, src: photo1, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',aspect: 'tall' },
+    { id: 1, src: photo9, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',aspect: 'tall' },
     { id: 2, src: photo2, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',aspect: 'wide' },
     { id: 3, src: photo3, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',aspect: 'square' },
     { id: 4, src: photo4, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',aspect: 'tall' },
@@ -183,9 +183,9 @@ export const playerData = {
     { id: 6, src: photo6, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',aspect: 'wide' },
     { id: 7, src: photo7, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',aspect: 'square' },
     { id: 8, src: photo8, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 9, src: photo9, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 9, src: photo11, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
     { id: 10, src: photo10, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 11, src: photo11, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 11, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
     { id: 12, src: photo12, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
     { id: 13, src: photo13, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
 

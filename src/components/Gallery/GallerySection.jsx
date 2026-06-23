@@ -42,7 +42,7 @@ function ArrowBtn({ direction, onClick, disabled }) {
       _focus={{ outline: 'none' }}
       aria-label={direction === 'prev' ? 'Anterior' : 'Siguiente'}
     >
-      {direction === 'prev' ? '←' : '→'}
+      {direction === 'prev' ? '<' : '>'}
     </Box>
   )
 }

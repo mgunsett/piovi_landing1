@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Flex, Text, Button } from '@chakra-ui/react'
+import { Box, Flex, Text, Button, AspectRatio } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -356,13 +356,11 @@ export default function VideosSection() {
           mx="auto"
           sx={{ clipPath: 'inset(0 100% 0 0)', willChange: 'clip-path' }}
         >
-        {/* 16:9 frame — cover by default, video fragments on hover, full video on click */}
+        {/* Frame responsive — vertical (3:4) en mobile, panorámico (16:8.5)
+            en desktop. AspectRatio estira su hijo a pantalla completa. */}
+        <AspectRatio ratio={{ base: 3 / 4, md: 16 / 8.5 }} w="100%">
         <Box
-          position="relative"
-          w="100%"
-          sx={{ paddingTop: '56.25%' }}
           bg="#050810"
-          overflow="hidden"
           cursor="pointer"
           role="button"
           aria-label={`Reproducir ${video.title}`}
@@ -457,6 +455,7 @@ export default function VideosSection() {
             </motion.div>
           </Box> */}
         </Box>
+        </AspectRatio>
 
         {/* ── Redesigned bottom frame bar ── */}
         <Box position="relative" h="3px" w="100%" overflow="hidden" bg="rgba(255,255,255,0.05)">

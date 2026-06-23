@@ -97,8 +97,8 @@ export default function ContactSection() {
                       top="50%"
                       transform="translateY(-50%)"
                       fontSize={{ base: '150px', md: '230px' }}
-                      opacity={{base:0.65, md:'none'}}
-                      color={{base: social.hoverColor ,md:"whiteAlpha.50"}}
+                      // opacity={{base:0.65, md:'none'}}
+                      color={{base: "whiteAlpha.100" ,md:"whiteAlpha.50"}}
                       zIndex={0}
                       pointerEvents="none"
                       userSelect="none"
@@ -197,7 +197,7 @@ export default function ContactSection() {
                       top="50%"
                       transform="translateY(-50%)"
                       fontSize={{ base: '140px', md: '200px' }}
-                      color={{base: contact.hoverColor,md:"whiteAlpha.50"}}
+                      color={{base: 'whiteAlpha.100',md:"whiteAlpha.50"}}
                       opacity={{base:0.65, md:"none"}}
                       zIndex={0}
                       pointerEvents="none"
@@ -216,8 +216,8 @@ export default function ContactSection() {
                       transform="translateY(-50%)"
                       w={{ base: '125px', md: '180px' }}
                       h="auto"
-                      opacity={{base:0.65, md:0.07}}
-                      filter={{base:"grayscale(0) brightness(1)",md:"grayscale(1) brightness(1.5)"}}
+                      opacity={0.20}
+                      filter={"grayscale(1) brightness(1.5)"}
                       objectFit="contain"
                       zIndex={0}
                       pointerEvents="none"

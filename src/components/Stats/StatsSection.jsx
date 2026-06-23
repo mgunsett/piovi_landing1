@@ -161,6 +161,45 @@ function SeasonCard({ label, value, index }) {
   )
 }
 
+// ─── ARROW BUTTON ────────────────────────────────────────────────
+function ArrowButton({ dir, onClick, disabled }) {
+  const isLeft = dir === 'left'
+  return (
+    <Box
+      as="button"
+      type="button"
+      onClick={onClick}
+      aria-label={isLeft ? 'Anterior' : 'Siguiente'}
+      disabled={disabled}
+      w="40px" h="40px"
+      borderRadius="50%"
+      display="flex" alignItems="center" justifyContent="center"
+      border="1px solid"
+      borderColor={disabled ? 'rgba(255,255,255,0.08)' : 'rgba(0,87,184,0.55)'}
+      bg={disabled ? 'transparent' : 'rgba(0,87,184,0.08)'}
+      color={disabled ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.85)'}
+      cursor={disabled ? 'not-allowed' : 'pointer'}
+      transition="all 0.2s ease"
+      flexShrink={0}
+      _hover={disabled ? {} : {
+        bg: 'rgba(0,87,184,0.9)',
+        borderColor: 'rgba(77,163,255,0.8)',
+        color: 'white',
+      }}
+      _active={disabled ? {} : { transform: 'scale(0.92)' }}
+    >
+      <Box
+        as="svg" w="18px" h="18px" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" strokeWidth="2"
+        strokeLinecap="round" strokeLinejoin="round"
+        transform={isLeft ? 'none' : 'scaleX(-1)'}
+      >
+        <polyline points="15 18 9 12 15 6" />
+      </Box>
+    </Box>
+  )
+}
+
 // ─── MAIN STATS SECTION ──────────────────────────────────────────
 export default function StatsSection() {
   const sectionRef = useRef(null)
@@ -177,41 +216,75 @@ export default function StatsSection() {
     scrub: 1,
   })
 
-  // Drag-to-scroll for club timeline
+  // Drag-to-scroll for club timeline — solo mouse (desktop).
+  // En mobile se usa el scroll nativo con momentum para evitar el
+  // conflicto entre el scrollLeft manual y el scroll táctil del navegador.
   useEffect(() => {
     const el = timelineRef.current
     if (!el) return
+
+    // Si el dispositivo es táctil, no interceptamos: scroll nativo suave.
+    const isTouch = window.matchMedia('(pointer: coarse)').matches
+    if (isTouch) return
+
     let isDown = false, startX = 0, scrollLeft = 0
     const onDown = e => {
       isDown = true
       el.style.cursor = 'grabbing'
-      startX = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft
+      startX = e.pageX - el.offsetLeft
       scrollLeft = el.scrollLeft
     }
     const onUp = () => { isDown = false; el.style.cursor = 'grab' }
     const onMove = e => {
       if (!isDown) return
-      if (!e.touches) e.preventDefault()
-      const x = (e.touches ? e.touches[0].pageX : e.pageX) - el.offsetLeft
+      e.preventDefault()
+      const x = e.pageX - el.offsetLeft
       el.scrollLeft = scrollLeft - (x - startX) * 1.1
     }
     el.addEventListener('mousedown', onDown)
     el.addEventListener('mouseleave', onUp)
     el.addEventListener('mouseup', onUp)
     el.addEventListener('mousemove', onMove)
-    el.addEventListener('touchstart', onDown, { passive: true })
-    el.addEventListener('touchend', onUp)
-    el.addEventListener('touchmove', onMove, { passive: false })
     return () => {
       el.removeEventListener('mousedown', onDown)
       el.removeEventListener('mouseleave', onUp)
       el.removeEventListener('mouseup', onUp)
       el.removeEventListener('mousemove', onMove)
-      el.removeEventListener('touchstart', onDown)
-      el.removeEventListener('touchend', onUp)
-      el.removeEventListener('touchmove', onMove)
     }
   }, [])
+
+  // Estado de los botones de flecha (se deshabilitan en los extremos)
+  const [canLeft, setCanLeft]   = useState(false)
+  const [canRight, setCanRight] = useState(true)
+
+  const updateArrows = () => {
+    const el = timelineRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    setCanLeft(el.scrollLeft > 4)
+    setCanRight(el.scrollLeft < max - 4)
+  }
+
+  useEffect(() => {
+    const el = timelineRef.current
+    if (!el) return
+    updateArrows()
+    el.addEventListener('scroll', updateArrows, { passive: true })
+    window.addEventListener('resize', updateArrows)
+    return () => {
+      el.removeEventListener('scroll', updateArrows)
+      window.removeEventListener('resize', updateArrows)
+    }
+  }, [])
+
+  // Desplaza una "página" (~una tarjeta y media) en la dirección dada
+  const scrollByDir = dir => {
+    const el = timelineRef.current
+    if (!el) return
+    const card = el.querySelector('[data-club-card]')
+    const step = card ? card.offsetWidth * 1.5 : el.clientWidth * 0.8
+    el.scrollBy({ left: dir * step, behavior: 'smooth' })
+  }
 
   const clubs = playerData.clubs
   const lastIdx = clubs.length - 1
@@ -221,14 +294,19 @@ export default function StatsSection() {
       ref={sectionRef}
       as="section" id="stats"
       bg="#0A0E16"
-      pt={{ base: 20, md: 28 }}
+      pt={{ base: 28, md: 32 }}
       pb={{ base: 0, md: 0 }}
       position="relative"
       overflow="hidden"
       zIndex={20}
-      borderTopLeftRadius={{ base: '14px', md: '22px' }}
-      borderTopRightRadius={{ base: '14px', md: '22px' }}
-      boxShadow="0 -24px 80px rgba(0,0,0,0.65)"
+      sx={{
+        // Máscara de fundido en el borde superior: la sección entra de
+        // forma gradual sobre el Hero en lugar de cortar con una línea.
+        // El degradado es transparente arriba y opaco a partir de ~100px,
+        // por debajo del padding superior (el título nunca queda velado).
+        maskImage: 'linear-gradient(to bottom, transparent 0, #000 100px)',
+        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, #000 100px)',
+      }}
     >
       <Box position="absolute" top="-80px" left="-100px" w="500px" h="500px"
         bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)"
@@ -391,14 +469,21 @@ export default function StatsSection() {
           >
             Trayectoria
           </Text>
-          <Text
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="10px" letterSpacing="0.18em"
-            textTransform="uppercase"
-            color="rgba(255,255,255,0.22)"
-          >
-            {clubs.length} Clubes · Arrastra para explorar →
-          </Text>
+          <Flex align="center" gap={{ base: 3, md: 5 }}>
+            <Text
+              display={{ base: 'none', md: 'block' }}
+              fontFamily="'Barlow Condensed', sans-serif"
+              fontSize="10px" letterSpacing="0.18em"
+              textTransform="uppercase"
+              color="rgba(255,255,255,0.22)"
+            >
+              {clubs.length} Clubes · Arrastra para explorar
+            </Text>
+            <Flex gap={2}>
+              <ArrowButton dir="left"  onClick={() => scrollByDir(-1)} disabled={!canLeft} />
+              <ArrowButton dir="right" onClick={() => scrollByDir(1)}  disabled={!canRight} />
+            </Flex>
+          </Flex>
         </Flex>
 
         {/* Scrollable strip */}
@@ -412,7 +497,10 @@ export default function StatsSection() {
             '&::-webkit-scrollbar': { height: '2px' },
             '&::-webkit-scrollbar-track': { bg: 'rgba(255,255,255,0.02)' },
             '&::-webkit-scrollbar-thumb': { bg: 'rgba(0,87,184,0.4)', borderRadius: '2px' },
-            scrollSnapType: 'x mandatory',
+            scrollSnapType: 'x proximity',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehaviorX: 'contain',
+            touchAction: 'pan-x',
           }}
         >
           <Flex gap={0} w="max-content">
@@ -422,6 +510,7 @@ export default function StatsSection() {
               return (
                 <Box
                   key={club.name}
+                  data-club-card
                   flexShrink={0}
                   w={{ base: '210px', md: '230px' }}
                   px="6px"

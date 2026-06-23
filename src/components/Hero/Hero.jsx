@@ -226,8 +226,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           {/* Ghost name block: GONZALO (small) above PIOVI (huge) */}
           <Box
             position="absolute"
-            bottom={{ base: '450px', md: '-10px' }}
-            left="0"
+            bottom={{ base: '360px', md: '-10px' }}
+            left={{ base: 2, md: '0' }}
             right="0"
             display="flex"
             flexDirection="column"
@@ -238,9 +238,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Text
               ref={gonzaloRef}
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '14vw', md: '10vw', lg: '12.5vw' }}
+              fontSize={{ base: '30vw', md: '10vw', lg: '12.5vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.60em', md: '0.35em' }}
+              letterSpacing={{ base: '0.1em', md: '0.35em' }}
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.055)' }}
               userSelect="none"
@@ -252,14 +252,14 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             </Text>
 
             {/* PIOVI — giant ghost stroke */}
-            <Flex gap={{ base: '8vw', md: '3vw' }} align="baseline">
+            <Flex gap={{ base: '2vw', md: '3vw' }} align="baseline">
               {heroName.split('').map((letter, i) => (
                 <Box
                   key={i}
                   ref={(el) => (bgLettersRef.current[i] = el)}
                   as="span"
                   fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ base: '38vw', md: '18vw', lg: '40vw' }}
+                  fontSize={{ base: '60vw', md: '18vw', lg: '40vw' }}
                   lineHeight="0.88"
                   color="transparent"
                   sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
@@ -290,8 +290,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             alignItems="center"
             position="absolute"
             bottom={{ base: 'none', md: '270px' }}
-            top={{ base: '12%', md: 'none' }}
-            left="0"
+            top={{ base: '20%', md: 'none' }}
+            left={{ base: 2, md: '0' }}
             right="0"
             display="flex"
             justifyContent="center"
@@ -299,9 +299,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           >
             <Text      
               fontFamily="'Bebas Neue', sans-serif"
-              fontSize={{ base: '12vw', md: '10vw', lg: '8vw' }}
+              fontSize={{ base: '16vw', md: '10vw', lg: '8vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.3em', md: '0.35em' }}
+              letterSpacing={{ base: '0.2em', md: '0.35em' }}
               color="white"
               userSelect="none"
               display={'inline-block'}
@@ -342,7 +342,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Box
               ref={{base:'none', md:photoRef}}
               position="absolute"
-              bottom={{ base: '210px', md: '0' }}
+              bottom={{ base: '170px', md: '0' }}
               left="50%"
               transform="translateX(-50%)"
               w={{ base: '280px', md: '400px', lg: '370px' }}
@@ -488,26 +488,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             </Box>
           </Box>
 
-           {/*Right info panel*/}
-          {/* <Box
-            position="absolute"
-            right={{ base: 6, md: 12, lg: 20 }}
-            bottom={{ base: '200px', md: '200px' }}
-            zIndex={6}
-            display={{ base: 'none', md: 'block' }}
-            textAlign="right"
-          >
-            <Box ref={statsRef}>
-              <VStack spacing={3} align="flex-start">
-                
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
-                </HoverFloat>
-                
-              </VStack>
-            </Box>
-          </Box>  */}
-
           {/* Match box — abajo-derecha (desktop). En mobile se muestra
               como franja full-width debajo del contenido (ver abajo). */}
           <Box
@@ -537,8 +517,19 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           opacity={0}
         />
 
-        {/* Marquee bottom bar */}
-        <MarqueeBar playerData={playerData} />
+        {/* Fade de transición hacia StatsSection — funde la base del Hero
+            con el color de Stats (#0A0E16) para que no quede ningún corte
+            entre secciones. Va por debajo del MatchBox/Scroll (zIndex 16+). */}
+        <Box
+          position="absolute"
+          bottom={0}
+          left={0}
+          right={0}
+          h={{ base: '120px', md: '180px' }}
+          zIndex={14}
+          pointerEvents="none"
+          bgGradient="linear(to-b, transparent, #0A0E16)"
+        />
 
         {/* Scroll indicator (desktop only — en mobile la franja de
             partidos ocupa la base del Hero) */}
@@ -587,53 +578,6 @@ function MiniStat({ label, value, accent, logo }) {
         </Text>
       </Flex>
     </VStack>
-  )
-}
-
-function MarqueeBar({ playerData }) {
-  return (
-    <Box
-      position="relative"
-      zIndex={18}
-      borderTop="1px solid rgba(255,255,255,0.06)"
-      borderBottom="1px solid rgba(255,255,255,0.06)"
-      bg="rgba(0,87,184,0.08)"
-      py={3}
-      overflow="hidden"
-    >
-      <Box display="flex" width="max-content">
-        <Box className={{base:'none', md:"marquee-track"}} display="flex" gap={6} whiteSpace="nowrap">
-          {playerData.marqueeItems.map((item, i) => (
-            <Text
-              key={i}
-              as="span"
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontWeight={item === '·' ? '300' : '600'}
-              fontSize="12px"
-              letterSpacing="0.18em"
-              textTransform="uppercase"
-              color={item === '·' ? 'brand.blue' : 'whiteAlpha.500'}
-            >
-              {item}
-            </Text>
-          ))}
-          {playerData.marqueeItems.map((item, i) => (
-            <Text
-              key={`b-${i}`}
-              as="span"
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontWeight={item === '·' ? '300' : '600'}
-              fontSize="12px"
-              letterSpacing="0.18em"
-              textTransform="uppercase"
-              color={item === '·' ? 'brand.blue' : 'whiteAlpha.500'}
-            >
-              {item}
-            </Text>
-          ))}
-        </Box>
-      </Box>
-    </Box>
   )
 }
 
