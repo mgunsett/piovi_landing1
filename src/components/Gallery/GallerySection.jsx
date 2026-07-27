@@ -96,14 +96,6 @@ function Slide({ item, pos, onClick, isMobile }) {
         pointerEvents: 'none',
       }} />
 
-      {/* Scan-line texture */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        opacity: 0.07, mixBlendMode: 'overlay',
-        backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px)',
-        pointerEvents: 'none',
-      }} />
-
       {/* Caption — only on center */}
       {isCenter && (
         <Box
@@ -362,19 +354,7 @@ export default function GallerySection() {
       justifyContent="center"
       py={{ base: 16, md: 0 }}
     >
-      {/* ── Decorative bg ── */}
-      <Box position="absolute" top="0" right="-80px" w="500px" h="500px"
-        bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)" pointerEvents="none" />
-      <Box position="absolute" bottom="10%" left="-80px" w="400px" h="400px"
-        bg="radial-gradient(ellipse, rgba(0,87,184,0.05) 0%, transparent 70%)" pointerEvents="none" />
-      <Box position="absolute" inset="0" pointerEvents="none"
-        sx={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.013) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.013) 1px, transparent 1px)`,
-          backgroundSize: '80px 80px',
-        }}
-      />
+    
 
       {/* Edge fades — clips side slides cleanly */}
       <Box position="absolute" top={0} left={0} h="100%" w={{ base: '24px', md: '80px' }} zIndex={4} pointerEvents="none"

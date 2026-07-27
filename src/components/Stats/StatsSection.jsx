@@ -230,17 +230,6 @@ export default function StatsSection() {
       borderTopRightRadius={{ base: '14px', md: '22px' }}
       boxShadow="0 -24px 80px rgba(0,0,0,0.65)"
     >
-      {/* Subtle background grid */}
-      <Box
-        position="absolute" inset="0" pointerEvents="none"
-        sx={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.013) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.013) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px',
-        }}
-      />
       <Box position="absolute" top="-80px" left="-100px" w="500px" h="500px"
         bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)"
         pointerEvents="none" />

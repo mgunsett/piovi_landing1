@@ -62,9 +62,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       if (lettersRef.current.length) {
         gsap.to(lettersRef.current, { x: xn * 14, y: yn * 7, duration: 1.2, ease: 'power2.out', stagger: 0.02 })
       }
-      if (photoRef.current) {
-        gsap.to(photoRef.current, { x: xn * 28, y: yn * 14, duration: 1.0, ease: 'power2.out' })
-      }
     }
 
     container.addEventListener('mousemove', onMove)
@@ -159,14 +156,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
   const imgSrc = playerImage || piovi4
 
   return (
-    // ── Outer wrapper — tall scroll space that gives the inner its
-    //    sticky "pin" duration. With inner = 100vh, the inner stays
-    //    pinned for [0 → wrapperH − 100vh].
-    //    · base 250vh → ~50vh advance phase  + 100vh cover phase
-    //    · md   300vh → ~100vh advance phase + 100vh cover phase
-    //    The 100vh cover phase is mirrored by StatsSection's −100vh
-    //    top margin in App.jsx, so Stats slides up over the STILL-pinned
-    //    Hero — the Hero never scrolls away, it gets tucked behind. ──
     <Box
       ref={outerRef}
       as="section"
@@ -212,8 +201,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           pointerEvents="none"
           willChange="transform"
         >
-          <GridLines />
-
           {/* Blue radial glow behind the player */}
           <Box
             position="absolute"
@@ -379,52 +366,46 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             bottom={{ base: '200px', md: '260px' }}
             display={{ base: 'none', md: 'block' }}
           >
-            <HoverFloat intensity={1.2}>
-              <Box ref={numberRef}>
-                <Text
-                  fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ md: '120px', lg: '160px' }}
-                  lineHeight="0.85"
-                  color="transparent"
-                  sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
-                  mb={4}
-                >
-                  {playerData.number}
-                </Text>
-              </Box>
-            </HoverFloat>
+            <Box ref={numberRef}>
+              <Text
+                fontFamily="'Bebas Neue', sans-serif"
+                fontSize={{ md: '120px', lg: '160px' }}
+                lineHeight="0.85"
+                color="transparent"
+                sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
+                mb={4}
+              >
+                {playerData.number}
+              </Text>
+            </Box>
 
             <Box ref={lineRef} h="1px" w="80px" bg="brand.blue" mb={3} />
 
-            <HoverFloat intensity={1}>
-              <Box ref={subtitleRef} display="flex" flexDirection="column" gap={1}>
-                <Text
-                  fontFamily="'Barlow Condensed', sans-serif"
-                  fontSize="13px"
-                  fontWeight="600"
-                  letterSpacing="0.18em"
-                  textTransform="uppercase"
-                  color="whiteAlpha.600"
-                  mb={1}
-                >
-                  {playerData.position}
-                </Text>
-                <Text
-                  fontFamily="'Barlow Condensed', sans-serif"
-                  fontSize="13px"
-                  fontWeight="600"
-                  letterSpacing="0.18em"
-                  textTransform="uppercase"
-                  color="brand.blue"
-                  mb={4}
-                >
-                  {playerData.nationalityFlag} {playerData.nationality}
-                </Text>
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
-                </HoverFloat>
-              </Box>
-            </HoverFloat>
+            <Box ref={subtitleRef} display="flex" flexDirection="column" gap={1}>
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="13px"
+                fontWeight="600"
+                letterSpacing="0.18em"
+                textTransform="uppercase"
+                color="whiteAlpha.600"
+                mb={1}
+              >
+                {playerData.position}
+              </Text>
+              <Text
+                fontFamily="'Barlow Condensed', sans-serif"
+                fontSize="13px"
+                fontWeight="600"
+                letterSpacing="0.18em"
+                textTransform="uppercase"
+                color="brand.blue"
+                mb={4}
+              >
+                {playerData.nationalityFlag} {playerData.nationality}
+              </Text>
+              <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
+            </Box>
           </Box>
 
           {/* ── Info compacta — MOBILE (subconjunto del panel izquierdo) ── */}
@@ -490,25 +471,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             </Box>
           </Box>
 
-          {/* Right info panel
-          <Box
-            position="absolute"
-            right={{ base: 6, md: 12, lg: 20 }}
-            bottom={{ base: '200px', md: '200px' }}
-            zIndex={6}
-            display={{ base: 'none', md: 'block' }}
-            textAlign="right"
-          >
-            <Box ref={statsRef}>
-              <VStack spacing={3} align="flex-start">
-                
-                <HoverFloat intensity={1}>
-                  <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
-                </HoverFloat>
-                
-              </VStack>
-            </Box>
-          </Box> */}
+
 
           {/* Match box — abajo-derecha (desktop). En mobile se muestra
               como franja full-width debajo del contenido (ver abajo). */}
@@ -537,10 +500,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           bg="radial-gradient(ellipse at center bottom, rgba(0,87,184,0.4) 0%, transparent 60%)"
           opacity={0}
         />
-
-        {/* Marquee bottom bar */}
-        <MarqueeBar playerData={playerData} />
-
         {/* Scroll indicator (desktop only — en mobile la franja de
             partidos ocupa la base del Hero) */}
         <Box display={{ base: 'none', md: 'block' }}>
@@ -635,65 +594,6 @@ function MarqueeBar({ playerData }) {
         </Box>
       </Box>
     </Box>
-  )
-}
-
-function GridLines() {
-  return (
-    <Box
-      position="absolute"
-      inset="0"
-      zIndex={0}
-      pointerEvents="none"
-      sx={{
-        backgroundImage: `
-          linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px)
-        `,
-        backgroundSize: '80px 80px',
-      }}
-    />
-  )
-}
-
-// ─── HOVER FLOAT ─────────────────────────────────────────────────
-function HoverFloat({ children, intensity = 1 }) {
-  const ref = useRef(null)
-
-  const onMove = (e) => {
-    const el = ref.current
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    const dx = ((e.clientX - r.left) / r.width  - 0.5) * 2
-    const dy = ((e.clientY - r.top)  / r.height - 0.5) * 2
-    gsap.to(el, {
-      x: dx * 7 * intensity,
-      y: dy * 5 * intensity,
-      rotateX: -dy * 4 * intensity,
-      rotateY:  dx * 4 * intensity,
-      duration: 0.35,
-      ease: 'power2.out',
-      transformPerspective: 600,
-    })
-  }
-
-  const onLeave = () => {
-    gsap.to(ref.current, {
-      x: 0, y: 0, rotateX: 0, rotateY: 0,
-      duration: 0.55,
-      ease: 'power3.out',
-    })
-  }
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{ display: 'inline-block', transformStyle: 'preserve-3d' }}
-    >
-      {children}
-    </div>
   )
 }
 

@@ -284,23 +284,7 @@ export default function VideosSection() {
       pt={{ base: 40, md: 0 }}
       pb={{ base: 8, md: 0 }}
     >
-      {/* ── Decorative elements ── */}
-      <Box position="absolute" inset="0" pointerEvents="none"
-        sx={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.013) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.013) 1px, transparent 1px)`,
-          backgroundSize: '80px 80px',
-        }}
-      />
-      <Box position="absolute" top="10%" left="-120px" w="500px" h="500px"
-        bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)"
-        pointerEvents="none"
-      />
-      <Box position="absolute" bottom="15%" right="-80px" w="400px" h="400px"
-        bg="radial-gradient(ellipse, rgba(0,87,184,0.05) 0%, transparent 70%)"
-        pointerEvents="none"
-      />
+      
 
       {/* ── Header ── */}
       <Box
@@ -410,13 +394,6 @@ export default function VideosSection() {
           <Box
             position="absolute" inset="0" pointerEvents="none" zIndex={2}
             bg="linear-gradient(to bottom, rgba(8,12,18,0.5) 0%, transparent 22%, transparent 68%, rgba(8,12,18,0.8) 100%)"
-          />
-
-          {/* Scan-line overlay */}
-          <Box
-            position="absolute" inset="0" pointerEvents="none" zIndex={3}
-            opacity={0.04} mixBlendMode="overlay"
-            sx={{ backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 3px)' }}
           />
 
           {/* Category badge — top left */}
