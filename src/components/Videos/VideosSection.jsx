@@ -75,7 +75,7 @@ function VideoModal({ isOpen, onClose }) {
               {video.category}
             </p>
             <p style={{
-              fontFamily: "'Bebas Neue', sans-serif",
+              fontFamily: "'Nippo', sans-serif",
               fontSize: 'clamp(22px, 3vw, 36px)',
               letterSpacing: '0.04em', color: 'white', lineHeight: 1,
             }}>
@@ -315,7 +315,7 @@ export default function VideosSection() {
               Video
             </Text>
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={{ base: '48px', md: '76px', lg: '96px' }}
               lineHeight="0.88" letterSpacing="0.02em"
             >

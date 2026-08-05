@@ -23,13 +23,13 @@ Una landing page moderna y animada construida con **React** + **Vite**, diseñad
 ## 📁 Estructura del Proyecto
 
 ```
+assets/              # Imágenes, videos y fuentes (fuera de src/, alias @assets)
 src/
 ├── components/      # Componentes reutilizables
 ├── pages/           # Páginas de la aplicación
 ├── data/            # Datos estáticos y dinámicos
 ├── hooks/           # Custom hooks
 ├── lib/             # Configuraciones (Supabase, etc)
-├── assets/          # Imágenes y multimedia
 ├── styles/          # CSS global
 └── App.jsx          # Componente raíz
 ```

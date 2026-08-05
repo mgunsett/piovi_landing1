@@ -106,7 +106,7 @@ function Slide({ item, pos, onClick, isMobile }) {
         >
           <Box w="28px" h="1px" bg="brand.blue" mb={2} />
           <Text
-            fontFamily="'Bebas Neue', sans-serif"
+            fontFamily="heading"
             fontSize="24px"
             letterSpacing="0.08em"
             color="white"
@@ -377,7 +377,7 @@ export default function GallerySection() {
               Galería
             </Text>
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={{ base: '44px', md: '68px', lg: '80px' }}
               lineHeight="0.9" letterSpacing="0.02em"
             >

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
-import piovi4 from '../../assets/piovi4.svg'
+import piovi4 from '@assets/piovi4.svg'
 import { playerData } from '../../data/playerData'
 import MatchBox from './MatchBox'
 import { useMatches } from '../../hooks/useMatches'
@@ -237,7 +237,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             {/* GONZALO — smaller first name */}
             <Text
               ref={gonzaloRef}
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={{ base: '30vw', md: '10vw', lg: '12.5vw' }}
               lineHeight="0.85"
               letterSpacing={{ base: '0.1em', md: '0.35em' }}
@@ -258,7 +258,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   key={i}
                   ref={(el) => (bgLettersRef.current[i] = el)}
                   as="span"
-                  fontFamily="'Bebas Neue', sans-serif"
+                  fontFamily="heading"
                   fontSize={{ base: '60vw', md: '18vw', lg: '40vw' }}
                   lineHeight="0.88"
                   color="transparent"
@@ -298,7 +298,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             overflow="hidden"
           >
             <Text      
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={{ base: '16vw', md: '10vw', lg: '8vw' }}
               lineHeight="0.85"
               letterSpacing={{ base: '0.2em', md: '0.35em' }}
@@ -315,7 +315,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   key={i}
                   ref={(el) => { lettersRef.current[i] = el }}
                   as="span"
-                  fontFamily="'Bebas Neue', sans-serif"
+                  fontFamily="heading"
                   fontSize={{ base: '52vw', md: '18vw', lg: '20vw' }}
                   lineHeight="0.88"
                   letterSpacing={{ base: '14px', md: '30px' }}
@@ -380,7 +380,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <HoverFloat intensity={1.2}>
               <Box ref={numberRef}>
                 <Text
-                  fontFamily="'Bebas Neue', sans-serif"
+                  fontFamily="heading"
                   fontSize={{ md: '120px', lg: '160px' }}
                   lineHeight="0.85"
                   color="transparent"
@@ -436,7 +436,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             gap={3}
           >
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize="60px"
               lineHeight="0.78"
               color="transparent"
@@ -476,7 +476,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   objectFit="contain"
                 />
                 <Text
-                  fontFamily="'Bebas Neue', sans-serif"
+                  fontFamily="heading"
                   fontSize="14px"
                   letterSpacing="0.04em"
                   color="white"
@@ -568,7 +568,7 @@ function MiniStat({ label, value, accent, logo }) {
           />
         )}
         <Text
-          fontFamily="'Bebas Neue', sans-serif"
+          fontFamily="heading"
           fontSize="22px"
           letterSpacing="0.05em"
           color={accent ? 'brand.blue' : 'white'}

@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
 import AdminPage from './pages/AdminPage.jsx'
 import theme from './theme.js'
+import './styles/nippo.css'
 import './styles/globals.css'
 
 import Lenis from 'lenis'

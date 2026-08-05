@@ -57,7 +57,7 @@ export default function ContactSection() {
             # REDES
           </Text>
           <Text
-            fontFamily="'Bebas Neue', sans-serif"
+            fontFamily="heading"
             fontSize={{ base: '52px', md: '80px', lg: '100px' }}
             lineHeight="0.9"
             letterSpacing="0.02em"
@@ -142,7 +142,7 @@ export default function ContactSection() {
                     {social.label}
                   </Text>
                   <Text
-                    fontFamily="'Bebas Neue', sans-serif"
+                    fontFamily="heading"
                     fontSize={{ base: '32px', md: '42px' }}
                     lineHeight="1"
                     letterSpacing="0.02em"
@@ -242,7 +242,7 @@ export default function ContactSection() {
                     {contact.title}
                   </Text>
                   <Text
-                    fontFamily="'Bebas Neue', sans-serif"
+                    fontFamily="heading"
                     fontSize={{ base: '32px', md: '42px' }}
                     lineHeight="1"
                     letterSpacing="0.02em"
@@ -302,7 +302,7 @@ export default function ContactSection() {
                 Representante de Marketing
               </Text>
               <Text
-                fontFamily="'Bebas Neue', sans-serif"
+                fontFamily="heading"
                 fontSize={{ base: '36px', md: '56px' }}
                 lineHeight="0.9"
                 letterSpacing="0.02em"

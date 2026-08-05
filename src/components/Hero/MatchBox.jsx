@@ -2,7 +2,7 @@ import { Box, Flex, Text, Image, VStack } from '@chakra-ui/react'
 
 // ─── MATCH BOX ───────────────────────────────────────────────────
 // Caja del Hero: "Último Resultado" + "Próximo Partido".
-// Sigue la línea visual de la web (Bebas Neue / Barlow Condensed,
+// Sigue la línea visual de la web (Nippo / Barlow Condensed,
 // azul Cruz Azul, bordes finos, esquinas rectas).
 //
 // variant="card"  → tarjeta vertical (desktop, flotante a la derecha)
@@ -86,7 +86,7 @@ function MatchRow({ match, kind, compact }) {
         <Box textAlign="center" px={1} flexShrink={0}>
           {isResult && hasScore ? (
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={compact ? '28px' : '34px'}
               lineHeight="0.9"
               color="white"
@@ -100,7 +100,7 @@ function MatchRow({ match, kind, compact }) {
             </Text>
           ) : (
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={compact ? '22px' : '26px'}
               lineHeight="0.9"
               color="whiteAlpha.500"

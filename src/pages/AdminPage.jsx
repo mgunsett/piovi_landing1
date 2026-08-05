@@ -212,7 +212,7 @@ function MatchForm({ slot, title, accent, showScore, initial }) {
       }}
     >
       <Text
-        fontFamily="'Bebas Neue', sans-serif"
+        fontFamily="heading"
         fontSize="24px"
         letterSpacing="0.04em"
         color="white"
@@ -388,7 +388,7 @@ function LoginForm({ onLogin }) {
         }}
       >
         <Text
-          fontFamily="'Bebas Neue', sans-serif"
+          fontFamily="heading"
           fontSize="34px"
           color="white"
           letterSpacing="0.04em"
@@ -464,7 +464,7 @@ function NotConfigured() {
   return (
     <Flex minH="100vh" align="center" justify="center" bg={PAGE_BG} px={4}>
       <Box maxW="520px" textAlign="center">
-        <Text fontFamily="'Bebas Neue', sans-serif" fontSize="40px" color="white">
+        <Text fontFamily="heading" fontSize="40px" color="white">
           Falta configurar Supabase
         </Text>
         <Text fontFamily="'Barlow', sans-serif" color="whiteAlpha.700" mt={3} lineHeight="1.7">
@@ -530,7 +530,7 @@ export default function AdminPage() {
         {/* Header */}
         <Flex align="center" justify="space-between" mb={2} wrap="wrap" gap={3}>
           <Box>
-            <Text fontFamily="'Bebas Neue', sans-serif" fontSize="40px" lineHeight="1" letterSpacing="0.03em">
+            <Text fontFamily="heading" fontSize="40px" lineHeight="1" letterSpacing="0.03em">
               PANEL DE PARTIDOS
             </Text>
             <Text fontFamily="'Barlow Condensed', sans-serif" fontSize="12px" letterSpacing="0.16em" textTransform="uppercase" color="whiteAlpha.500">
