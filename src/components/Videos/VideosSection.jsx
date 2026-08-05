@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Flex, Text, Button } from '@chakra-ui/react'
+import { Box, Flex, Text, Button, AspectRatio } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -135,8 +135,8 @@ function PlayButton({ onClick }) {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      w="clamp(64px, 7vw, 96px)"
-      h="clamp(64px, 7vw, 96px)"
+      w="clamp(50px, 7vw, 96px)"
+      h="clamp(50px, 7vw, 96px)"
       borderRadius="50%"
       border="1.5px solid"
       borderColor={hovered ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)'}
@@ -284,7 +284,15 @@ export default function VideosSection() {
       pt={{ base: 40, md: 0 }}
       pb={{ base: 8, md: 0 }}
     >
-      
+      {/* ── Decorative elements ── */}
+      <Box position="absolute" top="10%" left="-120px" w="500px" h="500px"
+        bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
+      <Box position="absolute" bottom="15%" right="-80px" w="400px" h="400px"
+        bg="radial-gradient(ellipse, rgba(0,87,184,0.05) 0%, transparent 70%)"
+        pointerEvents="none"
+      />
 
       {/* ── Header ── */}
       <Box
@@ -348,13 +356,11 @@ export default function VideosSection() {
           mx="auto"
           sx={{ clipPath: 'inset(0 100% 0 0)', willChange: 'clip-path' }}
         >
-        {/* 16:9 frame — cover by default, video fragments on hover, full video on click */}
+        {/* Frame responsive — vertical (3:4) en mobile, panorámico (16:8.5)
+            en desktop. AspectRatio estira su hijo a pantalla completa. */}
+        <AspectRatio ratio={{ base: 3 / 4, md: 16 / 8.5 }} w="100%">
         <Box
-          position="relative"
-          w="100%"
-          sx={{ paddingTop: '56.25%' }}
           bg="#050810"
-          overflow="hidden"
           cursor="pointer"
           role="button"
           aria-label={`Reproducir ${video.title}`}
@@ -425,7 +431,7 @@ export default function VideosSection() {
             <PlayButton onClick={() => setModalOpen(true)} />
           </Box>
 
-          {/* Dynamic hint */}
+          {/* Dynamic hint
           <Box
             position="absolute" bottom={6} left="50%"
             transform="translateX(-50%)"
@@ -447,8 +453,9 @@ export default function VideosSection() {
                 {isHovering ? 'Click para ver completo' : 'Pasá el cursor para previsualizar'}
               </Text>
             </motion.div>
-          </Box>
+          </Box> */}
         </Box>
+        </AspectRatio>
 
         {/* ── Redesigned bottom frame bar ── */}
         <Box position="relative" h="3px" w="100%" overflow="hidden" bg="rgba(255,255,255,0.05)">

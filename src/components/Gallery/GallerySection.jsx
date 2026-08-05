@@ -42,7 +42,7 @@ function ArrowBtn({ direction, onClick, disabled }) {
       _focus={{ outline: 'none' }}
       aria-label={direction === 'prev' ? 'Anterior' : 'Siguiente'}
     >
-      {direction === 'prev' ? '←' : '→'}
+      {direction === 'prev' ? '<' : '>'}
     </Box>
   )
 }
@@ -106,20 +106,13 @@ function Slide({ item, pos, onClick, isMobile }) {
         >
           <Box w="28px" h="1px" bg="brand.blue" mb={2} />
           <Text
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="9px" fontWeight="700"
-            letterSpacing="0.28em" textTransform="uppercase"
-            color="brand.blue" mb={1}
+            fontFamily="'Bebas Neue', sans-serif"
+            fontSize="24px"
+            letterSpacing="0.08em"
+            color="white"
           >
-            {item.category}
-          </Text>
-          <Text
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize={{ base: '12px', md: '15px' }}
-            fontWeight="600" letterSpacing="0.05em"
-            color="white" lineHeight="1.3"
-          >
-            {item.caption}
+            GP
+            <Box as="span" color="brand.blue" ml="1px">_</Box>
           </Text>
         </Box>
       )}
@@ -354,8 +347,11 @@ export default function GallerySection() {
       justifyContent="center"
       py={{ base: 16, md: 0 }}
     >
-    
-
+      {/* ── Decorative bg ── */}
+      <Box position="absolute" top="0" right="-80px" w="500px" h="500px"
+        bg="radial-gradient(ellipse, rgba(0,87,184,0.07) 0%, transparent 70%)" pointerEvents="none" />
+      <Box position="absolute" bottom="10%" left="-80px" w="400px" h="400px"
+        bg="radial-gradient(ellipse, rgba(0,87,184,0.05) 0%, transparent 70%)" pointerEvents="none" />
       {/* Edge fades — clips side slides cleanly */}
       <Box position="absolute" top={0} left={0} h="100%" w={{ base: '24px', md: '80px' }} zIndex={4} pointerEvents="none"
         bg="linear-gradient(to right, #080C12 0%, rgba(8,12,18,0) 100%)" />

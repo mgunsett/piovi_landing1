@@ -56,7 +56,7 @@ export default function Footer() {
         >
           <Text
             fontFamily="'Bebas Neue', sans-serif"
-            fontSize="24px"
+            fontSize="40px"
             letterSpacing="0.08em"
             color="white"
           >

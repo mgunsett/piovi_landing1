@@ -4,8 +4,8 @@
 // El AdminPage edita la versión en la nube; esto solo evita que el
 // Hero quede vacío en el primer render o sin backend.
 
-import escudoCruzAzul from '../assets/escudos/cruzazul.png'
-import escudoRival from '../assets/escudos/racing.png'
+import escudoCruzAzul from '../assets/escudos/cruzazul.webp'
+import escudoRival from '../assets/escudos/racing.webp'
 
 // Estructura de un partido:
 //   home / away → { name, shield }   (home = LOCAL, away = VISITANTE)

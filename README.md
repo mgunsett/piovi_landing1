@@ -1,116 +1,40 @@
-# 🔵 Gonzalo Piovi — Landing Page
+# Gonzalo Piovi - Landing Page Profesional
 
-Landing profesional para jugador de fútbol, construida con React + Vite + Chakra UI + GSAP + Framer Motion.
+Una landing page moderna y animada construida con **React** + **Vite**, diseñada para cautivar y conectar con la audiencia del equipo. Presenta un diseño inmersivo con animaciones fluidas, galería multimedia y estadísticas en tiempo real.
 
----
+## ✨ Características
 
-## 🚀 Setup
+- **Animaciones avanzadas**: Efectos cinemáticos y transiciones suaves con Framer Motion y GSAP
+- **Diseño responsivo**: Interfaz adaptable a todos los dispositivos gracias a Chakra UI
+- **Galería multimedia**: Fotos y videos integrados dinámicamente
+- **Estadísticas en vivo**: Datos sincronizados desde Supabase
+- **Performance optimizado**: Build con Vite para carga ultrarrápida
+- **Deploy automático**: Integración continua con Vercel
 
-```bash
-npm install
-npm run dev
-```
+## 🛠 Stack Técnico
 
----
+- **Frontend**: React 18, Vite
+- **Styling**: Chakra UI, Framer Motion, GSAP
+- **Backend**: Supabase (Base de datos y autenticación)
+- **Deploy**: Vercel
+- **Package Manager**: pnpm
 
-## 📁 Estructura del proyecto
+
+## 📁 Estructura del Proyecto
 
 ```
 src/
-├── components/
-│   ├── Hero/
-│   │   └── Hero.jsx              # Tipografía mega + foto flotante + marquee
-│   ├── Transition/
-│   │   └── CinematicTransition.jsx  # Scroll pinned + cambio de fondo animado
-│   ├── Stats/
-│   │   └── StatsSection.jsx      # Ficha técnica + barras animadas + clubes
-│   ├── Videos/
-│   │   └── VideosSection.jsx     # Grid videos con preview hover + modal
-│   ├── Press/
-│   │   └── PressSection.jsx      # Tarjetas de prensa + marquee de medios
-│   ├── Contact/
-│   │   └── ContactSection.jsx    # Form de contacto + redes sociales
-│   └── UI/
-│       ├── Navbar.jsx
-│       ├── Footer.jsx
-│       └── CustomCursor.jsx
-├── data/
-│   └── playerData.js             # ← EDITAR AQUÍ los datos del jugador
-├── styles/
-│   └── globals.css
-├── App.jsx
-├── main.jsx
-└── theme.js                      # Paleta de colores Chakra UI
+├── components/      # Componentes reutilizables
+├── pages/           # Páginas de la aplicación
+├── data/            # Datos estáticos y dinámicos
+├── hooks/           # Custom hooks
+├── lib/             # Configuraciones (Supabase, etc)
+├── assets/          # Imágenes y multimedia
+├── styles/          # CSS global
+└── App.jsx          # Componente raíz
 ```
 
 ---
 
-## ⚙️ Personalización
+**Desplegado en**: [Vercel](https://vercel.com)
 
-### Datos del jugador
-Editar `src/data/playerData.js`:
-- Nombre, posición, stats
-- Historial de clubes con colores
-- Videos (src y previewSrc)
-- Links de prensa
-
-### Imagen del jugador
-Colocar la imagen en `public/player.png` (fondo transparente recomendado).
-Luego en `App.jsx` cambiar `PLAYER_IMAGE` al path correcto.
-
-### Logos de clubes
-Colocar en `public/logos/`:
-- `cruzazul.png`
-- `racing.png`
-- `colon.png`
-- `union.png`
-
-### Videos
-Colocar en `public/videos/`:
-- `highlight1.mp4` — video completo
-- `preview1.mp4` — clip corto (5-8 segundos, sin audio)
-- Repetir para cada video
-
-### Colores del tema
-Editar `src/theme.js`:
-```js
-brand: {
-  blue: '#0057B8',   // Azul Cruz Azul
-  bone: '#F5F0E8',   // Fondo transición hueso
-  gold: '#C9A84C',   // Acento dorado
-}
-```
-
----
-
-## 🎨 Secciones
-
-| # | Sección | Tecnología clave |
-|---|---------|-----------------|
-| 01 | Hero | GSAP stagger letters + CSS float animation |
-| 02 | Cinematic Transition | GSAP ScrollTrigger pin + color interpolation |
-| 03 | Stats & Perfil | GSAP ScrollTrigger + animated bars |
-| 04 | Videos | GSAP 3D tilt + Chakra Modal + video preview |
-| 05 | Prensa | GSAP stagger + marquee de medios |
-| 06 | Contacto | Framer Motion form + GSAP scroll reveal |
-
----
-
-## 🗓️ Roadmap (próximas fases)
-
-- [ ] Panel de Admin (cambio de imágenes, videos, colores, tema)
-- [ ] Integración EmailJS para el formulario de contacto
-- [ ] Galería de fotos en lightbox
-- [ ] Soporte multilingual (ES / EN)
-- [ ] SEO y Open Graph tags
-- [ ] Analytics integration
-
----
-
-## 🛠️ Stack técnico
-
-- **React 18** + **Vite**
-- **Chakra UI v2** — sistema de diseño
-- **GSAP 3** + **ScrollTrigger** — animaciones de scroll
-- **Framer Motion** — transiciones de UI
-- Fuentes: **Bebas Neue** (display) + **Barlow Condensed** + **Barlow** (body)

@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { Box, Grid, Text, Flex, Icon } from '@chakra-ui/react'
+import { Box, Grid, Text, Flex, Icon, Image } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import playerData from '../../data/playerData.js'
@@ -93,17 +93,38 @@ export default function ContactSection() {
                     <Icon
                       as={social.icon}
                       position="absolute"
-                      right="-5%"
+                      right={{base:'-10%',md:"-5%"}}
                       top="50%"
                       transform="translateY(-50%)"
-                      fontSize={{ base: '160px', md: '230px' }}
-                      color="whiteAlpha.50"
+                      fontSize={{ base: '150px', md: '230px' }}
+                      // opacity={{base:0.65, md:'none'}}
+                      color={{base: "whiteAlpha.100" ,md:"whiteAlpha.50"}}
                       zIndex={0}
                       pointerEvents="none"
                       userSelect="none"
                       aria-hidden
                       transition="color 0.4s ease"
-                      _groupHover={{ color: social.hoverColor }}
+                      _groupHover={{ color: social.hoverColor, opacity: 0.85 }}
+                    />
+                  )}
+                  {social.image && (
+                    <Image
+                      src={social.image}
+                      position="absolute"
+                      right="5%"
+                      top="50%"
+                      transform="translateY(-50%)"
+                      w={{ base: '160px', md: '260px' }}
+                      h="auto"
+                      opacity={0.07}
+                      filter="grayscale(1) brightness(1.5)"
+                      objectFit="contain"
+                      zIndex={0}
+                      pointerEvents="none"
+                      userSelect="none"
+                      aria-hidden
+                      transition="opacity 0.4s ease, filter 0.4s ease"
+                      _groupHover={{ opacity: 0.22    , filter: 'grayscale(0) brightness(1)' }}
                     />
                   )}
                   
@@ -172,17 +193,38 @@ export default function ContactSection() {
                     <Icon
                       as={contact.icon}
                       position="absolute"
-                      right="-5%"
+                      right={{base:'-10%',md:"-5%"}}
                       top="50%"
                       transform="translateY(-50%)"
-                      fontSize={{ base: '160px', md: '200px' }}
-                      color="whiteAlpha.50"
+                      fontSize={{ base: '140px', md: '200px' }}
+                      color={{base: 'whiteAlpha.100',md:"whiteAlpha.50"}}
+                      opacity={{base:0.65, md:"none"}}
                       zIndex={0}
                       pointerEvents="none"
                       userSelect="none"
                       aria-hidden
                       transition="color 0.4s ease"
-                      _groupHover={{ color: contact.hoverColor }}
+                      _groupHover={{ color: contact.hoverColor , opacity: 0.85}}
+                    />
+                  )}
+                  {contact.image && (
+                    <Image
+                      src={contact.image}
+                      position="absolute"
+                      right={{base:"-5%", md:"-1%"}}
+                      top="50%"
+                      transform="translateY(-50%)"
+                      w={{ base: '125px', md: '180px' }}
+                      h="auto"
+                      opacity={0.20}
+                      filter={"grayscale(1) brightness(1.5)"}
+                      objectFit="contain"
+                      zIndex={0}
+                      pointerEvents="none"
+                      userSelect="none"
+                      aria-hidden
+                      transition="opacity 0.4s ease, filter 0.4s ease"
+                      _groupHover={{ opacity: 0.68, filter: 'grayscale(0) brightness(1)' }}
                     />
                   )}
                   

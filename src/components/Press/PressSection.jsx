@@ -141,7 +141,7 @@ export default function PressSection() {
       id="press"
       bg="#0A0E16"
       pt={{ base: 20, md: 32 }}
-      pb={10}
+      pb={{base: 6, md: 8}}
       px={{ base: 6, md: 12, lg: 20 }}
       position="relative"
       overflow="hidden"
@@ -183,23 +183,12 @@ export default function PressSection() {
       {/* Media logos marquee */}
       <Box
         borderTop="1px solid rgba(255,255,255,0.05)"
-        pt={6}
+        p={4}
         overflow="hidden"
       >
-        <Text
-          fontFamily="'Barlow Condensed', sans-serif"
-          fontSize="10px"
-          fontWeight="700"
-          letterSpacing="0.3em"
-          textTransform="uppercase"
-          color="whiteAlpha.300"
-          textAlign="center"
-          mb={6}
-        >
-          Presente en los principales medios
-        </Text>
+        
 
-        <Box display="flex" overflow="hidden">
+        <Box display="flex" overflow="hidden" mt={4}>
           <Box className="marquee-track" display="flex" gap={12} whiteSpace="nowrap">
             {mediaLogos.map((logo, i) => (
               <Text

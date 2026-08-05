@@ -1,30 +1,36 @@
 // ─── DATOS DEL JUGADOR ───────────────────────────────────────
 
-//Foto Principal
-import pioviImage from '../assets/piovi2.png'
+//Foto Principal 
+import pioviImage from '../assets/piovi4.svg'
+import logoMkt from '../assets/logoMkt.webp'
 
 //Gallery Photos
-import photo1 from '../assets/galleryPhotos/photo1.jpg'
-import photo2 from '../assets/galleryPhotos/photo2.jpg'
-import photo3 from '../assets/galleryPhotos/photo3.jpg'
-import photo4 from '../assets/galleryPhotos/photo4.jpg'
+import photo1 from '../assets/galleryPhotos/photo1.webp'
+import photo2 from '../assets/galleryPhotos/photo2.webp'
+import photo3 from '../assets/galleryPhotos/photo3.webp'
+import photo4 from '../assets/galleryPhotos/photo4.webp'
 import photo5 from '../assets/galleryPhotos/photo5.webp'
 import photo6 from '../assets/galleryPhotos/photo6.webp'
 import photo7 from '../assets/galleryPhotos/photo7.webp'
 import photo8 from '../assets/galleryPhotos/photo8.webp'
-import photo9 from '../assets/photo9.jpg'
+import photo9 from '../assets/galleryPhotos/photo9.webp'
+import photo10 from '../assets/galleryPhotos/photo10.webp'
+import photo11 from '../assets/galleryPhotos/photo11.webp'
+import photo12 from '../assets/galleryPhotos/photo12.webp'
+import photo13 from '../assets/galleryPhotos/photo13.webp'
 
 //Videos
 import video1 from '../assets/galleryVideos/video1.mp4'
+import photoVideo from '../assets/piovi3.webp'
 
 //Escudos 
-import escudoCruzAzul from '../assets/escudos/cruzazul.png'
-import escudoRacing from '../assets/escudos/racing.png'
-import escudoColon from '../assets/escudos/colon.png'
-import escudoArgentinos from '../assets/escudos/argentinos.png'
-import escudoVelez from '../assets/escudos/velez.png'
-import escudoDefensa from '../assets/escudos/defensa.png'
-import escudoGimnasia from '../assets/escudos/gimnasia.png'
+import escudoCruzAzul from '../assets/escudos/cruzazul.webp'
+import escudoRacing from '../assets/escudos/racing.webp'
+import escudoColon from '../assets/escudos/colon.webp'
+import escudoArgentinos from '../assets/escudos/argentinos.webp'
+import escudoVelez from '../assets/escudos/velez.webp'
+import escudoDefensa from '../assets/escudos/defensa.webp'
+import escudoGimnasia from '../assets/escudos/gimnasia.webp'
 
 //Icons
 import { FaInstagram, FaEnvelope } from 'react-icons/fa'
@@ -131,10 +137,10 @@ export const playerData = {
   videos: [
     {
       id: 1,
-      title: 'Cruz Azul Temporada 2026',
+      title: "Temporada",
       duration: '3:42',
       thumbnail: video1,
-      cover: photo9,          // foto de portada del video (acción en cancha)
+      cover: photoVideo,          // foto de portada del video (acción en cancha)
       src: video1,
       previewSrc: video1,
       category: 'Highlights',
@@ -169,14 +175,20 @@ export const playerData = {
 
   // Galería de fotos — colocar archivos reales en src/assets/galleryPhotos/
   gallery: [
-    { id: 1, src: photo8, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',   caption: 'Final - Liga MX Clausura 2026', category: 'Festejo', aspect: 'tall'   },
-    { id: 2, src: photo7, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',             caption: 'Entrenamiento · Ciudad Deportiva · Cruz Azul', category: 'Afición', aspect: 'wide'   },
-    { id: 3, src: photo6, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',               caption: 'Campeón - Liga MX Clausura 2026', category: 'Partido', aspect: 'square' },
-    { id: 4, src: photo5, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',                caption: 'Final - Liga MX Clausura 2026', category: 'Partido', aspect: 'tall'   },
-    { id: 5, src: photo4, alt: 'Piovi levanta el trofeo sentado en el trono dorado tras el título de Clausura 2025',  caption: 'Campeón - Liga MX Clausura 2026', category: 'Festejo', aspect: 'tall'   },
-    { id: 6, src: photo3, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',                              caption: 'Semifinal · Cruz Azul vs Chivas · Liga MX 2026', category: 'Partido', aspect: 'wide'   },
-    { id: 7, src: photo2, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',             caption: 'Semifinal · Cruz Azul vs Chivas · Liga MX 2026', category: 'Equipo', aspect: 'square' },
-    { id: 8, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028', caption: 'Renovación de contrato hasta 2028 · Cruz Azul', category: 'Renovación', aspect: 'tall'   },
+    { id: 1, src: photo9, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',aspect: 'tall' },
+    { id: 2, src: photo2, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',aspect: 'wide' },
+    { id: 3, src: photo3, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',aspect: 'square' },
+    { id: 4, src: photo4, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',aspect: 'tall' },
+    { id: 5, src: photo5, alt: 'Piovi levanta el trofeo sentado en el trono dorado tras el título de Clausura 2025',aspect: 'tall' },
+    { id: 6, src: photo6, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',aspect: 'wide' },
+    { id: 7, src: photo7, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',aspect: 'square' },
+    { id: 8, src: photo8, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 9, src: photo11, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 10, src: photo10, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 11, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 12, src: photo12, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+    { id: 13, src: photo13, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
+
   ],
 
   socialMedia: [
@@ -185,7 +197,7 @@ export const playerData = {
 
   contact: [
     { title: 'Representante Deportivo', label: 'DODICI Sports',    icon: FaEnvelope,  handle: '@dodici_sm', url: 'https://www.instagram.com/dodici_sm/', hoverColor: 'rgba(0, 87, 184, 0.4)' },
-    { title: 'Estadísticas', label: 'TransferMarkt', icon: IoMdStats,  handle: '@pioviprofile', url: 'https://www.transfermarkt.es/gonzalo-piovi/profil/spieler/284120', hoverColor: 'rgba(138, 211, 207, 0.53)' },
+    { title: 'Estadísticas', label: 'TransferMarkt', image: logoMkt,  handle: '@pioviprofile', url: 'https://www.transfermarkt.es/gonzalo-piovi/profil/spieler/284120', hoverColor: 'rgba(138, 211, 207, 0.53)' },
   ],
 
 
