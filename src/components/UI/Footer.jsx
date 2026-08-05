@@ -55,7 +55,7 @@ export default function Footer() {
           style={{ textDecoration: 'none' }}
         >
           <Text
-            fontFamily="'Bebas Neue', sans-serif"
+            fontFamily="heading"
             fontSize="40px"
             letterSpacing="0.08em"
             color="white"

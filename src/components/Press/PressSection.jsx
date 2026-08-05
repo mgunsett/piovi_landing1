@@ -160,7 +160,7 @@ export default function PressSection() {
           Medios
         </Text>
         <Text
-          fontFamily="'Bebas Neue', sans-serif"
+          fontFamily="heading"
           fontSize={{ base: '52px', md: '80px', lg: '100px' }}
           lineHeight="0.9"
           letterSpacing="0.02em"
@@ -194,7 +194,7 @@ export default function PressSection() {
               <Text
                 key={i}
                 as="span"
-                fontFamily="'Bebas Neue', sans-serif"
+                fontFamily="heading"
                 fontSize="18px"
                 letterSpacing="0.1em"
                 color="whiteAlpha.200"
@@ -206,7 +206,7 @@ export default function PressSection() {
               <Text
                 key={`b-${i}`}
                 as="span"
-                fontFamily="'Bebas Neue', sans-serif"
+                fontFamily="heading"
                 fontSize="18px"
                 letterSpacing="0.1em"
                 color="whiteAlpha.200"

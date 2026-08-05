@@ -1,36 +1,42 @@
 // ─── DATOS DEL JUGADOR ───────────────────────────────────────
 
 //Foto Principal 
-import pioviImage from '../assets/piovi4.svg'
-import logoMkt from '../assets/logoMkt.webp'
+import pioviImage from '@assets/piovi4.svg'
+import logoMkt from '@assets/logoMkt.webp'
 
 //Gallery Photos
-import photo1 from '../assets/galleryPhotos/photo1.webp'
-import photo2 from '../assets/galleryPhotos/photo2.webp'
-import photo3 from '../assets/galleryPhotos/photo3.webp'
-import photo4 from '../assets/galleryPhotos/photo4.webp'
-import photo5 from '../assets/galleryPhotos/photo5.webp'
-import photo6 from '../assets/galleryPhotos/photo6.webp'
-import photo7 from '../assets/galleryPhotos/photo7.webp'
-import photo8 from '../assets/galleryPhotos/photo8.webp'
-import photo9 from '../assets/galleryPhotos/photo9.webp'
-import photo10 from '../assets/galleryPhotos/photo10.webp'
-import photo11 from '../assets/galleryPhotos/photo11.webp'
-import photo12 from '../assets/galleryPhotos/photo12.webp'
-import photo13 from '../assets/galleryPhotos/photo13.webp'
+import image1 from '@assets/galleryPhotos/image1.webp'
+import image2 from '@assets/galleryPhotos/image2.webp'
+import image3 from '@assets/galleryPhotos/image3.webp'
+import image4 from '@assets/galleryPhotos/image4.webp'
+import image5 from '@assets/galleryPhotos/image5.webp'
+import image6 from '@assets/galleryPhotos/image6.webp'
+import image7 from '@assets/galleryPhotos/image7.webp'
+import image8 from '@assets/galleryPhotos/image8.webp'
+import image9 from '@assets/galleryPhotos/image9.webp'
+import image10 from '@assets/galleryPhotos/image10.webp'
+import image11 from '@assets/galleryPhotos/image11.webp'
+import image12 from '@assets/galleryPhotos/image12.webp'
+import image13 from '@assets/galleryPhotos/image13.webp'
+import image14 from '@assets/galleryPhotos/image14.webp'
+import image15 from '@assets/galleryPhotos/image15.webp'
+import image16 from '@assets/galleryPhotos/image16.webp'
+import image17 from '@assets/galleryPhotos/image17.webp'
+import image18 from '@assets/galleryPhotos/image18.webp'
+import image19 from '@assets/galleryPhotos/image19.webp'
 
 //Videos
-import video1 from '../assets/galleryVideos/video1.mp4'
-import photoVideo from '../assets/piovi3.webp'
+import video1 from '@assets/galleryVideos/video1.mp4'
+import photoVideo from '@assets/piovi3.webp'
 
 //Escudos 
-import escudoCruzAzul from '../assets/escudos/cruzazul.webp'
-import escudoRacing from '../assets/escudos/racing.webp'
-import escudoColon from '../assets/escudos/colon.webp'
-import escudoArgentinos from '../assets/escudos/argentinos.webp'
-import escudoVelez from '../assets/escudos/velez.webp'
-import escudoDefensa from '../assets/escudos/defensa.webp'
-import escudoGimnasia from '../assets/escudos/gimnasia.webp'
+import escudoCruzAzul from '@assets/escudos/cruzazul.webp'
+import escudoRacing from '@assets/escudos/racing.webp'
+import escudoColon from '@assets/escudos/colon.webp'
+import escudoArgentinos from '@assets/escudos/argentinos.webp'
+import escudoVelez from '@assets/escudos/velez.webp'
+import escudoDefensa from '@assets/escudos/defensa.webp'
+import escudoGimnasia from '@assets/escudos/gimnasia.webp'
 
 //Icons
 import { FaInstagram, FaEnvelope } from 'react-icons/fa'
@@ -86,7 +92,7 @@ export const playerData = {
       country: 'México',
       years: '2024 — Presente',
       logo: escudoCruzAzul,
-      titles: ['Campeones Concacaf 2025', 'Liga MX Clausura 2026'],
+      titles: ['Campeon de Campeones \'26', 'Liga MX Clausura \'26', 'Campeones Concacaf \'25'],
     },
     {
       name: 'Racing Club',
@@ -173,22 +179,27 @@ export const playerData = {
     },
   ],
 
-  // Galería de fotos — colocar archivos reales en src/assets/galleryPhotos/
+  // Galería de fotos — colocar archivos reales en assets/galleryPhotos/
   gallery: [
-    { id: 1, src: photo9, alt: 'Piovi celebra el título rodeado de su familia tras ganar La Final · Clausura 2025',aspect: 'tall' },
-    { id: 2, src: photo2, alt: 'Piovi firmando autógrafos a hinchas de Cruz Azul en la Ciudad Deportiva',aspect: 'wide' },
-    { id: 3, src: photo3, alt: 'Piovi concentrado en la formación previa a La Final del Clausura 2025',aspect: 'square' },
-    { id: 4, src: photo4, alt: 'Piovi conduce el balón con la camiseta alternativa gris de Cruz Azul',aspect: 'tall' },
-    { id: 5, src: photo5, alt: 'Piovi levanta el trofeo sentado en el trono dorado tras el título de Clausura 2025',aspect: 'tall' },
-    { id: 6, src: photo6, alt: 'Piovi #33 en acción con el balón ante Chivas · Liga MX',aspect: 'wide' },
-    { id: 7, src: photo7, alt: 'El plantel de Cruz Azul forma un círculo motivacional antes del partido',aspect: 'square' },
-    { id: 8, src: photo8, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 9, src: photo11, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 10, src: photo10, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 11, src: photo1, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 12, src: photo12, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-    { id: 13, src: photo13, alt: 'Presentación oficial de Piovi como jugador de Cruz Azul mostrando su camiseta 2028',  aspect: 'tall' },
-
+    { id: 1, src: image1, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 2, src: image2, alt: 'Gonzalo Piovi', aspect: 'wide' },
+    { id: 3, src: image3, alt: 'Gonzalo Piovi', aspect: 'square' },
+    { id: 4, src: image4, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 5, src: image5, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 6, src: image6, alt: 'Gonzalo Piovi', aspect: 'wide' },
+    { id: 7, src: image7, alt: 'Gonzalo Piovi', aspect: 'square' },
+    { id: 8, src: image8, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 9, src: image9, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 10, src: image10, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 11, src: image11, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 12, src: image12, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 13, src: image13, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 14, src: image14, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 15, src: image15, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 16, src: image16, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 17, src: image17, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 18, src: image18, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 19, src: image19, alt: 'Gonzalo Piovi', aspect: 'tall' },
   ],
 
   socialMedia: [
@@ -201,13 +212,6 @@ export const playerData = {
   ],
 
 
-  // ─── MARQUEE DATA ────────────────────────────────────────────────
-  marqueeItems: [
-    'Cruz Azul', '·', 'Defensor', '·', 'Buenos Aires', '·', 'Argentina', '·',
-    '#33', '·', 'Liga MX', '·', 'Zurdo', '·', '1.81m', '·',
-    'Cruz Azul', '·', 'Defensor', '·', 'Buenos Aires',  '·', 'Argentina', '·',
-    '#33', '·', 'La Máquina', '·', 'Liga MX', '·', 'Zurdo', '·', '1.81m', '·',
-  ],
 }
 
 export default playerData

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
-import piovi4 from '../../assets/piovi4.svg'
+import piovi4 from '@assets/piovi4.svg'
 import { playerData } from '../../data/playerData'
 import MatchBox from './MatchBox'
 import { useMatches } from '../../hooks/useMatches'
@@ -215,21 +215,22 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           {/* Ghost name block: GONZALO (small) above PIOVI (huge) */}
           <Box
             position="absolute"
-            bottom={{ base: '360px', md: '-10px' }}
+            bottom={{ base: '360px', md: '120px' }}
             left={{ base: 2, md: '0' }}
             right="0"
             display="flex"
             flexDirection="column"
             alignItems="center"
+            justifyContent="flex-start"
             overflow="hidden"
           >
             {/* GONZALO — smaller first name */}
             <Text
               ref={gonzaloRef}
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={{ base: '30vw', md: '10vw', lg: '12.5vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.1em', md: '0.35em' }}
+              letterSpacing={{ base: '0.1em', md: '0.12em' }}
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.055)' }}
               userSelect="none"
@@ -247,8 +248,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   key={i}
                   ref={(el) => (bgLettersRef.current[i] = el)}
                   as="span"
-                  fontFamily="'Bebas Neue', sans-serif"
-                  fontSize={{ base: '60vw', md: '18vw', lg: '40vw' }}
+                  fontFamily="heading"
+                  fontSize={{ base: '60vw', md: '18vw', lg: '30vw' }}
                   lineHeight="0.88"
                   color="transparent"
                   sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
@@ -283,14 +284,15 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             left={{ base: 2, md: '0' }}
             right="0"
             display="flex"
-            justifyContent="center"
+            justifyContent="flex-start"
             overflow="hidden"
           >
             <Text      
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
+              fontWeight="600"
               fontSize={{ base: '16vw', md: '10vw', lg: '8vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.2em', md: '0.35em' }}
+              letterSpacing={{ base: '0.2em', md: '0.05em' }}
               color="white"
               userSelect="none"
               display={'inline-block'}
@@ -298,16 +300,16 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             >
               {playerData.name.toUpperCase()}
             </Text>
-            <Flex gap={{ base: '0.5vw', md: '3vw' }} align="baseline">
+            <Flex gap={{ base: '0.5vw', md: '30px' }} align="baseline">
               {heroName.split('').map((letter, i) => (
                 <Box
                   key={i}
                   ref={(el) => { lettersRef.current[i] = el }}
                   as="span"
-                  fontFamily="'Bebas Neue', sans-serif"
+                  fontFamily="heading"
+                  fontWeight="600"
                   fontSize={{ base: '52vw', md: '18vw', lg: '20vw' }}
                   lineHeight="0.88"
-                  letterSpacing={{ base: '14px', md: '30px' }}
                   color="white"
                   display="inline-block"
                   userSelect="none"
@@ -362,26 +364,31 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           {/* Left info panel */}
           <Box
             position="absolute"
-            left={{ base: 6, md: 12, lg: 20 }}
-            bottom={{ base: '200px', md: '260px' }}
-            display={{ base: 'none', md: 'block' }}
+            left={{ base: 6, md: 12, lg: '20%' }}
+            bottom={{ base: '200px', md: '17%' }}
+            display={{ base: 'none', md: 'flex' }}
+            justifyContent="flex-start"
+            alignItems="center"
+            gap={3}
           >
-            <Box ref={numberRef}>
-              <Text
-                fontFamily="'Bebas Neue', sans-serif"
-                fontSize={{ md: '120px', lg: '160px' }}
-                lineHeight="0.85"
-                color="transparent"
-                sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.4)' }}
-                mb={4}
-              >
-                {playerData.number}
-              </Text>
-            </Box>
+            <HoverFloat intensity={1.2}>
+              <Box ref={numberRef}>
+                <Text
+                  fontFamily="heading"
+                  fontSize={{ md: '120px', lg: '160px' }}
+                  lineHeight="0.85"
+                  color="transparent"
+                  sx={{ WebkitTextStroke: '1px #2E77D6' }}
+                  mb={4}
+                >
+                  {playerData.number}
+                </Text>
+              </Box>
+            </HoverFloat>
 
-            <Box ref={lineRef} h="1px" w="80px" bg="brand.blue" mb={3} />
+            <Box ref={lineRef} h="110px" w="1px" bg="brand.red"  />
 
-            <Box ref={subtitleRef} display="flex" flexDirection="column" gap={1}>
+            <Box ref={subtitleRef} display="flex" flexDirection="column" mt={'-15px'} gap={1}>
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
                 fontSize="13px"
@@ -404,7 +411,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
               >
                 {playerData.nationalityFlag} {playerData.nationality}
               </Text>
-              <MiniStat label="Club" value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
+              <MiniStat value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
             </Box>
           </Box>
 
@@ -419,7 +426,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             gap={3}
           >
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize="60px"
               lineHeight="0.78"
               color="transparent"
@@ -459,7 +466,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   objectFit="contain"
                 />
                 <Text
-                  fontFamily="'Bebas Neue', sans-serif"
+                  fontFamily="heading"
                   fontSize="14px"
                   letterSpacing="0.04em"
                   color="white"
@@ -475,7 +482,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
               como franja full-width debajo del contenido (ver abajo). */}
           <Box
             position="absolute"
-            right={{ md: 8, lg: 20 }}
+            right={{ md: 8, lg: 8 }}
             bottom={{ md: '36px', lg: '52px' }}
             zIndex={16}
             display={{ base: 'none', md: 'block' }}
@@ -514,11 +521,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           bgGradient="linear(to-b, transparent, #0A0E16)"
         />
 
-        {/* Scroll indicator (desktop only — en mobile la franja de
-            partidos ocupa la base del Hero) */}
-        <Box display={{ base: 'none', md: 'block' }}>
-          <ScrollIndicator />
-        </Box>
+       
       </Box>
     </Box>
   )
@@ -528,9 +531,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
 function MiniStat({ label, value, accent, logo }) {
   return (
-    <VStack spacing={0} align="flex-start">
+    <VStack spacing={0} align="flex-start" mt={'-10px'}>
       <Text
-        fontFamily="'Barlow Condensed', sans-serif"
+        fontFamily="heading"
         fontSize="10px"
         fontWeight="600"
         letterSpacing="0.2em"
@@ -551,11 +554,10 @@ function MiniStat({ label, value, accent, logo }) {
           />
         )}
         <Text
-          fontFamily="'Bebas Neue', sans-serif"
+          fontFamily="heading"
           fontSize="22px"
           letterSpacing="0.05em"
           color={accent ? 'brand.blue' : 'white'}
-          
         >
           {value}
         </Text>

@@ -81,7 +81,7 @@ export default function Navbar() {
           onClick={() => { setMenuOpen(false); scrollToSection('#hero') }}
         >
           <Text
-            fontFamily="'Bebas Neue', sans-serif"
+            fontFamily="heading"
             fontSize="28px"
             letterSpacing="0.08em"
             color="white"
@@ -214,7 +214,7 @@ export default function Navbar() {
                       0{i + 1}
                     </Text>
                     <Text
-                      fontFamily="'Bebas Neue', sans-serif"
+                      fontFamily="heading"
                       fontSize="28px"
                       letterSpacing="0.04em"
                       color="whiteAlpha.800"

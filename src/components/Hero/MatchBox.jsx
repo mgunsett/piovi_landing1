@@ -2,7 +2,7 @@ import { Box, Flex, Text, Image, VStack } from '@chakra-ui/react'
 
 // ─── MATCH BOX ───────────────────────────────────────────────────
 // Caja del Hero: "Último Resultado" + "Próximo Partido".
-// Sigue la línea visual de la web (Bebas Neue / Barlow Condensed,
+// Sigue la línea visual de la web (Nippo / Barlow Condensed,
 // azul Cruz Azul, bordes finos, esquinas rectas).
 //
 // variant="card"  → tarjeta vertical (desktop, flotante a la derecha)
@@ -86,7 +86,7 @@ function MatchRow({ match, kind, compact }) {
         <Box textAlign="center" px={1} flexShrink={0}>
           {isResult && hasScore ? (
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={compact ? '28px' : '34px'}
               lineHeight="0.9"
               color="white"
@@ -100,7 +100,7 @@ function MatchRow({ match, kind, compact }) {
             </Text>
           ) : (
             <Text
-              fontFamily="'Bebas Neue', sans-serif"
+              fontFamily="heading"
               fontSize={compact ? '22px' : '26px'}
               lineHeight="0.9"
               color="whiteAlpha.500"
@@ -164,7 +164,7 @@ export default function MatchBox({ last, next, variant = 'card' }) {
         w="100%"
         bg="linear-gradient(to bottom, rgba(8,12,18,0.55) 0%, rgba(8,12,18,0.92) 100%)"
         backdropFilter="blur(10px)"
-        borderTop="1px solid rgba(0,87,184,0.35)"
+        borderTop="1px solid #E52B44"
         px={4}
         py={4}
       >
@@ -184,9 +184,9 @@ export default function MatchBox({ last, next, variant = 'card' }) {
   // ── Variante CARD (desktop, flotante) ──
   return (
     <Box
-      w={{ base: '260px', md: '300px' }}
+      w={{ base: '260px', md: '320px' }}
       bg="rgba(8,12,18,0.55)"
-      border="1px solid rgba(255,255,255,0.08)"
+      border="1px solid #102A5C"
       backdropFilter="blur(10px)"
       px={5}
       py={5}
@@ -201,7 +201,7 @@ export default function MatchBox({ last, next, variant = 'card' }) {
           left: 0,
           width: '28px',
           height: '2px',
-          background: '#0057B8',
+          background: '#E52B44',
         },
       }}
     >
