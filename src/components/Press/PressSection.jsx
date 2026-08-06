@@ -188,34 +188,7 @@ export default function PressSection() {
       >
         
 
-        <Box display="flex" overflow="hidden" mt={4}>
-          <Box className="marquee-track" display="flex" gap={12} whiteSpace="nowrap">
-            {mediaLogos.map((logo, i) => (
-              <Text
-                key={i}
-                as="span"
-                fontFamily="heading"
-                fontSize="18px"
-                letterSpacing="0.1em"
-                color="whiteAlpha.200"
-              >
-                {logo}
-              </Text>
-            ))}
-            {mediaLogos.map((logo, i) => (
-              <Text
-                key={`b-${i}`}
-                as="span"
-                fontFamily="heading"
-                fontSize="18px"
-                letterSpacing="0.1em"
-                color="whiteAlpha.200"
-              >
-                {logo}
-              </Text>
-            ))}
-          </Box>
-        </Box>
+        
       </Box>
     </Box>
   )

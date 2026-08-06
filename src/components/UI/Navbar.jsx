@@ -1,226 +1,266 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Box, Flex, Text, HStack, VStack } from '@chakra-ui/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
+import { playerData } from '../../data/playerData'
+import { NavbarBar } from './NavbarBar'
+import { NavbarSplit } from './NavbarSplit'
+import { NavbarMenu } from './NavbarMenu'
 
 const MotionBox = motion(Box)
 
+// Diseño del navbar:
+//  'clasico' → cápsula flotante glass centrada + card desplegable mobile (original)
+//  'barra'   → barra full-width transparente→sólida, links con subrayado + overlay fullscreen mobile
+//  'split'   → barra con logo centrado y links a los lados + drawer lateral mobile
+//  'menu'    → barra minimal (logo + botón menú) con panel grid desplegable en todas las resoluciones
+const NAV_DESIGN = 'clasico'
+
 const navLinks = [
-  { label: 'Stats',    href: '#stats' },
-  { label: 'Videos',   href: '#videos' },
-  { label: 'Fotos',    href: '#gallery' },
-  { label: 'Prensa',   href: '#press' },
+  { label: 'Home', href: '#hero'},
+  { label: 'Estadísticas', href: '#estadisticas' },
+  { label: 'Videos',       href: '#videos' },
+  { label: 'Galería',      href: '#galeria' },
+  { label: 'Prensa', href: '#prensa' },
+]
+
+const mobileLinks = [
+  ...navLinks,
   { label: 'Contacto', href: '#contact' },
 ]
 
-function scrollToSection(href) {
-  const lenis = window.__lenis
-  if (lenis) {
-    lenis.scrollTo(href, { offset: 0 })
+function scrollTo(href) {
+  const target = document.querySelector(href)
+  if (!target) return
+  if (window.__lenis) {
+    window.__lenis.scrollTo(target, { offset: -20 })
   } else {
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    target.scrollIntoView({ behavior: 'smooth' })
   }
 }
 
-export default function Navbar() {
-  const navRef = useRef(null)
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+function NavbarClassic() {
+  const [scrolled, setScrolled]   = useState(false)
+  const [menuOpen, setMenuOpen]   = useState(false)
+  const navRef                    = useRef(null)
 
   useEffect(() => {
     gsap.fromTo(navRef.current,
       { y: -60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.5 }
+      { y: 0, opacity: 1, duration: 0.9, ease: 'expo.out', delay: 0.5 }
     )
   }, [])
 
-  // Cerrar el menú al pasar a desktop
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 48em)')
-    const onChange = (e) => { if (e.matches) setMenuOpen(false) }
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
+    const handler = () => setScrolled(window.scrollY > 80)
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
   }, [])
 
-  // Fondo sólido cuando el menú mobile está abierto (mejor legibilidad)
-  const showSolid = scrolled || menuOpen
+  const handleLink = (e, href) => {
+    e.preventDefault()
+    setMenuOpen(false)
+    scrollTo(href)
+  }
 
   return (
     <Box
       ref={navRef}
       as="nav"
       position="fixed"
-      top="0"
-      left="0"
-      right="0"
+      top={{ base: 3, lg: 2  }}
+      left={0}
+      right={0}
       zIndex={1000}
-      transition="all 0.4s ease"
-      bg={showSolid ? 'rgba(8, 12, 18, 0.85)' : 'transparent'}
-      backdropFilter={showSolid ? 'blur(16px)' : 'none'}
-      borderBottom={showSolid ? '1px solid rgba(0, 87, 184, 0.2)' : 'none'}
+      px={{ base: 4, lg: 4 }}
+      style={{ opacity: 0 }}
     >
       <Flex
         align="center"
         justify="space-between"
-        px={{ base: 6, md: 12, lg: 20 }}
-        py={4}
+        maxW="1100px"
+        mx="auto"
+        px={{ base: 4, lg: 7 }}
+        py={{ base: 1.5, lg: 1 }}
+        borderRadius={{ base: '18px', lg: '10px' }}
+        border="1px solid"
+        borderColor={'brand.amber'}
+        bg={'brand.dark3'}
+        backdropFilter="blur(10px) saturate(140%)"
+        boxShadow={scrolled
+          ? '0 10px 34px rgba(0,0,0,0.40)'
+          : '0 6px 26px rgba(0,0,0,0.22)'}
+        transition="background 0.35s, border-color 0.35s, box-shadow 0.35s"
       >
         {/* Logo */}
-        <Box
-          as="button"
-          style={{ textDecoration: 'none', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-          onClick={() => { setMenuOpen(false); scrollToSection('#hero') }}
+        <Text
+          fontFamily='heading'
+          fontSize="2xl"
+          letterSpacing="wider"
+          color="brand.amber"
+          cursor="pointer"
+          onClick={(e) => handleLink(e, '#hero')}
+          _hover={{ color: 'brand.brown' }}
+          transition="color 0.2s"
         >
-          <Text
-            fontFamily="heading"
-            fontSize="28px"
-            letterSpacing="0.08em"
-            color="white"
-            lineHeight="1"
-            cursor="pointer"
-          >
-            GP
-            <Box as="span" color="brand.blue" ml="1px">_</Box>
-          </Text>
-        </Box>
+          {playerData.initials}<Box as="span" color="brand.gray2">_</Box>
+        </Text>
 
-        {/* Nav links — desktop */}
-        <HStack spacing={8} display={{ base: 'none', md: 'flex' }}>
-          {navLinks.slice(0, 4).map((link) => (
-            <NavAnchor key={link.label} href={link.href}>
-              {link.label}
-            </NavAnchor>
+        {/* Desktop links */}
+        <HStack spacing={1} display={{ base: 'none', lg: 'flex' }}>
+          {navLinks.map((link) => (
+            <Text
+              key={link.href}
+              as="a"
+              href={link.href}
+              onClick={(e) => handleLink(e, link.href)}
+              position="relative"
+              px={4}
+              py={2}
+              borderRadius="10px"
+              fontFamily='heading'
+              fontSize="2xs"
+              fontWeight="100"
+              letterSpacing="wider"
+              textTransform="uppercase"
+              color="brand.amber"
+              cursor="pointer"
+              transition="color 0.25s"
+              _before={{
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '10px',
+                bg: 'linear-gradient(135deg, rgba(77,147,214,0.22) 0%, rgba(30,95,168,0.10) 100%)',
+                opacity: 0,
+                transform: 'scale(0.92)',
+                transition: 'opacity 0.25s, transform 0.25s',
+                pointerEvents: 'none',
+              }}   
+              _hover={{
+                color: 'white',
+                _before: { opacity: 1, transform: 'scale(1)' },
+                _after: { width: '40%' },
+              }}
+            >
+              <Box as="span" position="relative" zIndex={1}>
+                {link.label}
+              </Box>
+            </Text>
           ))}
         </HStack>
 
-        {/* CTA — desktop */}
+        {/* CTA desktop */}
         <Box
-          as="button"
-          onClick={() => scrollToSection('#contact')}
-          fontFamily="'Barlow Condensed', sans-serif"
-          fontWeight="600"
-          fontSize="12px"
-          letterSpacing="0.16em"
-          textTransform="uppercase"
-          px={5}
-          py={2}
+          as="a"
+          href="#contact"
+          onClick={(e) => handleLink(e, '#contact')}
+          display={{ base: 'none', lg: 'block' }}
+          px={'10px'}
+          py={'5px'}
+          bg="brand.amber"
           border="1px solid"
-          borderColor="brand.blue"
-          color="white"
-          display={{ base: 'none', md: 'block' }}
-          bg="transparent"
+          borderColor='brand.amberLight'
+          borderRadius={'5px'}
+          fontFamily='heading'
+          fontSize="2xs"
+          fontWeight="400"
+          letterSpacing="2px"
+          textTransform="uppercase"
+          color="brand.brownLight"
           cursor="pointer"
-          _hover={{ bg: 'brand.blue', color: 'white' }}
-          transition="all 0.3s ease"
+          transition="all 0.2s"
+          _hover={{ bg: 'brand.brown', color: 'white' }}
         >
           Contacto
         </Box>
 
-        {/* Hamburguesa — mobile */}
+        {/* Hamburger mobile */}
         <Box
-          display={{ base: 'flex', md: 'none' }}
-          as="button"
-          aria-label="Abrir menú"
-          onClick={() => setMenuOpen((v) => !v)}
-          flexDirection="column"
-          justifyContent="center"
+          display={{ base: 'flex', lg: 'none' }}
+          flexDir="column"
           gap="5px"
-          w="34px"
-          h="34px"
-          alignItems="flex-end"
+          cursor="pointer"
+          onClick={() => setMenuOpen(!menuOpen)}
+          p={2}
         >
-          <Box
-            as="span"
-            w="26px"
-            h="2px"
-            bg="white"
-            transition="transform 0.3s ease, width 0.3s ease"
-            transform={menuOpen ? 'translateY(7px) rotate(45deg)' : 'none'}
-          />
-          <Box
-            as="span"
-            w="18px"
-            h="2px"
-            bg={menuOpen ? 'transparent' : 'brand.blue'}
-            transition="opacity 0.2s ease, width 0.3s ease"
-            opacity={menuOpen ? 0 : 1}
-          />
-          <Box
-            as="span"
-            w="26px"
-            h="2px"
-            bg="white"
-            transition="transform 0.3s ease"
-            transform={menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none'}
-          />
+          {[0, 1, 2].map((i) => (
+            <Box
+              key={i}
+              w="22px"
+              h="1.5px"
+              bg="white"
+              transition="all 0.25s"
+              transform={
+                menuOpen
+                  ? i === 0 ? 'rotate(45deg) translate(4.5px, 4.5px)'
+                  : i === 1 ? 'scaleX(0)'
+                  : 'rotate(-45deg) translate(4.5px, -4.5px)'
+                  : 'none'
+              }
+            />
+          ))}
         </Box>
       </Flex>
 
-      {/* Menú desplegable — mobile */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <MotionBox
-            display={{ base: 'block', md: 'none' }}
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            display={{ base: 'block', lg: 'none' }}
+            maxW="1400px"
+            mx="auto"
+            mt={3}
+            borderRadius="18px"
+            border="1px solid rgba(255,255,255,0.12)"
+            bg="rgba(5,11,20,0.65)"
+            backdropFilter="blur(20px) saturate(140%)"
+            boxShadow="0 10px 34px rgba(0,0,0,0.40)"
             overflow="hidden"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            borderTop="1px solid rgba(255,255,255,0.06)"
           >
-            <VStack
-              align="stretch"
-              spacing={0}
-              px={6}
-              py={4}
-              divider={<Box h="1px" bg="rgba(255,255,255,0.05)" />}
-            >
-              {navLinks.map((link, i) => (
+            <VStack align="stretch" spacing={0} py={2} px={2}>
+              {mobileLinks.map((link, i) => (
                 <MotionBox
-                  key={link.label}
+                  key={link.href}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.08 + i * 0.06, duration: 0.3 }}
+                  transition={{ delay: i * 0.06 }}
+                  w="full"
                 >
                   <Flex
-                    as="button"
-                    onClick={() => { setMenuOpen(false); scrollToSection(link.href) }}
+                    as="a"
+                    href={link.href}
+                    onClick={(e) => handleLink(e, link.href)}
                     align="center"
-                    gap={4}
+                    gap={3}
                     py={3}
-                    w="100%"
-                    bg="transparent"
-                    border="none"
+                    px={3}
+                    borderRadius="12px"
+                    _hover={{ color: 'brand.brown', bg: 'whiteAlpha.50' }}
+                    transition="color 0.2s, background 0.2s"
                     cursor="pointer"
-                    role="group"
                   >
                     <Text
-                      fontFamily="'Barlow Condensed', sans-serif"
-                      fontSize="11px"
-                      fontWeight="700"
-                      letterSpacing="0.2em"
-                      color="brand.blue"
-                      w="22px"
+                      as="span"
+                      fontFamily="mono"
+                      fontSize="2xs"
+                      fontWeight="600"
+                      letterSpacing="wider"
+                      color="brand.amberLight"
                     >
-                      0{i + 1}
+                      {String(i + 1).padStart(2, '0')}
                     </Text>
                     <Text
-                      fontFamily="heading"
-                      fontSize="28px"
-                      letterSpacing="0.04em"
+                      fontFamily="mono"
+                      fontSize="lg"
+                      fontWeight="600"
+                      letterSpacing="wider"
+                      textTransform="uppercase"
                       color="whiteAlpha.800"
-                      lineHeight="1"
-                      transition="color 0.2s ease, transform 0.2s ease"
-                      _groupHover={{ color: 'white', transform: 'translateX(4px)' }}
                     >
                       {link.label}
                     </Text>
@@ -235,39 +275,10 @@ export default function Navbar() {
   )
 }
 
-// ─── Link inline de desktop (con subrayado animado) ──────────────
-function NavAnchor({ href, children }) {
-  return (
-    <Box
-      as="button"
-      onClick={() => scrollToSection(href)}
-      fontFamily="'Barlow Condensed', sans-serif"
-      fontWeight="600"
-      fontSize="13px"
-      letterSpacing="0.14em"
-      textTransform="uppercase"
-      color="whiteAlpha.700"
-      position="relative"
-      bg="transparent"
-      border="none"
-      cursor="pointer"
-      _hover={{ color: 'white' }}
-      transition="color 0.2s"
-      sx={{
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          bottom: '-2px',
-          left: 0,
-          width: '0%',
-          height: '1px',
-          background: '#0057B8',
-          transition: 'width 0.3s ease',
-        },
-        '&:hover::after': { width: '100%' },
-      }}
-    >
-      {children}
-    </Box>
-  )
+// Selector: renderiza la variante según NAV_DESIGN ('clasico' | 'barra' | 'split' | 'menu')
+export default function Navbar() {
+  if (NAV_DESIGN === 'barra') return <NavbarBar />
+  if (NAV_DESIGN === 'split') return <NavbarSplit />
+  if (NAV_DESIGN === 'menu')  return <NavbarMenu />
+  return <NavbarClassic />
 }
