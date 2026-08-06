@@ -42,13 +42,14 @@ import escudoGimnasia from '@assets/escudos/gimnasia.webp'
 import { FaInstagram, FaEnvelope } from 'react-icons/fa'
 import { IoMdStats } from "react-icons/io";
 
-
-
-
+const name = 'GONZALO'
+const fullName = 'PIOVI'
 
 export const playerData = {
-  name: 'Gonzalo',
-  fullName: 'Piovi',
+  name,
+  fullName,
+  initials: `${name[0]}${fullName[0]}`,
+  displayName: `${name} ${fullName}`,
   number: 33,
   position: 'Defensor Central',
   positionShort: 'DEF',

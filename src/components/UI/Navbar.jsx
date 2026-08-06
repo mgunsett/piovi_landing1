@@ -17,10 +17,10 @@ const MotionBox = motion(Box)
 const NAV_DESIGN = 'clasico'
 
 const navLinks = [
-  { label: 'Home', href: '#hero'},
+  { label: 'Home', href: '#hero' },
   { label: 'Estadísticas', href: '#estadisticas' },
-  { label: 'Videos',       href: '#videos' },
-  { label: 'Galería',      href: '#galeria' },
+  { label: 'Videos', href: '#videos' },
+  { label: 'Galería', href: '#galeria' },
   { label: 'Prensa', href: '#prensa' },
 ]
 
@@ -97,13 +97,13 @@ function NavbarClassic() {
           fontFamily='heading'
           fontSize="2xl"
           letterSpacing="wider"
-          color="brand.amber"
+          color="brand.bone"
           cursor="pointer"
           onClick={(e) => handleLink(e, '#hero')}
           _hover={{ color: 'brand.brown' }}
           transition="color 0.2s"
         >
-          {playerData.initials}<Box as="span" color="brand.gray2">_</Box>
+          {playerData.initials}<Box as="span" color="brand.blueMid">_</Box>
         </Text>
 
         {/* Desktop links */}
@@ -160,17 +160,17 @@ function NavbarClassic() {
           py={'5px'}
           bg="brand.amber"
           border="1px solid"
-          borderColor='brand.amberLight'
+          borderColor='brand.blueMid'
           borderRadius={'5px'}
           fontFamily='heading'
           fontSize="2xs"
           fontWeight="400"
           letterSpacing="2px"
           textTransform="uppercase"
-          color="brand.brownLight"
+          color="brand.bone"
           cursor="pointer"
           transition="all 0.2s"
-          _hover={{ bg: 'brand.brown', color: 'white' }}
+          _hover={{ bg: 'brand.brown', borderColor: 'brand.red' }}
         >
           Contacto
         </Box>

@@ -190,8 +190,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
         />
 
         {/* ═══════════════════════════════════════════════════════
-            LAYER 1 — BACKGROUND (slowest)
-            Ghost "GONZALO / PIOVI" text + grid + blue glow
+            LAYER 1 — BACKGROUND
+            "GONZALO / PIOVI" 
         ══════════════════════════════════════════════════════════ */}
         <Box
           ref={bgLayerRef}
@@ -215,7 +215,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           {/* Ghost name block: GONZALO (small) above PIOVI (huge) */}
           <Box
             position="absolute"
-            bottom={{ base: '360px', md: '120px' }}
+            bottom={{ base: '390px', md: '120px' }}
             left={{ base: 2, md: '0' }}
             right="0"
             display="flex"
@@ -228,9 +228,9 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             <Text
               ref={gonzaloRef}
               fontFamily="heading"
-              fontSize={{ base: '30vw', md: '10vw', lg: '12.5vw' }}
+              fontSize={{ base: '25vw', md: '10vw', lg: '12.5vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.1em', md: '0.12em' }}
+              letterSpacing={{ base: '0em', md: '0.12em' }}
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.055)' }}
               userSelect="none"
@@ -242,14 +242,14 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             </Text>
 
             {/* PIOVI — giant ghost stroke */}
-            <Flex gap={{ base: '2vw', md: '3vw' }} align="baseline">
+            <Flex gap={{ base: '-6vw', md: '3vw' }} align="baseline">
               {heroName.split('').map((letter, i) => (
                 <Box
                   key={i}
                   ref={(el) => (bgLettersRef.current[i] = el)}
                   as="span"
                   fontFamily="heading"
-                  fontSize={{ base: '60vw', md: '18vw', lg: '30vw' }}
+                  fontSize={{ base: '80vw', md: '18vw', lg: '30vw' }}
                   lineHeight="0.88"
                   color="transparent"
                   sx={{ WebkitTextStroke: '1px rgba(255,255,255,0.08)' }}
@@ -281,7 +281,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             position="absolute"
             bottom={{ base: 'none', md: '270px' }}
             top={{ base: '20%', md: 'none' }}
-            left={{ base: 2, md: '0' }}
+            left={{ base: '2px', md: '0' }}
             right="0"
             display="flex"
             justifyContent="flex-start"
@@ -292,7 +292,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
               fontWeight="600"
               fontSize={{ base: '16vw', md: '10vw', lg: '8vw' }}
               lineHeight="0.85"
-              letterSpacing={{ base: '0.2em', md: '0.05em' }}
+              letterSpacing={{ base: '0.12em', md: '0.05em' }}
               color="white"
               userSelect="none"
               display={'inline-block'}
@@ -308,7 +308,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
                   as="span"
                   fontFamily="heading"
                   fontWeight="600"
-                  fontSize={{ base: '52vw', md: '18vw', lg: '20vw' }}
+                  fontSize={{ base: '37vw', md: '18vw', lg: '20vw' }}
                   lineHeight="0.88"
                   color="white"
                   display="inline-block"
@@ -419,25 +419,26 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           <Box
             display={{ base: 'block', md: 'none' }}
             position="absolute"
-            bottom='100px'
-            left={6}
+            bottom='60px'
+            left={2}
             zIndex={15}
             alignItems="flex-start"
             gap={3}
           >
             <Text
               fontFamily="heading"
-              fontSize="60px"
+              fontSize="90px"
               lineHeight="0.78"
               color="transparent"
               sx={{ WebkitTextStroke: '1px rgba(0,87,184,0.55)' }}
             >
               {playerData.number}
             </Text>
-            <Box pt="3px">
+            <Box ref={lineRef} h="1px" w="100px" bg="brand.red" mt={4}  />
+            <Box pt="10px">
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="8px"
+                fontSize="12px"
                 fontWeight="600"
                 letterSpacing="0.14em"
                 textTransform="uppercase"
@@ -448,13 +449,13 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
               </Text>
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="11px"
+                fontSize="12px"
                 fontWeight="600"
                 letterSpacing="0.14em"
                 textTransform="uppercase"
                 color="brand.blue"
                 lineHeight="1.25"
-                mb={2}
+                my={2}
               >
                 {playerData.nationalityFlag} {playerData.nationality}
               </Text>
