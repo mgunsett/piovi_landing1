@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Box, Flex, Grid, GridItem, Image, Text, VStack } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -14,7 +14,7 @@ function ClubsHeader() {
               textTransform="uppercase" letterSpacing="widest">
         Trayectoria
       </Text>
-      <Text as="h2" fontFamily='heading' fontWeight="medium"
+      <Text as="h2" fontFamily='heading' fontWeight="medium" textTransform="uppercase"
             fontSize={{ base: '4xl',md:'5xl', lg: '6xl' }} color="brand.bone" lineHeight={1}>
         Clu<Box as="span" color="brand.blue">bes</Box>
       </Text>
@@ -40,13 +40,13 @@ function ClubBadge({ club, isActive }) {
       transition="box-shadow 0.35s, transform 0.35s"
       _groupHover={{
         transform: 'scale(1.06)',
-        boxShadow: '0 0 0 4px #bda78e4d, 0 0 24px #bda78e55',
+        boxShadow: '0 0 0 4px #a52f2f4d, 0 0 24px #ad494e55',
       }}
     >
       <Image
         src={club.logo}
         alt={`Escudo de ${club.name}`}
-        boxSize="58%"
+        boxSize="78%"
         objectFit="contain"
         loading="lazy"
         filter={isActive ? 'none' : 'saturate(0.85)'}
@@ -68,13 +68,13 @@ function YearMark({ years, isActive, cardSide }) {
     >
       <Text
         fontFamily="heading"
-        fontSize={{ lg: '2xl', xl: '3xl' }}
+        fontSize={{ lg: 'xl', xl: '2xl' }}
         letterSpacing="0.08em"
-        textTransform="uppercase"
-        color={isActive ? 'brand.accentLight' : 'brand.accent'}
+        
+        color={isActive ? 'brand.red' : 'brand.bone'}
         opacity={isActive ? 1 : 0.85}
-        transition="opacity 0.3s"
-        _groupHover={{ opacity: 1 }}
+        cursor="default"
+        transition="color 0.3s, opacity 0.3s"
       >
         {years}
       </Text>
@@ -121,17 +121,17 @@ function ClubCard({ club, isActive, side }) {
       </Text>
 
       <Text
-        fontFamily='"Dela Gothic One", monospace'
+        fontFamily='heading'
         textTransform="uppercase"
-        fontSize={{ base: 'xs', lg: 'sm' }}
-        color="brand.bone"
+        fontSize={{ base: 'sm', md: 'md', lg: 'lg' }}
+        color="brand.blueLight"
         lineHeight={1.25}
       >
         {club.name}
       </Text>
       <Text
         fontFamily="mono"
-        fontSize="10px"
+        fontSize={{ base: '10px' , md: '11px', lg: '11px' }}
         color="brand.gray"
         textTransform="uppercase"
         letterSpacing="0.18em"
@@ -143,7 +143,7 @@ function ClubCard({ club, isActive, side }) {
       {club.titles.length > 0 && (
         <VStack spacing={1} mt={2.5} align={stackAlign}>
           {club.titles.map((t) => (
-            <Text key={t} fontFamily="mono" fontSize="12px" color="brand.boneWarm">
+            <Text key={t} fontFamily="mono" fontSize={{ base: '12px', md: '13px', lg: '14px' }} color="brand.boneWarm">
               🏆 {t}
             </Text>
           ))}
@@ -155,7 +155,7 @@ function ClubCard({ club, isActive, side }) {
           {(Array.isArray(club.info) ? club.info : [club.info])
             .filter(Boolean)
             .map((line) => (
-              <Text key={line} fontFamily="mono" fontSize="10px" color="brand.gray" lineHeight={1.5}>
+              <Text key={line} fontFamily="heading" fontSize={{ base: '10px', md: '11px', lg: '12px' }} color="brand.gray" lineHeight={1.5}>
                 {line}
               </Text>
             ))}
@@ -166,7 +166,7 @@ function ClubCard({ club, isActive, side }) {
 }
 
 // ─── ETAPA DE LA LÍNEA DE TIEMPO ──────────────────────────────────
-function TimelineItem({ club, index, isActive }) {
+function TimelineItem({ club, index, isActive, isYearActive, onYearHoverStart, onYearHoverEnd }) {
   // Las tarjetas alternan de lado en escritorio; en móvil van todas a la derecha
   const side = index % 2 === 0 ? 'left' : 'right'
 
@@ -177,6 +177,8 @@ function TimelineItem({ club, index, isActive }) {
       templateColumns={{ base: '48px 1fr', lg: '1fr 96px 1fr' }}
       columnGap={{ base: 4, lg: 0 }}
       alignItems="center"
+      onMouseEnter={onYearHoverStart}
+      onMouseLeave={onYearHoverEnd}
     >
       {/* Escudo sobre la línea */}
       <GridItem colStart={{ base: 1, lg: 2 }} rowStart={1} display="flex" justifyContent="center">
@@ -195,7 +197,7 @@ function TimelineItem({ club, index, isActive }) {
         display={{ base: 'none', lg: 'block' }}
         h="100%"
       >
-        <YearMark years={club.years} isActive={isActive} cardSide={side} />
+        <YearMark years={club.years} isActive={isYearActive} cardSide={side} />
       </GridItem>
     </Grid>
   )
@@ -205,6 +207,9 @@ function TimelineItem({ club, index, isActive }) {
 export function ClubsVertical() {
   const wrapRef = useRef(null)
   const progressRef = useRef(null)
+  const [hoveredYear, setHoveredYear] = useState(null)
+  const defaultActiveIndex = 0
+  const activeYearIndex = hoveredYear ?? defaultActiveIndex
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -272,7 +277,10 @@ export function ClubsVertical() {
               key={`${club.name}-${club.years}`}
               club={club}
               index={i}
-              isActive={i === 0}
+              isActive={i === defaultActiveIndex}
+              isYearActive={i === activeYearIndex}
+              onYearHoverStart={() => setHoveredYear(i)}
+              onYearHoverEnd={() => setHoveredYear(null)}
             />
           ))}
         </VStack>

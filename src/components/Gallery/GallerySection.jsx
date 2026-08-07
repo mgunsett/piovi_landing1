@@ -346,6 +346,7 @@ export default function GallerySection() {
       flexDirection="column"
       justifyContent="center"
       py={{ base: 16, md: 0 }}
+      px={{ base: 0, md: 16 }}
     >
       {/* ── Decorative bg ── */}
       <Box position="absolute" top="0" right="-80px" w="500px" h="500px"
@@ -369,16 +370,16 @@ export default function GallerySection() {
         <Flex justify="space-between" align="flex-end">
           <Box>
             <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="10px" fontWeight="700"
+              fontFamily="heading"
+              fontSize={{ base: '10px', md: '11px', lg: '12px' }} 
               letterSpacing="0.36em" textTransform="uppercase"
-              color="brand.blue" mb={2}
+              color="brand.bone" mb={2}
             >
               Galería
             </Text>
             <Text
               fontFamily="heading"
-              fontSize={{ base: '44px', md: '68px', lg: '80px' }}
+              textTransform="uppercase" fontWeight="medium" fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
               lineHeight="0.9" letterSpacing="0.02em"
             >
               FO<Box as="span" color="brand.blue">TOS</Box>
@@ -401,6 +402,7 @@ export default function GallerySection() {
       {/* ── Carousel stage ── */}
       <Box
         position="relative"
+        mx="auto"
         w="100%"
         h={{ base: SLIDE_H_BASE, md: SLIDE_H_MD }}
         zIndex={3}

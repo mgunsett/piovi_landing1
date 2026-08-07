@@ -188,6 +188,7 @@ export default function MatchBox({ last, next, variant = 'card' }) {
       bg="rgba(8,12,18,0.55)"
       border="1px solid #102A5C"
       backdropFilter="blur(10px)"
+      borderRadius="md"
       px={5}
       py={5}
       position="relative"

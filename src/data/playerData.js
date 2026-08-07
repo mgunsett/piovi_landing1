@@ -63,7 +63,7 @@ export const playerData = {
   birthPlace: 'Moron, Buenos Aires',
   currentClub: 'Cruz Azul',
   logoCurrentClub: escudoCruzAzul,
-  image: pioviImage,
+  image: photoVideo,
 
 
   // Stats técnicas (0-100)
@@ -141,18 +141,42 @@ export const playerData = {
   ],
 
   // Videos highlight
+ 
   videos: [
     {
-      id: 1,
-      title: "Temporada",
-      duration: '3:42',
-      thumbnail: video1,
-      cover: photoVideo,          // foto de portada del video (acción en cancha)
-      src: video1,
-      previewSrc: video1,
+      id: 'v2',
+      instagramId: 'DPP_syMDWD5',
+      title: 'Asistencia',
+      fullTitle: 'Gonzalo Piovi | Asistencias \'26',
+      season: 'Asistencias Cruz Azul',
+      league: 'LIGA MX 2025',
+      thumbnail: image2,
+      cover: image2,
+      category: 'Asistencia',
+    },
+    {
+      id: 'v3',
+      instagramId: 'DVjGHikDaUC',
+      title: 'Highlights \'25',
+      fullTitle: 'Gonzalo Piovi | Highlights \'25',
+      season: 'Highlights Cruz Azul \'25',
+      league: 'LIGA MX 2025',
+      thumbnail: image10,
+      cover: image10,
       category: 'Highlights',
     },
-
+    
+    {
+      id: 'v4',
+      instagramId: 'DCmfAbFpTpl',
+      title: 'Highlights \'24',
+      fullTitle: 'Gonzalo Piovi | Highlights \'24',
+      season: 'Highlights Cruz Azul \'24',
+      league: 'LIGA MX 2024',
+      thumbnail: image4,
+      cover: image4,
+      category: 'Highlights',
+    },
   ],
 
   // Prensa & menciones
