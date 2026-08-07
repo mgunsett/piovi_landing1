@@ -15,8 +15,8 @@ const R = 100 // ← tamaño del polígono (radio). Subilo/bajalo para agrandar 
 function RadarChart({ stats }) {
   const wrapRef = useRef(null)
   const N = stats.length
-  const [amberLight, brownLight, gray2, amber, amber2, gray, bone] = useToken('colors', [
-    'brand.accentLight', 'brand.steelLight', 'brand.grayLight', 'brand.accent','brand.accentMid','brand.gray','brand.bone'
+  const [red, blueSoft, steelLight, amber, amber2, gray, bone] = useToken('colors', [
+    'brand.red','brand.blueSoft', 'brand.steelLight', 'brand.grayLight', 'brand.accent','brand.accentMid','brand.gray','brand.bone',
   ])
 
   // Punto (x,y) para un valor 0-100 en el eje i
@@ -98,12 +98,12 @@ function RadarChart({ stats }) {
         {stats.map((_, i) => {
           const [x, y] = pointFor(100, i)
           return <line key={i} x1={CX} y1={CY} x2={x} y2={y}
-            stroke={amberLight} />
+            stroke={blueSoft} />
         })}
         <polygon
           className="radar-value"
           points={valuePoints.map(p => p.join(',')).join(' ')}
-          fill={`${gray2}4D`} stroke={amber2} strokeWidth="1.5"
+          fill={`${steelLight}4D`} stroke={red} strokeWidth="1.5"
         />
         {valuePoints.map(([x, y], i) => (
           <circle key={i} className="radar-dot" cx={x} cy={y} r="2.8" fill={amber2} />
@@ -111,7 +111,7 @@ function RadarChart({ stats }) {
         {labels.map(l => (
           <text key={l.label} className="radar-label"
             x={l.x} y={l.y} textAnchor={l.anchor}
-            fontFamily="'Barlow Condensed', sans-serif"
+            fontFamily="'Nippo', sans-serif"
             fontSize="16" letterSpacing="0.8" fill={gray}
             style={{ textTransform: 'uppercase' }}
           >

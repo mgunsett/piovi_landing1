@@ -10,13 +10,13 @@ gsap.registerPlugin(ScrollTrigger)
 function ClubsHeader() {
   return (
     <Box mb={{ base: 8, lg: 12 }}>
-      <Text fontFamily='"mono", monospace' fontSize="10px" color="brand.bone"
-            textTransform="uppercase" letterSpacing="widest">
+        <Text fontFamily='heading' fontSize="12px" color="brand.bone"
+              textTransform="uppercase" letterSpacing="widest">
         Trayectoria
       </Text>
-      <Text as="h2" fontFamily='heading' fontWeight="bold"
-            fontSize={{ base: '5xl', lg: '5xl' }} color="brand.accent" lineHeight={1}>
-        Clubes
+      <Text as="h2" fontFamily='heading' fontWeight="medium"
+            fontSize={{ base: '4xl',md:'5xl', lg: '6xl' }} color="brand.bone" lineHeight={1}>
+        Clu<Box as="span" color="brand.blue">bes</Box>
       </Text>
     </Box>
   )
