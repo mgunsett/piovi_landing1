@@ -26,10 +26,6 @@ import image18 from '@assets/galleryPhotos/image18.webp'
 import image19 from '@assets/galleryPhotos/image19.webp'
 import image20 from '@assets/galleryPhotos/image20.webp'
 
-//Videos
-import video1 from '@assets/galleryVideos/video1.mp4'
-import photoVideo from '@assets/piovi3.webp'
-
 //Escudos 
 import escudoCruzAzul from '@assets/escudos/cruzazul.webp'
 import escudoRacing from '@assets/escudos/racing.webp'
@@ -64,7 +60,7 @@ export const playerData = {
   birthPlace: 'Moron, Buenos Aires',
   currentClub: 'Cruz Azul',
   logoCurrentClub: escudoCruzAzul,
-  image: photoVideo,
+  image: pioviImage,
 
 
   // Stats técnicas (0-100)

@@ -14,6 +14,7 @@ import { extendTheme } from '@chakra-ui/react'
 const scale = {
   // ── Base oscura ────────────────────────────────────────────────
   dark: '#080C12',        // fondo del sitio — no cambiar
+  darkDeep: 'rgba(9, 18, 34, 0.55)',    // fondo de secciones y paneles oscuros
   surfaceDeep: '#0D1420', // superficie apenas elevada
   surface: '#111A28',     // paneles y tarjetas sobre el fondo
   line: '#1C2739',        // bordes y reglas sutiles

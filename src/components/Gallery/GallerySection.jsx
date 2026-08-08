@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { Box, Flex, Text, useBreakpointValue } from '@chakra-ui/react'
+import { Box, Flex, Text, Image, useBreakpointValue } from '@chakra-ui/react'
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -7,42 +8,168 @@ import playerData from '../../data/playerData.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
+const MotionBox = motion(Box)
+
 // ─── HELPERS ─────────────────────────────────────────────────────
-const SLIDE_W_MD  = '48vw'   // center slide width desktop
+const SLIDE_W_MD  = '38vw'   // center slide width desktop
 const SLIDE_W_BASE = '82vw'  // center slide width mobile
-const SLIDE_H_MD  = '62vh'
+const SLIDE_H_MD  = '82vh'
 const SLIDE_H_BASE = '52vh'
 
 // Distance the side slides travel from center (% of their own width)
 const SIDE_X = '68%'
 
+// Swipe: px de desplazamiento horizontal que cuentan como gesto (y no como tap)
+const SWIPE_THRESHOLD = 45
+const TAP_TOLERANCE   = 10
+
 // ─── ARROW BUTTON ─────────────────────────────────────────────────
-function ArrowBtn({ direction, onClick, disabled }) {
+// Marco cuadrado con esquina exterior recortada. El borde se dibuja con un
+// contenedor de 1px de padding porque clip-path recorta los borders del CSS.
+const CUT = '11px'
+
+function ArrowBtn({ direction, onClick }) {
+  const isPrev = direction === 'prev'
+  const clip = isPrev
+    ? `polygon(${CUT} 0, 100% 0, 100% 100%, 0 100%, 0 ${CUT})`
+    : `polygon(0 0, calc(100% - ${CUT}) 0, 100% ${CUT}, 100% 100%, 0 100%)`
+
   return (
     <Box
       as="button"
+      type="button"
       onClick={onClick}
-      disabled={disabled}
-      display="flex" alignItems="center" justifyContent="center"
-      w={{ base: '48px', md: '58px' }}
-      h={{ base: '48px', md: '58px' }}
-      borderRadius="50%"
-      border="1px solid rgba(255,255,255,0.12)"
-      bg="rgba(255,255,255,0.04)"
-      color="white"
-      fontSize={{ base: '22px', md: '26px' }}
+      aria-label={isPrev ? 'Foto anterior' : 'Foto siguiente'}
+      w="46px" h="46px"
+      borderRadius="md"
+      p="1px"
+      flexShrink={0}
+      bg="rgba(255,255,255,0.14)"
       cursor="pointer"
-      transition="all 0.25s ease"
-      _hover={{
-        bg: 'rgba(0,87,184,0.18)',
-        borderColor: 'rgba(0,87,184,0.55)',
-        transform: `translateX(${direction === 'prev' ? '-3px' : '3px'})`,
+      transition="background 0.3s ease"
+      data-cursor-hover
+      sx={{
+        clipPath: clip,
+        WebkitClipPath: clip,
+        '&:hover, &:focus-visible': { background: 'brand.accent' },
+        '&:hover .gp-arrow-face, &:focus-visible .gp-arrow-face': {
+          background: 'rgba(0,87,184,0.22)',
+          color: '#fff',
+        },
+        '&:hover .gp-arrow-icon': { transform: `translateX(${isPrev ? '-3px' : '3px'})` },
+        '&:hover .gp-arrow-tick': { opacity: 1 },
+        '&:active .gp-arrow-face': { background: 'rgba(0,87,184,0.4)' },
+        '&:focus': { outline: 'none' },
       }}
-      _disabled={{ opacity: 0.25, cursor: 'not-allowed' }}
-      _focus={{ outline: 'none' }}
-      aria-label={direction === 'prev' ? 'Anterior' : 'Siguiente'}
     >
-      {direction === 'prev' ? '<' : '>'}
+      <Flex
+        className="gp-arrow-face"
+        position="relative"
+        w="100%" h="100%"
+        align="center" justify="center"
+        bg="#0B1017"
+        color="rgba(255,255,255,0.72)"
+        borderRadius="md"
+        transition="background 0.3s ease, color 0.3s ease"
+        sx={{ clipPath: clip, WebkitClipPath: clip }}
+      >
+        {/* Detalle HUD: escuadra en la esquina opuesta al corte */}
+        
+        <Box
+          className="gp-arrow-icon"
+          as={isPrev ? FiChevronLeft : FiChevronRight}
+          fontSize="22px"
+          transition="transform 0.3s cubic-bezier(0.22,1,0.36,1)"
+        />
+      </Flex>
+    </Box>
+  )
+}
+
+// ─── PROGRESS SLIDER (arrastrable) ────────────────────────────────
+function ProgressSlider({ total, active, onSeek }) {
+  const trackRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
+
+  const indexFromX = useCallback((clientX) => {
+    const el = trackRef.current
+    if (!el) return 0
+    const rect = el.getBoundingClientRect()
+    const ratio = (clientX - rect.left) / rect.width
+    return Math.min(total - 1, Math.max(0, Math.floor(ratio * total)))
+  }, [total])
+
+  const handleDown = (e) => {
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    setDragging(true)
+    onSeek(indexFromX(e.clientX))
+  }
+  const handleMove = (e) => {
+    if (!dragging) return
+    onSeek(indexFromX(e.clientX))
+  }
+  const handleUp = (e) => {
+    if (!dragging) return
+    e.currentTarget.releasePointerCapture?.(e.pointerId)
+    setDragging(false)
+  }
+  const handleKey = (e) => {
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); onSeek(Math.max(0, active - 1)) }
+    if (e.key === 'ArrowRight') { e.preventDefault(); onSeek(Math.min(total - 1, active + 1)) }
+    if (e.key === 'Home')       { e.preventDefault(); onSeek(0) }
+    if (e.key === 'End')        { e.preventDefault(); onSeek(total - 1) }
+  }
+
+  return (
+    <Box
+      ref={trackRef}
+      data-gallery-slider=""
+      flex="1"
+      w="100%"
+      position="relative"
+      h={{ base: '34px', md: '26px' }}
+      cursor={dragging ? 'grabbing' : 'grab'}
+      onPointerDown={handleDown}
+      onPointerMove={handleMove}
+      onPointerUp={handleUp}
+      onPointerCancel={handleUp}
+      onKeyDown={handleKey}
+      tabIndex={0}
+      role="slider"
+      aria-label="Progreso de la galería"
+      aria-valuemin={1}
+      aria-valuemax={total}
+      aria-valuenow={active + 1}
+      sx={{ touchAction: 'none', '&:focus': { outline: 'none' } }}
+      _focusVisible={{ '& .track': { bg: 'rgba(255,255,255,0.22)' } }}
+      _hover={{ '& .track': { bg: 'rgba(255,255,255,0.16)' } }}
+    >
+      {/* Riel */}
+      <Box
+        className="track"
+        position="absolute" top="50%" left={0} right={0}
+        transform="translateY(-50%)"
+        h="2px" borderRadius="full"
+        bg={dragging ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)'}
+        transition="background 0.25s ease"
+        pointerEvents="none"
+      />
+      {/* Thumb arrastrable */}
+      <Box
+        position="absolute" top="50%"
+        transform={`translateY(-50%) scaleY(${dragging ? 1.6 : 1})`}
+        h="4px" borderRadius="full"
+        bg="brand.blue"
+        boxShadow={dragging ? '0 0 18px rgba(46,119,214,0.9)' : '0 0 12px rgba(0,87,184,0.75)'}
+        w={`${100 / total}%`}
+        left={`${(active / total) * 100}%`}
+        transition={
+          dragging
+            ? 'transform 0.15s ease, box-shadow 0.15s ease'
+            : 'left 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.15s ease, box-shadow 0.15s ease'
+        }
+        pointerEvents="none"
+      />
     </Box>
   )
 }
@@ -58,43 +185,41 @@ function Slide({ item, pos, onClick, isMobile }) {
   const opacity = !isVisible ? 0 : isCenter ? 1 : isMobile ? 0 : 0.42
 
   return (
-    <motion.div
+    <MotionBox
       animate={{ x: xVal, scale, opacity, zIndex: isCenter ? 3 : isVisible ? 2 : 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 30, mass: 0.9 }}
       onClick={isCenter ? onClick : undefined}
-      style={{
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        translateX: '-50%',
-        translateY: '-50%',
-        width: isMobile ? SLIDE_W_BASE : SLIDE_W_MD,
-        height: isMobile ? SLIDE_H_BASE : SLIDE_H_MD,
-        cursor: isCenter ? 'pointer' : 'default',
-        pointerEvents: isVisible ? 'auto' : 'none',
-        willChange: 'transform, opacity',
-        borderRadius: '2px',
-        overflow: 'hidden',
-      }}
+      position="absolute"
+      left="50%"
+      top="50%"
+      w={isMobile ? SLIDE_W_BASE : SLIDE_W_MD}
+      h={isMobile ? SLIDE_H_BASE : SLIDE_H_MD}
+      cursor={isCenter ? 'pointer' : 'default'}
+      pointerEvents={isVisible ? 'auto' : 'none'}
+      borderRadius="md"
+      border="1px solid rgba(85, 101, 155, 0.61)"
+      overflow="hidden"
+      style={{ translateX: '-50%', translateY: '-50%', willChange: 'transform, opacity' }}
     >
       {/* Image */}
-      <div
-        style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${item.src})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: isCenter ? 'brightness(1)' : 'brightness(0.7)',
-          transition: 'filter 0.4s ease',
-        }}
+      <Image
+        src={item.src}
+        alt={item.alt}
+        position="absolute"
+        inset={0}
+        w="100%"
+        h="100%"
+        objectFit="cover"
+        filter={isCenter ? 'brightness(1)' : 'brightness(0.7)'}
+        transition="filter 0.4s ease"
       />
 
       {/* Gradient overlay (always) */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.28) 100%)',
-        pointerEvents: 'none',
-      }} />
+      <Box
+        position="absolute" inset={0}
+        bg="linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.28) 100%)"
+        pointerEvents="none"
+      />
 
       {/* Caption — only on center */}
       {isCenter && (
@@ -104,7 +229,6 @@ function Slide({ item, pos, onClick, isMobile }) {
           right={{ base: 4, md: 6 }}
           bottom={{ base: 4, md: 6 }}
         >
-          <Box w="28px" h="1px" bg="brand.blue" mb={2} />
           <Text
             fontFamily="heading"
             fontSize="24px"
@@ -112,7 +236,7 @@ function Slide({ item, pos, onClick, isMobile }) {
             color="white"
           >
             GP
-            <Box as="span" color="brand.blue" ml="1px">_</Box>
+            <Box as="span" fontFamily="heading" fontWeight='bold' color="brand.blue" ml="-5px">_</Box>
           </Text>
         </Box>
       )}
@@ -128,7 +252,7 @@ function Slide({ item, pos, onClick, isMobile }) {
           pointerEvents="none"
         />
       )}
-    </motion.div>
+    </MotionBox>
   )
 }
 
@@ -161,36 +285,38 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext, isMobile }) {
   }
 
   return (
-    <motion.div
+    <MotionBox
       key="lightbox"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      style={{
-        position: 'fixed', inset: 0, zIndex: 99999,
-        background: 'rgba(4,7,13,0.97)',
-        backdropFilter: 'blur(6px)',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-      }}
+      position="fixed"
+      inset={0}
+      zIndex={99999}
+      bg="rgba(4,7,13,0.97)"
+      backdropFilter="blur(6px)"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
       onClick={onClose}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {/* Close */}
-      <button
+      <Flex
+        as="button"
+        type="button"
         onClick={e => { e.stopPropagation(); onClose() }}
-        style={{
-          position: 'absolute', top: 24, right: 28,
-          background: 'rgba(255,255,255,0.12)',
-          border: '1px solid rgba(255,255,255,0.28)',
-          color: 'white', width: 44, height: 44, borderRadius: '50%',
-          fontSize: 20, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200,
-        }}
+        position="absolute" top="24px" right="28px"
+        bg="rgba(255,255,255,0.12)"
+        border="1px solid rgba(255,255,255,0.28)"
+        color="white" w="44px" h="44px" borderRadius="50%"
+        fontSize="20px" cursor="pointer"
+        align="center" justify="center" zIndex={200}
         aria-label="Cerrar"
-      >✕</button>
+      >✕</Flex>
 
       {/* Counter */}
       <Box position="absolute" top="28px" left="28px" zIndex={200}
@@ -203,79 +329,95 @@ function Lightbox({ images, activeIndex, onClose, onPrev, onNext, isMobile }) {
       </Box>
 
       {isMobile ? (
-        <div
+        <Flex
           onClick={e => e.stopPropagation()}
-          style={{ width: '100%', padding: '0 20px', display: 'flex', justifyContent: 'center' }}
+          w="100%" px="20px" justify="center"
         >
           <AnimatePresence mode="wait">
-            <motion.div
+            <MotionBox
               key={activeIndex}
               initial={{ opacity: 0, x: 28 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -28 }}
               transition={{ duration: 0.18 }}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, width: '100%' }}
+              display="flex" flexDirection="column" alignItems="center" gap="10px" w="100%"
             >
-              <img src={item.src} alt={item.alt} style={{ maxWidth: '100%', maxHeight: '68vh', objectFit: 'contain', display: 'block', filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.8))' }} />
+              <Image src={item.src} alt={item.alt} maxW="100%" maxH="68vh" objectFit="contain" display="block" filter="drop-shadow(0 20px 50px rgba(0,0,0,0.8))" />
               <Flex direction="column" align="center" gap="4px">
                 <Text fontFamily="'Barlow Condensed', sans-serif" fontSize="9px" fontWeight="700" letterSpacing="0.28em" textTransform="uppercase" color="brand.blue">{item.category}</Text>
                 <Text fontFamily="'Barlow Condensed', sans-serif" fontSize="12px" letterSpacing="0.06em" color="rgba(255,255,255,0.55)" textAlign="center">{item.caption}</Text>
               </Flex>
-            </motion.div>
+            </MotionBox>
           </AnimatePresence>
-        </div>
+        </Flex>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '4px', padding: '0 12px' }} onClick={e => e.stopPropagation()}>
+        <Flex align="center" justify="center" w="100%" gap="4px" px="12px" onClick={e => e.stopPropagation()}>
           {/* Prev wing */}
-          <div
-            style={{ flexShrink: 0, width: 'clamp(70px,13vw,200px)', height: '52vh', position: 'relative', overflow: 'hidden', opacity: 0.52, cursor: 'pointer', transform: 'translateY(52px)', clipPath: 'polygon(0 0, 78% 0, 100% 18%, 100% 100%, 0 100%)' }}
+          <Box
+            as="button"
+            type="button"
+            aria-label="Foto anterior"
+            flexShrink={0}
+            w="clamp(70px,13vw,200px)" h="52vh"
+            position="relative" overflow="hidden"
+            opacity={0.52} cursor="pointer"
+            transform="translateY(52px)"
+            sx={{ clipPath: 'polygon(0 0, 78% 0, 100% 18%, 100% 100%, 0 100%)' }}
             onClick={onPrev}
           >
-            <img src={prevItem.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(3px)', transform: 'scale(1.06)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(4,7,13,0.18) 0%, rgba(4,7,13,0.82) 100%)' }} />
-            <div style={{ position: 'absolute', bottom: '28%', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.7)', fontSize: 26, lineHeight: 1 }}>‹</div>
-          </div>
+            <Image src={prevItem.src} alt="" w="100%" h="100%" objectFit="cover" filter="blur(3px)" transform="scale(1.06)" />
+            <Box position="absolute" inset={0} bg="linear-gradient(to right, rgba(4,7,13,0.18) 0%, rgba(4,7,13,0.82) 100%)" />
+            <Box position="absolute" bottom="28%" left="50%" transform="translateX(-50%)" color="rgba(255,255,255,0.7)" fontSize="26px" lineHeight="1">‹</Box>
+          </Box>
 
           {/* Center */}
-          <div style={{ flex: '0 0 auto', width: 'min(56vw, 800px)', display: 'flex', justifyContent: 'center' }}>
+          <Flex flex="0 0 auto" w="min(56vw, 800px)" justify="center">
             <AnimatePresence mode="wait">
-              <motion.div
+              <MotionBox
                 key={activeIndex}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.2 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, width: '100%' }}
+                display="flex" flexDirection="column" alignItems="center" gap="12px" w="100%"
               >
-                <img src={item.src} alt={item.alt} style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', display: 'block', filter: 'drop-shadow(0 32px 80px rgba(0,0,0,0.8))' }} />
+                <Image src={item.src} alt={item.alt} maxW="100%" maxH="80vh" objectFit="contain" display="block" filter="drop-shadow(0 32px 80px rgba(0,0,0,0.8))" />
                 <Flex direction="column" align="center" gap="4px">
                   <Text fontFamily="'Barlow Condensed', sans-serif" fontSize="9px" fontWeight="700" letterSpacing="0.28em" textTransform="uppercase" color="brand.blue">{item.category}</Text>
                   <Text fontFamily="'Barlow Condensed', sans-serif" fontSize="13px" letterSpacing="0.08em" color="rgba(255,255,255,0.55)">{item.caption}</Text>
                 </Flex>
-              </motion.div>
+              </MotionBox>
             </AnimatePresence>
-          </div>
+          </Flex>
 
           {/* Next wing */}
-          <div
-            style={{ flexShrink: 0, width: 'clamp(70px,13vw,200px)', height: '52vh', position: 'relative', overflow: 'hidden', opacity: 0.52, cursor: 'pointer', transform: 'translateY(52px)', clipPath: 'polygon(0 18%, 22% 0, 100% 0, 100% 100%, 0 100%)' }}
+          <Box
+            as="button"
+            type="button"
+            aria-label="Foto siguiente"
+            flexShrink={0}
+            w="clamp(70px,13vw,200px)" h="52vh"
+            position="relative" overflow="hidden"
+            opacity={0.52} cursor="pointer"
+            transform="translateY(52px)"
+            sx={{ clipPath: 'polygon(0 18%, 22% 0, 100% 0, 100% 100%, 0 100%)' }}
             onClick={onNext}
           >
-            <img src={nextItem.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(3px)', transform: 'scale(1.06)' }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to left, rgba(4,7,13,0.18) 0%, rgba(4,7,13,0.82) 100%)' }} />
-            <div style={{ position: 'absolute', bottom: '28%', left: '50%', transform: 'translateX(-50%)', color: 'rgba(255,255,255,0.7)', fontSize: 26, lineHeight: 1 }}>›</div>
-          </div>
-        </div>
+            <Image src={nextItem.src} alt="" w="100%" h="100%" objectFit="cover" filter="blur(3px)" transform="scale(1.06)" />
+            <Box position="absolute" inset={0} bg="linear-gradient(to left, rgba(4,7,13,0.18) 0%, rgba(4,7,13,0.82) 100%)" />
+            <Box position="absolute" bottom="28%" left="50%" transform="translateX(-50%)" color="rgba(255,255,255,0.7)" fontSize="26px" lineHeight="1">›</Box>
+          </Box>
+        </Flex>
       )}
 
       {/* Mobile nav */}
       {isMobile && (
-        <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 20, zIndex: 200 }}>
-          <button onClick={e => { e.stopPropagation(); onPrev() }} style={{ background: 'rgba(0,87,184,0.2)', border: '1px solid rgba(0,87,184,0.45)', color: 'white', width: 52, height: 52, borderRadius: '50%', fontSize: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-          <button onClick={e => { e.stopPropagation(); onNext() }} style={{ background: 'rgba(0,87,184,0.2)', border: '1px solid rgba(0,87,184,0.45)', color: 'white', width: 52, height: 52, borderRadius: '50%', fontSize: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
-        </div>
+        <Flex position="absolute" bottom="28px" left={0} right={0} justify="center" gap="16px" zIndex={200}>
+          <ArrowBtn direction="prev" onClick={e => { e.stopPropagation(); onPrev() }} />
+          <ArrowBtn direction="next" onClick={e => { e.stopPropagation(); onNext() }} />
+        </Flex>
       )}
-    </motion.div>
+    </MotionBox>
   )
 }
 
@@ -298,19 +440,41 @@ export default function GallerySection() {
   const openLightbox  = useCallback(() => setLightbox(active), [active])
   const closeLightbox = useCallback(() => setLightbox(null), [])
 
-  // Click/tap on the progress track jumps to that photo
-  const seekTrack = useCallback((e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const ratio = (e.clientX - rect.left) / rect.width
-    setActive(Math.min(total - 1, Math.max(0, Math.floor(ratio * total))))
-  }, [total])
   const prevLightbox  = useCallback(() => setLightbox(i => (i - 1 + total) % total), [total])
   const nextLightbox  = useCallback(() => setLightbox(i => (i + 1) % total), [total])
 
-  // Arrow key nav (only when lightbox is closed)
+  // Swipe sobre el carrusel (mobile y desktop). Si el dedo/mouse se movió,
+  // el click no debe abrir el lightbox.
+  const swipe = useRef({ x: 0, y: 0, active: false, moved: false })
+
+  const onStageDown = (e) => {
+    swipe.current = { x: e.clientX, y: e.clientY, active: true, moved: false }
+  }
+  const onStageMove = (e) => {
+    if (!swipe.current.active) return
+    if (Math.abs(e.clientX - swipe.current.x) > TAP_TOLERANCE) swipe.current.moved = true
+  }
+  const onStageUp = (e) => {
+    if (!swipe.current.active) return
+    swipe.current.active = false
+    const dx = e.clientX - swipe.current.x
+    const dy = e.clientY - swipe.current.y
+    if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+      swipe.current.moved = true
+      navigate(dx < 0 ? 1 : -1)
+    }
+  }
+  const onStageClickCapture = (e) => {
+    if (!swipe.current.moved) return
+    swipe.current.moved = false
+    e.stopPropagation()
+  }
+
+  // Arrow key nav (only when lightbox is closed; el slider maneja las suyas)
   useEffect(() => {
     if (lightbox !== null) return
     const onKey = (e) => {
+      if (e.target?.closest?.('[data-gallery-slider]')) return
       if (e.key === 'ArrowLeft')  navigate(-1)
       if (e.key === 'ArrowRight') navigate(1)
     }
@@ -403,6 +567,12 @@ export default function GallerySection() {
         h={{ base: SLIDE_H_BASE, md: SLIDE_H_MD }}
         zIndex={3}
         flexShrink={0}
+        onPointerDown={onStageDown}
+        onPointerMove={onStageMove}
+        onPointerUp={onStageUp}
+        onPointerCancel={onStageUp}
+        onClickCapture={onStageClickCapture}
+        sx={{ touchAction: 'pan-y' }}
       >
         {images.map((img, i) => (
           <Slide
@@ -416,84 +586,46 @@ export default function GallerySection() {
       </Box>
 
       {/* ── Bottom controls ── */}
+      {/* Mobile: solo slider + contador centrado (se navega con swipe).
+          Desktop: flechas · slider · contador en una fila. */}
       <Flex
         position="relative" zIndex={5}
         px={{ base: 6, md: 12, lg: 20 }}
-        mt={{ base: 8, md: 10 }}
-        align="center"
-        gap={{ base: 4, md: 8 }}
+        mt={{ base: 7, md: 10 }}
+        direction={{ base: 'column', md: 'row' }}
+        align={{ base: 'stretch', md: 'center' }}
+        gap={{ base: 2, md: 8 }}
       >
-        {/* Arrow buttons */}
-        <Flex gap={3} flexShrink={0}>
+        {/* Flechas — solo desktop */}
+        <Flex gap={3} flexShrink={0} display={{ base: 'none', md: 'flex' }}>
           <ArrowBtn direction="prev" onClick={() => navigate(-1)} />
           <ArrowBtn direction="next" onClick={() => navigate(1)} />
         </Flex>
 
-        {/* Progress track — click to jump */}
-        <Box
-          flex="1"
-          position="relative"
-          h="24px"
-          cursor="pointer"
-          onClick={seekTrack}
-          role="slider"
-          aria-label="Progreso de la galería"
-          aria-valuemin={1}
-          aria-valuemax={total}
-          aria-valuenow={active + 1}
-          _hover={{ '& .track': { bg: 'rgba(255,255,255,0.16)' } }}
-        >
-          {/* Base line */}
-          <Box
-            className="track"
-            position="absolute" top="50%" left={0} right={0}
-            transform="translateY(-50%)"
-            h="2px" borderRadius="full"
-            bg="rgba(255,255,255,0.08)"
-            transition="background 0.25s ease"
-          />
-          {/* Active segment */}
-          <Box
-            position="absolute" top="50%"
-            transform="translateY(-50%)"
-            h="4px" borderRadius="full"
-            bg="brand.blue"
-            boxShadow="0 0 12px rgba(0,87,184,0.75)"
-            w={`${100 / total}%`}
-            left={`${(active / total) * 100}%`}
-            transition="left 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
-            pointerEvents="none"
-          />
-        </Box>
+        <ProgressSlider total={total} active={active} onSeek={setActive} />
 
-        {/* Counter + hint */}
-        <Flex direction="column" align="flex-end" flexShrink={0} gap="2px">
-          <Flex align="baseline" gap="5px">
-            <Text
-              fontFamily="heading"
-              fontSize={{ base: 'lg', md: 'xl' }}
-              lineHeight="1" letterSpacing="0.04em"
-              color="white"
-            >
-              {String(active + 1).padStart(2, '0')}
-            </Text>
-            <Text
-              fontFamily="'Barlow Condensed', sans-serif"
-              fontSize="11px" fontWeight="600"
-              letterSpacing="0.14em"
-              color="rgba(255,255,255,0.3)"
-            >
-              / {String(total).padStart(2, '0')}
-            </Text>
-          </Flex>
+        {/* Contador */}
+        <Flex
+          align="baseline"
+          gap="5px"
+          flexShrink={0}
+          justify={{ base: 'center', md: 'flex-end' }}
+        >
           <Text
-            display={{ base: 'none', md: 'block' }}
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="10px" fontWeight="600"
-            letterSpacing="0.24em" textTransform="uppercase"
-            color="rgba(255,255,255,0.22)"
+            fontFamily="heading"
+            fontSize={{ base: 'lg', md: 'xl' }}
+            lineHeight="1" letterSpacing="0.04em"
+            color="white"
           >
-            Click para ampliar
+            {String(active + 1).padStart(2, '0')}
+          </Text>
+          <Text
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="11px" fontWeight="600"
+            letterSpacing="0.14em"
+            color="rgba(255,255,255,0.3)"
+          >
+            / {String(total).padStart(2, '0')}
           </Text>
         </Flex>
       </Flex>
