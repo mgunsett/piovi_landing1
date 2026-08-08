@@ -24,6 +24,7 @@ import image16 from '@assets/galleryPhotos/image16.webp'
 import image17 from '@assets/galleryPhotos/image17.webp'
 import image18 from '@assets/galleryPhotos/image18.webp'
 import image19 from '@assets/galleryPhotos/image19.webp'
+import image20 from '@assets/galleryPhotos/image20.webp'
 
 //Videos
 import video1 from '@assets/galleryVideos/video1.mp4'
@@ -144,38 +145,37 @@ export const playerData = {
  
   videos: [
     {
-      id: 'v2',
-      instagramId: 'DPP_syMDWD5',
-      title: 'Asistencia',
-      fullTitle: 'Gonzalo Piovi | Asistencias \'26',
-      season: 'Asistencias Cruz Azul',
-      league: 'LIGA MX 2025',
-      thumbnail: image2,
-      cover: image2,
-      category: 'Asistencia',
-    },
-    {
-      id: 'v3',
-      instagramId: 'DVjGHikDaUC',
+      id: 'v4',
+      instagramId: 'DNyKDrlQJ_n',
       title: 'Highlights \'25',
       fullTitle: 'Gonzalo Piovi | Highlights \'25',
       season: 'Highlights Cruz Azul \'25',
       league: 'LIGA MX 2025',
-      thumbnail: image10,
-      cover: image10,
+      thumbnail: image17,
+      cover: image17,
       category: 'Highlights',
     },
-    
     {
-      id: 'v4',
-      instagramId: 'DCmfAbFpTpl',
+      id: 'v3',
+      instagramId: 'DEQii45y_tJ',
       title: 'Highlights \'24',
       fullTitle: 'Gonzalo Piovi | Highlights \'24',
       season: 'Highlights Cruz Azul \'24',
       league: 'LIGA MX 2024',
-      thumbnail: image4,
-      cover: image4,
+      thumbnail: image10,
+      cover: image10,
       category: 'Highlights',
+    },
+    {
+      id: 'v2',
+      instagramId: 'C0kObElRXJ_',
+      title: 'Highlights \'23',
+      fullTitle: 'Gonzalo Piovi | Highlights \'23',
+      season: 'Highlights Racing \'23',
+      league: 'Liga Profesional 2023',
+      thumbnail: image20,
+      cover: image20,
+      category: 'Asistencia',
     },
   ],
 
@@ -225,6 +225,7 @@ export const playerData = {
     { id: 17, src: image17, alt: 'Gonzalo Piovi', aspect: 'tall' },
     { id: 18, src: image18, alt: 'Gonzalo Piovi', aspect: 'tall' },
     { id: 19, src: image19, alt: 'Gonzalo Piovi', aspect: 'tall' },
+    { id: 20, src: image20, alt: 'Gonzalo Piovi', aspect: 'tall' },
   ],
 
   socialMedia: [

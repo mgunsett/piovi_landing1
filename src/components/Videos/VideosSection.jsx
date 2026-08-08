@@ -127,7 +127,7 @@ export default function VideosSection() {
         right="-12%"
         w="55vw"
         h="55vw"
-        background="radial-gradient(ellipse, rgba(189,167,142,0.16) 0%, transparent 70%)"
+        background="radial-gradient(ellipse, #0A1834 0%, transparent 70%)"
         pointerEvents="none"
       />
 
@@ -137,7 +137,7 @@ export default function VideosSection() {
         aria-hidden
         position="absolute"
         top={{ base: '10%', md: '12%' }}
-        right={{ base: '-15%', md: '8%' }}
+        right={{ base: '-15%', md: '2%' }}
         fontFamily="heading"
         fontSize={{ base: '80vw', md: '40vw' }}
         lineHeight={0.8}
@@ -145,7 +145,7 @@ export default function VideosSection() {
         pointerEvents="none"
         userSelect="none"
         zIndex={0}
-        sx={{ WebkitTextStroke: '1.5px rgba(189,167,142,0.14)' }}
+        sx={{ WebkitTextStroke: '1.5px #e52b4444' }}
       >
         {playerData.number}
       </Text>

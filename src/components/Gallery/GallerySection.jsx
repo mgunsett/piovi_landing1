@@ -297,6 +297,13 @@ export default function GallerySection() {
 
   const openLightbox  = useCallback(() => setLightbox(active), [active])
   const closeLightbox = useCallback(() => setLightbox(null), [])
+
+  // Click/tap on the progress track jumps to that photo
+  const seekTrack = useCallback((e) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ratio = (e.clientX - rect.left) / rect.width
+    setActive(Math.min(total - 1, Math.max(0, Math.floor(ratio * total))))
+  }, [total])
   const prevLightbox  = useCallback(() => setLightbox(i => (i - 1 + total) % total), [total])
   const nextLightbox  = useCallback(() => setLightbox(i => (i + 1) % total), [total])
 
@@ -385,17 +392,6 @@ export default function GallerySection() {
               FO<Box as="span" color="brand.blue">TOS</Box>
             </Text>
           </Box>
-          {/* Counter */}
-          <Text
-            display={{ base: 'none', md: 'block' }}
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="11px" fontWeight="700"
-            letterSpacing="0.24em" textTransform="uppercase"
-            color="rgba(255,255,255,0.25)"
-            mb={1}
-          >
-            {String(active + 1).padStart(2,'0')} — {String(total).padStart(2,'0')}
-          </Text>
         </Flex>
       </Box>
 
@@ -425,45 +421,81 @@ export default function GallerySection() {
         px={{ base: 6, md: 12, lg: 20 }}
         mt={{ base: 8, md: 10 }}
         align="center"
-        justify="space-between"
+        gap={{ base: 4, md: 8 }}
       >
         {/* Arrow buttons */}
-        <Flex gap={3}>
+        <Flex gap={3} flexShrink={0}>
           <ArrowBtn direction="prev" onClick={() => navigate(-1)} />
           <ArrowBtn direction="next" onClick={() => navigate(1)} />
         </Flex>
 
-        {/* Dot indicators */}
-        <Flex gap="6px" align="center">
-          {images.map((_, i) => (
-            <Box
-              key={i}
-              as="button"
-              onClick={() => setActive(i)}
-              w={i === active ? '28px' : '6px'}
-              h="6px"
-              borderRadius="3px"
-              bg={i === active ? 'brand.blue' : 'rgba(255,255,255,0.2)'}
-              transition="all 0.35s ease"
-              cursor="pointer"
-              border="none"
-              p={0}
-              sx={{ boxShadow: i === active ? '0 0 10px rgba(0,87,184,0.7)' : 'none' }}
-              aria-label={`Foto ${i + 1}`}
-            />
-          ))}
-        </Flex>
-
-        {/* Hint */}
-        <Text
-          display={{ base: 'none', md: 'block' }}
-          fontFamily="'Barlow Condensed', sans-serif"
-          fontSize="10px" fontWeight="600"
-          letterSpacing="0.24em" textTransform="uppercase"
-          color="rgba(255,255,255,0.22)"
+        {/* Progress track — click to jump */}
+        <Box
+          flex="1"
+          position="relative"
+          h="24px"
+          cursor="pointer"
+          onClick={seekTrack}
+          role="slider"
+          aria-label="Progreso de la galería"
+          aria-valuemin={1}
+          aria-valuemax={total}
+          aria-valuenow={active + 1}
+          _hover={{ '& .track': { bg: 'rgba(255,255,255,0.16)' } }}
         >
-          Click para ampliar
-        </Text>
+          {/* Base line */}
+          <Box
+            className="track"
+            position="absolute" top="50%" left={0} right={0}
+            transform="translateY(-50%)"
+            h="2px" borderRadius="full"
+            bg="rgba(255,255,255,0.08)"
+            transition="background 0.25s ease"
+          />
+          {/* Active segment */}
+          <Box
+            position="absolute" top="50%"
+            transform="translateY(-50%)"
+            h="4px" borderRadius="full"
+            bg="brand.blue"
+            boxShadow="0 0 12px rgba(0,87,184,0.75)"
+            w={`${100 / total}%`}
+            left={`${(active / total) * 100}%`}
+            transition="left 0.45s cubic-bezier(0.22, 1, 0.36, 1)"
+            pointerEvents="none"
+          />
+        </Box>
+
+        {/* Counter + hint */}
+        <Flex direction="column" align="flex-end" flexShrink={0} gap="2px">
+          <Flex align="baseline" gap="5px">
+            <Text
+              fontFamily="heading"
+              fontSize={{ base: 'lg', md: 'xl' }}
+              lineHeight="1" letterSpacing="0.04em"
+              color="white"
+            >
+              {String(active + 1).padStart(2, '0')}
+            </Text>
+            <Text
+              fontFamily="'Barlow Condensed', sans-serif"
+              fontSize="11px" fontWeight="600"
+              letterSpacing="0.14em"
+              color="rgba(255,255,255,0.3)"
+            >
+              / {String(total).padStart(2, '0')}
+            </Text>
+          </Flex>
+          <Text
+            display={{ base: 'none', md: 'block' }}
+            fontFamily="'Barlow Condensed', sans-serif"
+            fontSize="10px" fontWeight="600"
+            letterSpacing="0.24em" textTransform="uppercase"
+            color="rgba(255,255,255,0.22)"
+          >
+            Click para ampliar
+          </Text>
+        </Flex>
       </Flex>
 
       {/* ── Lightbox ── */}
