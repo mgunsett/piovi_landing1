@@ -35,6 +35,12 @@ import escudoVelez from '@assets/escudos/velez.webp'
 import escudoDefensa from '@assets/escudos/defensa.webp'
 import escudoGimnasia from '@assets/escudos/gimnasia.webp'
 
+//Logos
+import logo1 from '@assets/logos/logo1.webp'
+import logo2 from '@assets/logos/logo2.webp'
+import logo3 from '@assets/logos/logo3.webp'
+
+
 //Icons
 import { FaInstagram, FaEnvelope } from 'react-icons/fa'
 import { IoMdStats } from "react-icons/io";
@@ -179,24 +185,24 @@ export const playerData = {
   press: [
     {
       media: 'Marca México',
-      logo: '/logos/espn.png',
+      logo: logo1,
       title: 'Piovi sobre Messi: "El mejor del mundo tuvo la intención de llevarme"',
       date: 'Septiembre 2025',
       url: 'https://www.marca.com/mx/futbol/liga-mx/2025/09/04/68b92c6eca474126788b45e9.html',
     },
     {
-      media: 'Excélsior',
-      logo: '/logos/tyc.png',
-      title: 'Aspiraba a esto y estoy muy contento y orgulloso de haber llegado a esta familia que es Cruz Azul',
-      date: 'Marzo 2026',
-      url: 'https://www.excelsior.com.mx/deportes/cruz-azul-gonzalo-piovi-habla-regreso-olimpico-universitario-para-enfrentar-pumas',
-    },
-    {
       media: 'Récord México',
-      logo: '/logos/ole.png',
+      logo: logo2,
       title: '”Tenemos que estar preparados, sabemos los jugadores que tienen, estamos convencidos de que con nuestra gente va a empujar”',
       date: 'Abril 2026',
       url: 'https://www.record.com.mx/historia/podemos-remontar-piovi-lanza-alentador-mensaje-previo-a-la-vuelta-ante-lafc-2026041323580152451',
+    },
+    {
+      media: 'Excélsior',
+      logo: logo3,
+      title: 'Aspiraba a esto y estoy muy contento y orgulloso de haber llegado a esta familia que es Cruz Azul',
+      date: 'Marzo 2026',
+      url: 'https://www.excelsior.com.mx/deportes/cruz-azul-gonzalo-piovi-habla-regreso-olimpico-universitario-para-enfrentar-pumas',
     },
   ],
 

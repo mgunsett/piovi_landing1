@@ -46,22 +46,16 @@ export default function ContactSection() {
         {/* Title */}
         <Box ref={titleRef} mb={{ base: 12, md: 20 }}>
           <Text
-            fontFamily="'Barlow Condensed', sans-serif"
-            fontSize="11px"
-            fontWeight="700"
-            letterSpacing="0.3em"
-            textTransform="uppercase"
-            color="brand.blue"
-            mb={3}
+            fontFamily="heading"
+            fontSize={{ base: '10px', md: '11px', lg: '12px' }}
+            letterSpacing="0.36em" textTransform="uppercase"
+            color="brand.bone" mb={2}
           >
             # REDES
           </Text>
-          <Text
-            fontFamily="heading"
-            fontSize={{ base: '52px', md: '80px', lg: '100px' }}
-            lineHeight="0.9"
-            letterSpacing="0.02em"
-          >
+          <Text fontFamily="heading"
+            textTransform="uppercase" fontWeight="medium" fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
+            lineHeight="0.9" letterSpacing="0.02em">
             CONT<Box as="span" color="brand.blue">ACTO</Box>
           </Text>
         </Box>
@@ -80,8 +74,9 @@ export default function ContactSection() {
                 role="group"
                 position="relative"
                 overflow="hidden"
-                p={{ base: 8, md: 10}}
+                p={{ base: 6, md: 10}}
                 border="1px solid rgba(255,255,255,0.06)"
+                borderRadius="md"
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
@@ -93,10 +88,10 @@ export default function ContactSection() {
                     <Icon
                       as={social.icon}
                       position="absolute"
-                      right={{base:'-10%',md:"-5%"}}
+                      right={{base:'-10%',md:"-3%"}}
                       top="50%"
                       transform="translateY(-50%)"
-                      fontSize={{ base: '150px', md: '230px' }}
+                      fontSize={{ base: '150px', md: '225px' }}
                       // opacity={{base:0.65, md:'none'}}
                       color={{base: "whiteAlpha.100" ,md:"whiteAlpha.50"}}
                       zIndex={0}
@@ -131,9 +126,9 @@ export default function ContactSection() {
                 {/* Text content — above the watermark icon */}
                 <Box position="relative" zIndex={1}>
                   <Text
-                    fontFamily="'Barlow Condensed', sans-serif"
-                    fontSize="10px"
-                    fontWeight="700"
+                    fontFamily="heading"
+                    fontSize={{ base: '10px', md: '11px', lg: '12px' }}
+                    fontWeight="medium"
                     letterSpacing="0.2em"
                     textTransform="uppercase"
                     color="whiteAlpha.400"
@@ -143,7 +138,7 @@ export default function ContactSection() {
                   </Text>
                   <Text
                     fontFamily="heading"
-                    fontSize={{ base: '32px', md: '42px' }}
+                    fontSize={{ base: '32px', md: '38px' }}
                     lineHeight="1"
                     letterSpacing="0.02em"
                     color="white"
@@ -161,7 +156,7 @@ export default function ContactSection() {
                     {social.handle}
                   </Text>
                 </Box>
-                <Text position="relative" zIndex={1} color="brand.blue" fontSize="18px">→</Text>
+
               </Box>
             ))}
           </Grid>
@@ -180,8 +175,9 @@ export default function ContactSection() {
                 role="group"
                 position="relative"
                 overflow="hidden"
-                p={5}
+                p={{ base: 6, md: 10 }}
                 border="1px solid rgba(255,255,255,0.06)"
+                borderRadius="md"
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
@@ -193,10 +189,10 @@ export default function ContactSection() {
                     <Icon
                       as={contact.icon}
                       position="absolute"
-                      right={{base:'-10%',md:"-5%"}}
+                      right={{base:'-10%',md:"-8%"}}
                       top="50%"
                       transform="translateY(-50%)"
-                      fontSize={{ base: '140px', md: '200px' }}
+                      fontSize={{ base: '140px', md: '225px' }}
                       color={{base: 'whiteAlpha.100',md:"whiteAlpha.50"}}
                       opacity={{base:0.65, md:"none"}}
                       zIndex={0}
@@ -211,7 +207,7 @@ export default function ContactSection() {
                     <Image
                       src={contact.image}
                       position="absolute"
-                      right={{base:"-5%", md:"-1%"}}
+                      right={{base:"-5%", md:"-2%"}}
                       top="50%"
                       transform="translateY(-50%)"
                       w={{ base: '125px', md: '180px' }}
@@ -231,9 +227,9 @@ export default function ContactSection() {
                 {/* Text content — above the watermark icon */}
                 <Box position="relative" zIndex={1}>
                   <Text
-                    fontFamily="'Barlow Condensed', sans-serif"
-                    fontSize="10px"
-                    fontWeight="700"
+                    fontFamily="heading"
+                    fontSize={{ base: '10px', md: '11px', lg: '12px' }}
+                    fontWeight="medium"
                     letterSpacing="0.2em"
                     textTransform="uppercase"
                     color="whiteAlpha.400"
@@ -243,7 +239,7 @@ export default function ContactSection() {
                   </Text>
                   <Text
                     fontFamily="heading"
-                    fontSize={{ base: '32px', md: '42px' }}
+                    fontSize={{ base: '32px', md: '36px' }}
                     lineHeight="1"
                     letterSpacing="0.02em"
                     color="white"
@@ -261,7 +257,7 @@ export default function ContactSection() {
                     {contact.handle}
                   </Text>
                 </Box>
-                <Text position="relative" zIndex={1} color="brand.blue" fontSize="18px">→</Text>
+                
               </Box> 
             ))}
           </Grid>
@@ -276,6 +272,7 @@ export default function ContactSection() {
             rel="noopener noreferrer"
             p={{ base: 8, md: 10 }}
             border="1px solid rgba(201,168,76,0.18)"
+            borderRadius="md"
             display="flex"
             flexDirection={{ base: 'column', md: 'row' }}
             justifyContent="space-between"
@@ -291,9 +288,9 @@ export default function ContactSection() {
 
             <Box>
               <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="10px"
-                fontWeight="700"
+                fontFamily="heading"
+                fontSize={{ base: '10px', md: '11px', lg: '12px' }}
+                fontWeight="medium"
                 letterSpacing="0.3em"
                 textTransform="uppercase"
                 color="brand.gold"
@@ -303,16 +300,16 @@ export default function ContactSection() {
               </Text>
               <Text
                 fontFamily="heading"
-                fontSize={{ base: '36px', md: '56px' }}
+                fontSize={{ base: '32px', md: '38px' }}
                 lineHeight="0.9"
                 letterSpacing="0.02em"
                 color="white"
               >
-                LEDSPORTS
+                LED Sports
               </Text>
               
             </Box>
-            <Text color="brand.gold" fontSize="20px" lineHeight="1">→</Text>
+            
           </Box>
         </Box>
       </Box>
