@@ -460,7 +460,7 @@ function ClubTimeline() {
                   textTransform="uppercase" letterSpacing="widest">
             Trayectoria
           </Text>
-          <Text as="h2" fontFamily='"Dela Gothic One", sans-serif' fontWeight="bold" fontSize={{ base: '3xl', lg: '4xl' }}
+          <Text as="h3" fontFamily='"Dela Gothic One", sans-serif' fontWeight="bold" fontSize={{ base: '3xl', lg: '4xl' }}
                   color="brand.accent" lineHeight={1}>
             Clubes
           </Text>

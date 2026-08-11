@@ -20,7 +20,7 @@ const navLinks = [
   { label: 'Home', href: '#hero' },
   { label: 'Estadísticas', href: '#estadisticas' },
   { label: 'Videos', href: '#videos' },
-  { label: 'Galería', href: '#galeria' },
+  { label: 'Galería', href: '#gallery' },
   { label: 'Prensa', href: '#prensa' },
 ]
 

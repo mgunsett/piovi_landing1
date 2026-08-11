@@ -57,16 +57,16 @@ export default function Footer() {
           <Text
             fontFamily="heading"
             fontSize="40px"
-            letterSpacing="0.08em"
+            letterSpacing="-0.08em"
             color="white"
           >
             GP
-            <Box as="span" color="brand.blue" ml="1px">_</Box>
+            <Box as="span" color="brand.blue" ml="-2px">_</Box>
           </Text>
         </Box>
 
         <Text
-          fontFamily="'Barlow Condensed', sans-serif"
+          fontFamily="heading"
           fontSize="12px"
           letterSpacing="0.12em"
           textTransform="uppercase"
@@ -76,7 +76,7 @@ export default function Footer() {
           © 2026 Gonzalo Piovi · Todos los derechos reservados
         </Text>
 
-        <Text fontSize="12px" color="rgba(255,255,255,0.3)" letterSpacing="0.05em">
+        <Text fontFamily="heading" fontSize="12px" color="rgba(255,255,255,0.3)" letterSpacing="0.05em">
             Desarrollo Web -{' '} 
             <Link 
             href="https://matiasgunsett.netlify.app/" 

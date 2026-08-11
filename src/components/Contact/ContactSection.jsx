@@ -53,7 +53,7 @@ export default function ContactSection() {
           >
             # REDES
           </Text>
-          <Text fontFamily="heading"
+          <Text as="h2" fontFamily="heading"
             textTransform="uppercase" fontWeight="medium" fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
             lineHeight="0.9" letterSpacing="0.02em">
             CONT<Box as="span" color="brand.blue">ACTO</Box>

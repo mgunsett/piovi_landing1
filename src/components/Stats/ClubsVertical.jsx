@@ -14,7 +14,7 @@ function ClubsHeader() {
               textTransform="uppercase" letterSpacing="widest">
         Trayectoria
       </Text>
-      <Text as="h2" fontFamily='heading' fontWeight="medium" textTransform="uppercase"
+      <Text as="h3" fontFamily='heading' fontWeight="medium" textTransform="uppercase"
             fontSize={{ base: '4xl',md:'5xl', lg: '6xl' }} color="brand.bone" lineHeight={1}>
         Clu<Box as="span" color="brand.blue">bes</Box>
       </Text>

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Box, Flex, Text, VStack, Image } from '@chakra-ui/react'
+import { Box, Flex, Text, VStack, Image, VisuallyHidden } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
@@ -164,6 +164,10 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
       zIndex={1}
       h={{ base: '200vh', md: '200vh' }}
     >
+      <VisuallyHidden as="h1">
+        {playerData.displayName} — {playerData.position} de {playerData.currentClub}
+      </VisuallyHidden>
+
       {/* ── Inner sticky viewport — pinned while Stats covers it ── */}
       <Box
         ref={containerRef}

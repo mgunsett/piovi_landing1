@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /AdminPage
+
+Sitemap: https://gonzalopiovi.com/sitemap.xml

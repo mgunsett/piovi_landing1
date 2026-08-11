@@ -194,7 +194,7 @@ export default function PressSection() {
               color="brand.bone" mb={2}>
               Testimonios
             </Text>
-            <Text  fontFamily="heading"
+            <Text as="h2" fontFamily="heading"
               textTransform="uppercase" fontWeight="medium" fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
               lineHeight="0.9" letterSpacing="0.02em">
               Pre<Box as="span" color="brand.blue">nsa</Box>
