@@ -58,6 +58,20 @@ const brand = {
   accentMid: scale.blue,        // extremo claro de degradados
   steel: '#3E5F8A',             // azul apagado: bordes, barras decorativas
   steelLight: '#6B8CB8',        // azul apagado legible sobre fondo oscuro
+
+  // Alias usados por AdminPage.jsx — mapeados a la paleta navy/azul
+  // existente (no hay marrón real en la marca, son nombres heredados
+  // de un template genérico).
+  brownDark: scale.navy,
+  brown: scale.blueDark,
+  brownLight: scale.blueMid,
+  gray2: scale.grayLight,
+
+  // Alias dorado/ámbar — reusan la familia `gold` (ya pensada para
+  // realces premium: resultados, palmarés).
+  amber: scale.gold,
+  amberLight: scale.goldLight,
+  dorado: scale.gold,
 }
 
 const theme = extendTheme({

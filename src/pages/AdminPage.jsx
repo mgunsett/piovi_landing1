@@ -1,577 +1,667 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
-  Box, Flex, Text, Input, Button, VStack, HStack, Image,
-  Spinner, useToast, Divider,
+  Box, Flex, VStack, HStack, Text, Input, Button, Image,
+  FormControl, FormLabel, Grid, GridItem, useToast,
+  Divider, Spinner, Badge, IconButton, Tabs, TabList,
+  TabPanels, TabPanel, Tab, useToken,
 } from '@chakra-ui/react'
-import { supabase, isSupabaseConfigured, SHIELDS_BUCKET } from '../lib/supabase'
-import { rowToMatch, defaultMatches } from '../data/matchData'
+import { FiEdit2, FiTrash2, FiUpload, FiLogOut, FiSave } from 'react-icons/fi'
+import { playerData } from '../data/playerData'
+import {
+  signInWithEmailAndPassword, signOut, onAuthStateChanged,
+} from 'firebase/auth'
+import { getDoc, setDoc, deleteDoc } from 'firebase/firestore'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { auth, storage, isFirebaseConfigured, playerMatchDoc, PLAYER_SLUG } from '../lib/firebase'
 
-// ─── ADMIN PAGE ──────────────────────────────────────────────────
-// Panel para administrar "Último Resultado" y "Próximo Partido".
-// Login real con Supabase Auth · datos en tabla `matches` · escudos
-// en Supabase Storage (bucket `shields`).
-
-const EMPTY = {
-  home: { name: '', shield: '' },
-  away: { name: '', shield: '' },
-  homeScore: '',
-  awayScore: '',
-  date: '',
-  stadium: '',
-  competition: '',
+const emptySlot = {
+  home_team: '', away_team: '',
+  home_score: '', away_score: '',
+  match_date: '', stadium: '', competition: '',
+  home_shield: '', away_shield: '',
 }
 
-const PAGE_BG = '#080C12'
+const labelStyle = {
+  fontFamily: 'mono', fontSize: '10px', color: 'brand.gray',
+  textTransform: 'uppercase', letterSpacing: 'widest', mb: 1,
+}
 
-// ─── Estilos compartidos de inputs ───────────────────────────────
 const inputStyle = {
-  bg: 'rgba(255,255,255,0.03)',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 0,
-  color: 'white',
-  fontFamily: "'Barlow', sans-serif",
-  fontSize: '14px',
-  _placeholder: { color: 'whiteAlpha.400' },
-  _hover: { borderColor: 'rgba(0,87,184,0.5)' },
-  _focus: { borderColor: 'brand.blue', boxShadow: 'none' },
+  bg: 'brand.dark',
+  border: '1px solid',
+  borderColor: 'brand.brownDark',
+  borderRadius: 'md',
+  fontFamily: 'mono', fontSize: 'sm', color: 'brand.amber',
+  h: '42px',
+  _hover: { borderColor: 'brand.gray' },
+  _focus: { borderColor: 'brand.brown', boxShadow: '0 0 0 1px rgba(30,95,168,0.4)' },
+  _placeholder: { color: 'rgba(122,140,163,0.5)' },
 }
 
-function FieldLabel({ children }) {
+function ShieldUpload({ label, currentUrl, onFileChange }) {
+  const inputRef = useRef(null)
+  const [preview, setPreview] = useState(null)
+  const [brownLight] = useToken('colors', ['brand.brownLight'])
+
+  const handleChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    onFileChange(file)
+    setPreview(URL.createObjectURL(file))
+  }
+
+  const displayUrl = preview || currentUrl
+
   return (
-    <Text
-      fontFamily="'Barlow Condensed', sans-serif"
-      fontSize="11px"
-      fontWeight="700"
-      letterSpacing="0.18em"
-      textTransform="uppercase"
-      color="whiteAlpha.600"
-      mb={1.5}
-    >
-      {children}
-    </Text>
+    <FormControl>
+      <FormLabel {...labelStyle}>{label}</FormLabel>
+      <Input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        display="none"
+        onChange={handleChange}
+      />
+      <Flex
+        align="center"
+        gap={3}
+        p={2}
+        border="1px dashed"
+        borderColor="brand.brownDark"
+        borderRadius="md"
+        cursor="pointer"
+        transition="all 0.2s"
+        _hover={{ borderColor: 'brand.brown', bg: 'rgba(30,95,168,0.04)' }}
+        onClick={() => inputRef.current?.click()}
+        minH="56px"
+      >
+        {displayUrl ? (
+          <Image src={displayUrl} boxSize="40px" objectFit="contain" borderRadius="sm" />
+        ) : (
+          <Flex
+            boxSize="40px"
+            align="center"
+            justify="center"
+            bg="brand.brownDark"
+            borderRadius="sm"
+          >
+            <FiUpload color={brownLight} size={16} />
+          </Flex>
+        )}
+        <Text fontFamily="mono" fontSize="11px" color="brand.gray">
+          {displayUrl ? 'Cambiar imagen' : 'Subir escudo'}
+        </Text>
+      </Flex>
+    </FormControl>
   )
 }
 
-// ─── Subida de escudo a Storage ──────────────────────────────────
-function ShieldUpload({ value, onChange, slot, side }) {
-  const fileRef = useRef(null)
-  const [uploading, setUploading] = useState(false)
+function MatchForm({ slot, label, data, onSave, uploading }) {
+  const [form, setForm] = useState({ ...emptySlot, ...data })
+  const [shieldFiles, setShieldFiles] = useState({ home: null, away: null })
+
+  useEffect(() => setForm({ ...emptySlot, ...data }), [data])
+
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+
+  return (
+    <Box>
+      <Text fontFamily="mono" fontSize="10px" color="brand.brown"
+            textTransform="uppercase" letterSpacing="widest" mb={4}>
+        {label}
+      </Text>
+
+      <Grid templateColumns={{ base: '1fr', md: '1fr auto 1fr' }} gap={{ base: 4, md: 3 }} alignItems="start">
+        {/* Local */}
+        <VStack spacing={3} align="stretch">
+          <Box px={3} py={2} bg="rgba(30,95,168,0.05)" borderRadius="md" border="1px solid" borderColor="brand.brownDark">
+            <Text fontFamily="mono" fontSize="9px" color="brand.brownLight"
+                  textTransform="uppercase" letterSpacing="widest" mb={2}>
+              Local
+            </Text>
+            <FormControl mb={3}>
+              <FormLabel {...labelStyle}>Equipo</FormLabel>
+              <Input {...inputStyle} value={form.home_team} onChange={set('home_team')} placeholder="Ej: Talleres" />
+            </FormControl>
+            <FormControl mb={3}>
+              <FormLabel {...labelStyle}>Goles</FormLabel>
+              <Input {...inputStyle} value={form.home_score} onChange={set('home_score')}
+                     placeholder="—" type="number" textAlign="center" />
+            </FormControl>
+            <ShieldUpload
+              label="Escudo"
+              currentUrl={form.home_shield}
+              onFileChange={(f) => setShieldFiles((s) => ({ ...s, home: f }))}
+            />
+          </Box>
+        </VStack>
+
+        {/* VS divider */}
+        <Flex align="center" justify="center" h="100%" display={{ base: 'none', md: 'flex' }} pt={10}>
+          <Text fontFamily="heading" fontSize="2xl" color="brand.brownDark">VS</Text>
+        </Flex>
+
+        {/* Visitante */}
+        <VStack spacing={3} align="stretch">
+          <Box px={3} py={2} bg="rgba(30,95,168,0.05)" borderRadius="md" border="1px solid" borderColor="brand.brownDark">
+            <Text fontFamily="mono" fontSize="9px" color="brand.brownLight"
+                  textTransform="uppercase" letterSpacing="widest" mb={2}>
+              Visitante
+            </Text>
+            <FormControl mb={3}>
+              <FormLabel {...labelStyle}>Equipo</FormLabel>
+              <Input {...inputStyle} value={form.away_team} onChange={set('away_team')} placeholder="Ej: River Plate" />
+            </FormControl>
+            <FormControl mb={3}>
+              <FormLabel {...labelStyle}>Goles</FormLabel>
+              <Input {...inputStyle} value={form.away_score} onChange={set('away_score')}
+                     placeholder="—" type="number" textAlign="center" />
+            </FormControl>
+            <ShieldUpload
+              label="Escudo"
+              currentUrl={form.away_shield}
+              onFileChange={(f) => setShieldFiles((s) => ({ ...s, away: f }))}
+            />
+          </Box>
+        </VStack>
+      </Grid>
+
+      {/* Match details */}
+      <Grid templateColumns={{ base: '1fr', sm: 'repeat(3, 1fr)' }} gap={3} mt={4}>
+        <FormControl>
+          <FormLabel {...labelStyle}>Fecha</FormLabel>
+          <Input {...inputStyle} value={form.match_date} onChange={set('match_date')} placeholder="22 Jun 2025" />
+        </FormControl>
+        <FormControl>
+          <FormLabel {...labelStyle}>Estadio</FormLabel>
+          <Input {...inputStyle} value={form.stadium} onChange={set('stadium')} placeholder="Mario Kempes" />
+        </FormControl>
+        <FormControl>
+          <FormLabel {...labelStyle}>Competencia</FormLabel>
+          <Input {...inputStyle} value={form.competition} onChange={set('competition')} placeholder="Liga Profesional" />
+        </FormControl>
+      </Grid>
+
+      <Button
+        mt={5} w="full"
+        bg="brand.dorado" color="white"
+        fontFamily="mono" fontSize="sm" letterSpacing="widest" textTransform="uppercase"
+        borderRadius="md" h="44px"
+        leftIcon={<FiSave />}
+        _hover={{ bg: 'brand.brownLight' }}
+        _active={{ bg: 'brand.brownDark' }}
+        isLoading={uploading}
+        onClick={() => onSave(slot, form, shieldFiles)}
+      >
+        Guardar {slot === 'last' ? 'Resultado' : 'Partido'}
+      </Button>
+    </Box>
+  )
+}
+
+function MatchPreviewCard({ slot, data, label, onEdit, onDelete }) {
+  const hasData = data && data.home_team
+
+  if (!hasData) {
+    return (
+      <Box
+        border="1px dashed"
+        borderColor="brand.brownDark"
+        borderRadius="lg"
+        p={{ base: 4, md: 6 }}
+        textAlign="center"
+      >
+        <Text fontFamily="mono" fontSize="10px" color="brand.gray"
+              textTransform="uppercase" letterSpacing="widest" mb={2}>
+          {label}
+        </Text>
+        <Text fontFamily="mono" fontSize="sm" color="brand.gray2">
+          Sin datos cargados
+        </Text>
+      </Box>
+    )
+  }
+
+  const homeScore = data.home_score ?? '—'
+  const awayScore = data.away_score ?? '—'
+
+  return (
+    <Box
+      border="1px solid"
+      borderColor="brand.brownDark"
+      borderRadius="lg"
+      overflow="hidden"
+      transition="all 0.2s"
+      _hover={{ borderColor: 'brand.brown' }}
+    >
+      {/* Card header */}
+      <Flex
+        justify="space-between"
+        align="center"
+        px={4} py={2}
+        bg="rgba(30,95,168,0.08)"
+        borderBottom="1px solid"
+        borderColor="brand.brownDark"
+      >
+        <Badge
+          fontFamily="heading" fontSize="9px"
+          bg={slot === 'last' ? 'brand.amberLight' : 'brand.brownLight'}
+          color={slot === 'last' ? 'brand.amber' : 'brand.brownLight'}
+          border="1px solid"
+          borderColor={slot === 'last' ? 'brand.amber' : 'brand.brownLight'}
+          px={2} py={0.5} letterSpacing="widest" textTransform="uppercase"
+        >
+          {label}
+        </Badge>
+        <HStack spacing={1}>
+          <IconButton
+            icon={<FiEdit2 size={14} />}
+            size="sm" variant="ghost"
+            color="brand.gray"
+            _hover={{ color: 'brand.brownLight', bg: 'rgba(30,95,168,0.1)' }}
+            aria-label="Editar"
+            onClick={onEdit}
+          />
+          <IconButton
+            icon={<FiTrash2 size={14} />}
+            size="sm" variant="ghost"
+            color="brand.gray"
+            _hover={{ color: 'red.400', bg: 'rgba(255,0,0,0.06)' }}
+            aria-label="Eliminar"
+            onClick={onDelete}
+          />
+        </HStack>
+      </Flex>
+
+      {/* Match display */}
+      <Flex
+        direction={{ base: 'column', sm: 'row' }}
+        align="center"
+        justify="center"
+        gap={{ base: 3, sm: 6 }}
+        px={4} py={{ base: 4, md: 5 }}
+      >
+        {/* Home team */}
+        <VStack spacing={2} flex={1} minW={0}>
+          {data.home_shield ? (
+            <Image src={data.home_shield} boxSize={{ base: '44px', md: '52px' }} objectFit="contain" />
+          ) : (
+            <Flex boxSize={{ base: '44px', md: '52px' }} align="center" justify="center"
+                  bg="brand.brownDark" borderRadius="md">
+              <Text fontFamily="heading" fontSize="sm" color="brand.brownLight">
+                {data.home_team?.slice(0, 3).toUpperCase()}
+              </Text>
+            </Flex>
+          )}
+          <Text fontFamily="mono" fontSize={{ base: '11px', md: '12px' }} color="brand.gray"
+                textTransform="uppercase" letterSpacing="wider" textAlign="center" noOfLines={1}>
+            {data.home_team}
+          </Text>
+        </VStack>
+
+        {/* Score */}
+        <HStack spacing={3} flexShrink={0}>
+          <Text fontFamily="heading" fontSize={{ base: '3xl', md: '4xl' }} color="brand.amber" lineHeight={1}>
+            {homeScore}
+          </Text>
+          <Text fontFamily="heading" fontSize={{ base: 'lg', md: 'xl' }} color="brand.dorado" lineHeight={1}>
+            —
+          </Text>
+          <Text fontFamily="heading" fontSize={{ base: '3xl', md: '4xl' }} color="brand.amber" lineHeight={1}>
+            {awayScore}
+          </Text>
+        </HStack>
+
+        {/* Away team */}
+        <VStack spacing={2} flex={1} minW={0}>
+          {data.away_shield ? (
+            <Image src={data.away_shield} boxSize={{ base: '44px', md: '52px' }} objectFit="contain" />
+          ) : (
+            <Flex boxSize={{ base: '44px', md: '52px' }} align="center" justify="center"
+                  bg="brand.brownDark" borderRadius="md">
+              <Text fontFamily="heading" fontSize="sm" color="brand.brownLight">
+                {data.away_team?.slice(0, 3).toUpperCase()}
+              </Text>
+            </Flex>
+          )}
+          <Text fontFamily="mono" fontSize={{ base: '11px', md: '12px' }} color="brand.gray"
+                textTransform="uppercase" letterSpacing="wider" textAlign="center" noOfLines={1}>
+            {data.away_team}
+          </Text>
+        </VStack>
+      </Flex>
+
+      {/* Match meta */}
+      <Flex
+        px={4} py={2}
+        bg="rgba(30,95,168,0.04)"
+        borderTop="1px solid"
+        borderColor="brand.brownDark"
+        justify="space-between"
+        align="center"
+        wrap="wrap"
+        gap={2}
+      >
+        <HStack spacing={3}>
+          {data.match_date && (
+            <Text fontFamily="mono" fontSize="10px" color="brand.gray" letterSpacing="wider">
+              {data.match_date}
+            </Text>
+          )}
+          {data.competition && (
+            <Badge fontFamily="mono" fontSize="8px" bg="rgba(30,95,168,0.1)"
+                   color="brand.brownLight" px={2} py={0.5} letterSpacing="wider">
+              {data.competition}
+            </Badge>
+          )}
+        </HStack>
+        {data.stadium && (
+          <Text fontFamily="mono" fontSize="10px" color="brand.gray" letterSpacing="wider"
+                noOfLines={1} maxW={{ base: '120px', md: '200px' }}>
+            {data.stadium}
+          </Text>
+        )}
+      </Flex>
+    </Box>
+  )
+}
+
+export default function AdminPage() {
+  const [user,        setUser]        = useState(null)
+  const [loading,     setLoading]     = useState(true)
+  const [matchData,   setMatchData]   = useState({ last: {}, next: {} })
+  const [uploading,   setUploading]   = useState(false)
+  const [email,       setEmail]       = useState('')
+  const [password,    setPassword]    = useState('')
+  const [authLoading, setAuthLoading] = useState(false)
+  const [tabIndex,    setTabIndex]    = useState(0)
   const toast = useToast()
 
-  const handleFile = async (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+  useEffect(() => {
+    if (!isFirebaseConfigured) { setLoading(false); return }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      setLoading(false)
+    })
+    return () => unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    if (!user) return
+    const loadMatches = async () => {
+      const [lastSnap, nextSnap] = await Promise.all([
+        getDoc(playerMatchDoc('last')),
+        getDoc(playerMatchDoc('next')),
+      ])
+      const result = {}
+      if (lastSnap.exists()) result.last = lastSnap.data()
+      if (nextSnap.exists()) result.next = nextSnap.data()
+      setMatchData(result)
+    }
+    loadMatches()
+  }, [user])
+
+  const handleLogin = async () => {
+    setAuthLoading(true)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+    } catch (err) {
+      toast({ title: err.message, status: 'error', duration: 4000 })
+    }
+    setAuthLoading(false)
+  }
+
+  const handleLogout = async () => {
+    await signOut(auth)
+    setUser(null)
+  }
+
+  const uploadShield = async (file, name) => {
+    if (!file) return null
+    const ext = file.name.split('.').pop()
+    const path = `players/${PLAYER_SLUG}/shields/${name.replace(/\s+/g, '_').toLowerCase()}.${ext}`
+    const storageRef = ref(storage, path)
+    await uploadBytes(storageRef, file)
+    return getDownloadURL(storageRef)
+  }
+
+  const handleSave = async (slot, form, shieldFiles) => {
     setUploading(true)
     try {
-      const ext = file.name.split('.').pop()
-      const path = `${slot}-${side}-${Date.now()}.${ext}`
-      const { error } = await supabase.storage
-        .from(SHIELDS_BUCKET)
-        .upload(path, file, { upsert: true, cacheControl: '3600' })
-      if (error) throw error
-      const { data } = supabase.storage.from(SHIELDS_BUCKET).getPublicUrl(path)
-      onChange(data.publicUrl)
-      toast({ title: 'Escudo subido', status: 'success', duration: 2000 })
+      let homeShieldUrl = form.home_shield || null
+      let awayShieldUrl = form.away_shield || null
+
+      if (shieldFiles.home) homeShieldUrl = await uploadShield(shieldFiles.home, form.home_team || 'home')
+      if (shieldFiles.away) awayShieldUrl = await uploadShield(shieldFiles.away, form.away_team || 'away')
+
+      const payload = {
+        home_team:   form.home_team,
+        away_team:   form.away_team,
+        home_score:  form.home_score !== '' ? Number(form.home_score) : null,
+        away_score:  form.away_score !== '' ? Number(form.away_score) : null,
+        match_date:  form.match_date,
+        stadium:     form.stadium,
+        competition: form.competition,
+        home_shield: homeShieldUrl,
+        away_shield: awayShieldUrl,
+        updated_at:  new Date().toISOString(),
+      }
+
+      await setDoc(playerMatchDoc(slot), payload)
+      setMatchData((prev) => ({ ...prev, [slot]: payload }))
+      toast({ title: 'Partido guardado', status: 'success', duration: 3000 })
     } catch (err) {
-      toast({ title: 'Error al subir', description: err.message, status: 'error' })
+      toast({ title: err.message, status: 'error', duration: 4000 })
     } finally {
       setUploading(false)
     }
   }
 
-  return (
-    <VStack spacing={2} align="center">
-      <Box
-        w="64px"
-        h="64px"
-        border="1px solid rgba(255,255,255,0.12)"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        bg="rgba(255,255,255,0.02)"
-      >
-        {uploading ? (
-          <Spinner size="sm" color="brand.blue" />
-        ) : value ? (
-          <Image src={value} alt="escudo" boxSize="52px" objectFit="contain" />
-        ) : (
-          <Text fontSize="10px" color="whiteAlpha.400" textAlign="center">
-            Sin{'\n'}escudo
-          </Text>
-        )}
-      </Box>
-      <Button
-        size="xs"
-        variant="outline"
-        borderRadius={0}
-        borderColor="rgba(0,87,184,0.5)"
-        color="white"
-        fontFamily="'Barlow Condensed', sans-serif"
-        letterSpacing="0.1em"
-        textTransform="uppercase"
-        fontWeight="600"
-        _hover={{ bg: 'rgba(0,87,184,0.2)' }}
-        onClick={() => fileRef.current?.click()}
-        isLoading={uploading}
-      >
-        Subir
-      </Button>
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFile}
-        style={{ display: 'none' }}
-      />
-    </VStack>
-  )
-}
-
-// ─── Formulario de un partido ────────────────────────────────────
-function MatchForm({ slot, title, accent, showScore, initial }) {
-  const [form, setForm] = useState(initial || EMPTY)
-  const [saving, setSaving] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const toast = useToast()
-
-  useEffect(() => {
-    if (initial) setForm(initial)
-  }, [initial])
-
-  const set = (path, val) => {
-    setForm((f) => {
-      if (path === 'home.name') return { ...f, home: { ...f.home, name: val } }
-      if (path === 'home.shield') return { ...f, home: { ...f.home, shield: val } }
-      if (path === 'away.name') return { ...f, away: { ...f.away, name: val } }
-      if (path === 'away.shield') return { ...f, away: { ...f.away, shield: val } }
-      return { ...f, [path]: val }
-    })
-  }
-
-  const toIntOrNull = (v) => {
-    if (v === '' || v === null || v === undefined) return null
-    const n = parseInt(v, 10)
-    return Number.isNaN(n) ? null : n
-  }
-
-  const handleSave = async () => {
-    setSaving(true)
+  const handleDelete = async (slot) => {
     try {
-      const payload = {
-        slot,
-        home_team: form.home.name,
-        home_shield: form.home.shield,
-        away_team: form.away.name,
-        away_shield: form.away.shield,
-        home_score: showScore ? toIntOrNull(form.homeScore) : null,
-        away_score: showScore ? toIntOrNull(form.awayScore) : null,
-        match_date: form.date,
-        stadium: form.stadium,
-        competition: form.competition,
-        updated_at: new Date().toISOString(),
-      }
-      const { error } = await supabase
-        .from('matches')
-        .upsert(payload, { onConflict: 'slot' })
-      if (error) throw error
-      toast({ title: 'Guardado', status: 'success', duration: 2000 })
+      await deleteDoc(playerMatchDoc(slot))
+      setMatchData((prev) => ({ ...prev, [slot]: {} }))
+      toast({ title: 'Partido eliminado', status: 'info', duration: 3000 })
     } catch (err) {
-      toast({ title: 'Error al guardar', description: err.message, status: 'error' })
-    } finally {
-      setSaving(false)
+      toast({ title: err.message, status: 'error', duration: 4000 })
     }
   }
 
-  const handleDelete = async () => {
-    setDeleting(true)
-    try {
-      const { error } = await supabase.from('matches').delete().eq('slot', slot)
-      if (error) throw error
-      setForm(EMPTY)
-      toast({ title: 'Datos eliminados', status: 'info', duration: 2000 })
-    } catch (err) {
-      toast({ title: 'Error al eliminar', description: err.message, status: 'error' })
-    } finally {
-      setDeleting(false)
-    }
+  const handleEdit = (slot) => {
+    setTabIndex(slot === 'last' ? 0 : 1)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  return (
-    <Box
-      flex="1"
-      minW={{ base: '100%', md: '340px' }}
-      bg="rgba(255,255,255,0.015)"
-      border="1px solid rgba(255,255,255,0.08)"
-      p={6}
-      position="relative"
-      sx={{
-        '&::before': {
-          content: '""', position: 'absolute', top: 0, left: 0,
-          width: '32px', height: '3px', background: accent,
-        },
-      }}
-    >
-      <Text
-        fontFamily="heading"
-        fontSize="24px"
-        letterSpacing="0.04em"
-        color="white"
-        mb={5}
-      >
-        {title}
-      </Text>
-
-      {/* Equipos + escudos */}
-      <Flex gap={4} mb={5}>
-        <VStack flex="1" spacing={3} align="stretch">
-          <Box>
-            <FieldLabel>Equipo Local</FieldLabel>
-            <Input
-              {...inputStyle}
-              value={form.home.name}
-              onChange={(e) => set('home.name', e.target.value)}
-              placeholder="Ej: Cruz Azul"
-            />
-          </Box>
-          <ShieldUpload
-            value={form.home.shield}
-            onChange={(url) => set('home.shield', url)}
-            slot={slot}
-            side="home"
-          />
-        </VStack>
-
-        <VStack flex="1" spacing={3} align="stretch">
-          <Box>
-            <FieldLabel>Equipo Visitante</FieldLabel>
-            <Input
-              {...inputStyle}
-              value={form.away.name}
-              onChange={(e) => set('away.name', e.target.value)}
-              placeholder="Ej: América"
-            />
-          </Box>
-          <ShieldUpload
-            value={form.away.shield}
-            onChange={(url) => set('away.shield', url)}
-            slot={slot}
-            side="away"
-          />
-        </VStack>
-      </Flex>
-
-      {/* Resultado (solo último partido) */}
-      {showScore && (
-        <HStack spacing={4} mb={5}>
-          <Box flex="1">
-            <FieldLabel>Goles Local</FieldLabel>
-            <Input
-              {...inputStyle}
-              type="number"
-              value={form.homeScore ?? ''}
-              onChange={(e) => set('homeScore', e.target.value)}
-              placeholder="0"
-            />
-          </Box>
-          <Box flex="1">
-            <FieldLabel>Goles Visitante</FieldLabel>
-            <Input
-              {...inputStyle}
-              type="number"
-              value={form.awayScore ?? ''}
-              onChange={(e) => set('awayScore', e.target.value)}
-              placeholder="0"
-            />
-          </Box>
-        </HStack>
-      )}
-
-      <VStack spacing={4} align="stretch" mb={6}>
-        <Box>
-          <FieldLabel>Fecha</FieldLabel>
-          <Input
-            {...inputStyle}
-            value={form.date}
-            onChange={(e) => set('date', e.target.value)}
-            placeholder="Ej: 19 Mar 2026"
-          />
-        </Box>
-        <Box>
-          <FieldLabel>Estadio</FieldLabel>
-          <Input
-            {...inputStyle}
-            value={form.stadium}
-            onChange={(e) => set('stadium', e.target.value)}
-            placeholder="Ej: Estadio Azteca"
-          />
-        </Box>
-        <Box>
-          <FieldLabel>Competición (opcional)</FieldLabel>
-          <Input
-            {...inputStyle}
-            value={form.competition}
-            onChange={(e) => set('competition', e.target.value)}
-            placeholder="Ej: Liga MX · J12"
-          />
-        </Box>
-      </VStack>
-
-      <HStack spacing={3}>
-        <Button
-          flex="1"
-          bg="brand.blue"
-          color="white"
-          borderRadius={0}
-          fontFamily="'Barlow Condensed', sans-serif"
-          letterSpacing="0.12em"
-          textTransform="uppercase"
-          fontWeight="700"
-          _hover={{ bg: '#003A7D' }}
-          onClick={handleSave}
-          isLoading={saving}
-        >
-          Guardar
-        </Button>
-        <Button
-          variant="outline"
-          borderRadius={0}
-          borderColor="rgba(255,80,80,0.4)"
-          color="rgba(255,120,120,0.9)"
-          fontFamily="'Barlow Condensed', sans-serif"
-          letterSpacing="0.12em"
-          textTransform="uppercase"
-          fontWeight="600"
-          _hover={{ bg: 'rgba(255,80,80,0.12)' }}
-          onClick={handleDelete}
-          isLoading={deleting}
-        >
-          Eliminar
-        </Button>
-      </HStack>
-    </Box>
-  )
-}
-
-// ─── Login ───────────────────────────────────────────────────────
-function LoginForm({ onLogin }) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const submit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    setLoading(false)
-    if (error) setError(error.message)
-    else onLogin()
-  }
-
-  return (
-    <Flex minH="100vh" align="center" justify="center" bg={PAGE_BG} px={4}>
-      <Box
-        as="form"
-        onSubmit={submit}
-        w="100%"
-        maxW="380px"
-        bg="rgba(255,255,255,0.015)"
-        border="1px solid rgba(255,255,255,0.08)"
-        p={8}
-        position="relative"
-        sx={{
-          '&::before': {
-            content: '""', position: 'absolute', top: 0, left: 0,
-            width: '40px', height: '3px', background: '#0057B8',
-          },
-        }}
-      >
-        <Text
-          fontFamily="heading"
-          fontSize="34px"
-          color="white"
-          letterSpacing="0.04em"
-          lineHeight="1"
-        >
-          ADMIN
-          <Box as="span" color="brand.blue">_</Box>
-        </Text>
-        <Text
-          fontFamily="'Barlow Condensed', sans-serif"
-          fontSize="12px"
-          letterSpacing="0.16em"
-          textTransform="uppercase"
-          color="whiteAlpha.500"
-          mb={7}
-        >
-          Panel de partidos · Piovi
-        </Text>
-
-        <VStack spacing={4} align="stretch">
-          <Box>
-            <FieldLabel>Usuario (email)</FieldLabel>
-            <Input
-              {...inputStyle}
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="correo@ejemplo.com"
-              autoComplete="username"
-            />
-          </Box>
-          <Box>
-            <FieldLabel>Contraseña</FieldLabel>
-            <Input
-              {...inputStyle}
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </Box>
-
-          {error && (
-            <Text fontSize="13px" color="rgba(255,120,120,0.9)" fontFamily="'Barlow', sans-serif">
-              {error}
-            </Text>
-          )}
-
-          <Button
-            type="submit"
-            bg="brand.blue"
-            color="white"
-            borderRadius={0}
-            fontFamily="'Barlow Condensed', sans-serif"
-            letterSpacing="0.14em"
-            textTransform="uppercase"
-            fontWeight="700"
-            mt={2}
-            _hover={{ bg: '#003A7D' }}
-            isLoading={loading}
-          >
-            Ingresar
-          </Button>
-        </VStack>
-      </Box>
-    </Flex>
-  )
-}
-
-// ─── Aviso de configuración faltante ─────────────────────────────
-function NotConfigured() {
-  return (
-    <Flex minH="100vh" align="center" justify="center" bg={PAGE_BG} px={4}>
-      <Box maxW="520px" textAlign="center">
-        <Text fontFamily="heading" fontSize="40px" color="white">
-          Falta configurar Supabase
-        </Text>
-        <Text fontFamily="'Barlow', sans-serif" color="whiteAlpha.700" mt={3} lineHeight="1.7">
-          Creá un archivo <Box as="code" color="brand.blue">.env</Box> en la raíz con
-          {' '}<Box as="code" color="brand.blue">VITE_SUPABASE_URL</Box> y
-          {' '}<Box as="code" color="brand.blue">VITE_SUPABASE_ANON_KEY</Box>, luego reiniciá el
-          servidor de desarrollo. Mirá <Box as="code" color="brand.blue">SUPABASE_SETUP.md</Box>.
-        </Text>
-      </Box>
-    </Flex>
-  )
-}
-
-// ─── Página principal ────────────────────────────────────────────
-export default function AdminPage() {
-  const [session, setSession] = useState(null)
-  const [checking, setChecking] = useState(true)
-  const [initial, setInitial] = useState(null) // { last, next } desde DB
-
-  // Sesión
-  useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setChecking(false)
-      return
-    }
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setChecking(false)
-    })
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
-    return () => sub.subscription.unsubscribe()
-  }, [])
-
-  // Cargar datos existentes al autenticarse
-  useEffect(() => {
-    if (!session) return
-    ;(async () => {
-      const { data } = await supabase.from('matches').select('*').in('slot', ['last', 'next'])
-      const lastRow = data?.find((r) => r.slot === 'last')
-      const nextRow = data?.find((r) => r.slot === 'next')
-      setInitial({
-        last: toForm(rowToMatch(lastRow)),
-        next: toForm(rowToMatch(nextRow)),
-      })
-    })()
-  }, [session])
-
-  if (!isSupabaseConfigured) return <NotConfigured />
-
-  if (checking) {
+  if (!isFirebaseConfigured) {
     return (
-      <Flex minH="100vh" align="center" justify="center" bg={PAGE_BG}>
-        <Spinner color="brand.blue" />
-      </Flex>
+      <Box minH="100vh" bg="brand.dark" display="flex" alignItems="center" justifyContent="center" px={6}>
+        <VStack spacing={3} textAlign="center">
+          <Text fontFamily="heading" fontSize="2xl" color="white">Firebase no configurado</Text>
+          <Text fontFamily="mono" fontSize="sm" color="brand.gray">
+            Creá un archivo .env con las variables VITE_FIREBASE_ correspondientes.
+          </Text>
+        </VStack>
+      </Box>
     )
   }
 
-  if (!session) return <LoginForm onLogin={() => {}} />
+  if (loading) {
+    return (
+      <Box minH="100vh" bg="brand.dark" display="flex" alignItems="center" justifyContent="center">
+        <Spinner color="brand.brand" size="lg" />
+      </Box>
+    )
+  }
+
+  if (!user) {
+    return (
+      <Box minH="100vh" bg="brand.dark" display="flex" alignItems="center" justifyContent="center" px={4}>
+        <Box
+          w="full" maxW="380px"
+          bg="rgba(11,42,74,0.4)"
+          border="1px solid"
+          borderColor="brand.brownDark"
+          borderRadius="xl"
+          p={{ base: 6, md: 8 }}
+          backdropFilter="blur(10px)"
+        >
+          <VStack spacing={1} mb={6}>
+            <Text fontFamily="heading" fontSize="3xl" color="brand.amber">{playerData.name} <Text as="span" color="brand.amber">{playerData.fullName}</Text> _</Text>
+            <Text fontFamily="mono" fontSize="10px" color="brand.gray"
+                  letterSpacing="widest" textTransform="uppercase">
+              Panel de administración
+            </Text>
+          </VStack>
+          <VStack spacing={4}>
+            <FormControl>
+              <FormLabel {...labelStyle}>Email</FormLabel>
+              <Input {...inputStyle} type="email" value={email}
+                     onChange={(e) => setEmail(e.target.value)} placeholder="admin@ejemplo.com" />
+            </FormControl>
+            <FormControl>
+              <FormLabel {...labelStyle}>Contraseña</FormLabel>
+              <Input {...inputStyle} type="password" value={password}
+                     onChange={(e) => setPassword(e.target.value)}
+                     onKeyDown={(e) => e.key === 'Enter' && handleLogin()} />
+            </FormControl>
+            <Button
+              w="full" bg="brand.brown" color="white" h="44px"
+              fontFamily="mono" fontSize="sm" letterSpacing="widest" textTransform="uppercase"
+              borderRadius="md"
+              _hover={{ bg: 'brand.brownLight' }}
+              _active={{ bg: 'brand.brownDark' }}
+              isLoading={authLoading}
+              onClick={handleLogin}
+            >
+              Ingresar
+            </Button>
+          </VStack>
+        </Box>
+      </Box>
+    )
+  }
 
   return (
-    <Box minH="100vh" bg={PAGE_BG} color="white">
-      <Box maxW="900px" mx="auto" px={{ base: 5, md: 8 }} py={{ base: 8, md: 12 }}>
+    <Box minH="100vh" bg="brand.dark" py={{ base: 6, md: 10 }} px={{ base: 4, md: 6, lg: 10 }}>
+      <Box maxW="900px" mx="auto">
         {/* Header */}
-        <Flex align="center" justify="space-between" mb={2} wrap="wrap" gap={3}>
+        <Flex align="center" justify="space-between" mb={{ base: 6, md: 8 }}>
           <Box>
-            <Text fontFamily="heading" fontSize="40px" lineHeight="1" letterSpacing="0.03em">
-              PANEL DE PARTIDOS
+            <Text fontFamily="heading" fontSize={{ base: '2xl', md: '3xl' }} color="brand.amber" lineHeight={1}>
+              {playerData.initials}_ Admin
             </Text>
-            <Text fontFamily="'Barlow Condensed', sans-serif" fontSize="12px" letterSpacing="0.16em" textTransform="uppercase" color="whiteAlpha.500">
-              {session.user?.email}
-            </Text>
+            <HStack spacing={2} mt={2}>
+              <Badge
+                fontFamily="mono" fontSize="9px" bg="rgba(30,95,168,0.15)"
+                color="brand.brownLight" border="1px solid rgba(30,95,168,0.3)"
+                px={2} py={0.5} letterSpacing="widest"
+              >
+                Partidos
+              </Badge>
+              <Text fontFamily="mono" fontSize="10px" color="brand.gray"
+                    display={{ base: 'none', sm: 'block' }}>
+                {user.email}
+              </Text>
+            </HStack>
           </Box>
-          <HStack spacing={3}>
-            <Button as="a" href="/" variant="outline" borderRadius={0} borderColor="rgba(255,255,255,0.15)" color="white" fontFamily="'Barlow Condensed', sans-serif" letterSpacing="0.1em" textTransform="uppercase" fontWeight="600" _hover={{ bg: 'rgba(255,255,255,0.06)' }}>
-              Ver web
-            </Button>
-            <Button variant="outline" borderRadius={0} borderColor="rgba(0,87,184,0.5)" color="white" fontFamily="'Barlow Condensed', sans-serif" letterSpacing="0.1em" textTransform="uppercase" fontWeight="600" _hover={{ bg: 'rgba(0,87,184,0.2)' }} onClick={() => supabase.auth.signOut()}>
-              Salir
-            </Button>
-          </HStack>
+          <Button
+            variant="ghost"
+            color="brand.gray"
+            fontFamily="mono" fontSize="xs"
+            letterSpacing="widest" textTransform="uppercase"
+            leftIcon={<FiLogOut />}
+            _hover={{ color: 'white', bg: 'rgba(30,95,168,0.1)' }}
+            onClick={handleLogout}
+          >
+            <Text display={{ base: 'none', sm: 'block' }}>Salir</Text>
+          </Button>
         </Flex>
 
-        <Divider borderColor="rgba(255,255,255,0.08)" my={6} />
+        <Divider borderColor="brand.brownDark" mb={{ base: 5, md: 8 }} />
 
-        {!initial ? (
-          <Flex justify="center" py={12}><Spinner color="brand.blue" /></Flex>
-        ) : (
-          <Flex gap={6} direction={{ base: 'column', md: 'row' }} align="stretch">
-            <MatchForm slot="last" title="Último Resultado" accent="#C9A84C" showScore initial={initial.last} />
-            <MatchForm slot="next" title="Próximo Partido" accent="#0057B8" showScore={false} initial={initial.next} />
-          </Flex>
-        )}
+        {/* Forms with tabs */}
+        <Box
+          bg="rgba(11,42,74,0.25)"
+          border="1px solid"
+          borderColor="brand.brownDark"
+          borderRadius="xl"
+          p={{ base: 4, md: 6 }}
+          mb={{ base: 6, md: 8 }}
+        >
+          <Tabs
+            index={tabIndex}
+            onChange={setTabIndex}
+            variant="unstyled"
+          >
+            <TabList mb={5} gap={2}>
+              <Tab
+                fontFamily="mono" fontSize="11px" letterSpacing="widest"
+                textTransform="uppercase" color="brand.gray2" color="brand.gray"
+                borderRadius="md" px={4} py={2}
+                _selected={{ color: 'white', bg: 'brand.gray' }}
+                _hover={{ color: 'white' }}
+              >
+                Último Resultado
+              </Tab>
+              <Tab
+                fontFamily="mono" fontSize="11px" letterSpacing="widest"
+                textTransform="uppercase" color="brand.gray"
+                borderRadius="md" px={4} py={2}
+                _selected={{ color: 'white', bg: 'brand.gray' }}
+                _hover={{ color: 'white' }}
+              >
+                Próximo Partido
+              </Tab>
+            </TabList>
+
+            <TabPanels>
+              <TabPanel p={0}>
+                <MatchForm
+                  slot="last"
+                  label="Cargar último resultado"
+                  data={matchData.last}
+                  onSave={handleSave}
+                  uploading={uploading}
+                />
+              </TabPanel>
+              <TabPanel p={0}>
+                <MatchForm
+                  slot="next"
+                  label="Cargar próximo partido"
+                  data={matchData.next}
+                  onSave={handleSave}
+                  uploading={uploading}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Box>
+
+        {/* Preview section */}
+        <Box mb={6}>
+          <Text fontFamily="mono" fontSize="10px" color="brand.gray"
+                textTransform="uppercase" letterSpacing="widest" mb={4}>
+            Datos cargados
+          </Text>
+
+          <VStack spacing={4} align="stretch">
+            <MatchPreviewCard
+              slot="last"
+              data={matchData.last}
+              label="Último Resultado"
+              onEdit={() => handleEdit('last')}
+              onDelete={() => handleDelete('last')}
+            />
+            <MatchPreviewCard
+              slot="next"
+              data={matchData.next}
+              label="Próximo Partido"
+              onEdit={() => handleEdit('next')}
+              onDelete={() => handleDelete('next')}
+            />
+          </VStack>
+        </Box>
       </Box>
     </Box>
   )
-}
-
-// Convierte un match (rowToMatch) al shape del formulario.
-function toForm(match) {
-  if (!match) return EMPTY
-  return {
-    home: { name: match.home.name, shield: match.home.shield },
-    away: { name: match.away.name, shield: match.away.shield },
-    homeScore: match.homeScore ?? '',
-    awayScore: match.awayScore ?? '',
-    date: match.date,
-    stadium: match.stadium,
-    competition: match.competition,
-  }
 }

@@ -39,7 +39,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
   const heroName = 'PIOVI'
 
-  // Datos de partidos (último resultado + próximo) — Supabase con fallback local
+  // Datos de partidos (último resultado + próximo) — Firebase con fallback local
   const { matches } = useMatches()
 
   // ── Mouse parallax on individual elements within each layer ────
@@ -404,17 +404,20 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
               >
                 {playerData.position}
               </Text>
-              <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="13px"
-                fontWeight="600"
-                letterSpacing="0.18em"
-                textTransform="uppercase"
-                color="brand.blue"
-                mb={4}
-              >
-                {playerData.nationalityFlag} {playerData.nationality}
-              </Text>
+              <Flex align="center" gap={4} my={2} mb={4}>
+                <Image src={playerData.nationalityFlag} boxSize="24px" objectFit="contain" />
+                <Text
+                  fontFamily="heading"
+                  fontSize="14px"
+                  fontWeight="600"
+                  letterSpacing="0.14em"
+                  textTransform="uppercase"
+                  color="brand.blue"
+                  lineHeight="1.25"
+                >
+                  {playerData.nationality}
+                </Text>
+              </Flex>
               <MiniStat value={playerData.currentClub} logo={playerData.logoCurrentClub} accent />
             </Box>
           </Box>
@@ -451,18 +454,21 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
               >
                 {playerData.position}
               </Text>
-              <Text
-                fontFamily="'Barlow Condensed', sans-serif"
-                fontSize="12px"
-                fontWeight="600"
-                letterSpacing="0.14em"
-                textTransform="uppercase"
-                color="brand.blue"
-                lineHeight="1.25"
-                my={2}
-              >
-                {playerData.nationalityFlag} {playerData.nationality}
-              </Text>
+              <Flex align="center" gap="6px" mt={0}>
+                <Image src={playerData.nationalityFlag} boxSize="20px" objectFit="contain" />
+                <Text
+                  fontFamily="'Barlow Condensed', sans-serif"
+                  fontSize="12px"
+                  fontWeight="600"
+                  letterSpacing="0.14em"
+                  textTransform="uppercase"
+                  color="brand.blue"
+                  lineHeight="1.25"
+                  my={2}
+                >
+                  {playerData.nationality}
+                </Text>
+              </Flex>
               <Flex align="center" gap="6px">
                 <Image
                   src={playerData.logoCurrentClub}
@@ -548,12 +554,12 @@ function MiniStat({ label, value, accent, logo }) {
         {label}
       </Text>
       {/* Value + logo (optional), aligned to the right edge */}
-      <Flex align="center" justify="flex-end" gap="8px">
+      <Flex align="center" justify="flex-end" gap={2}>
         {logo && (
           <Image
             src={logo}
             alt={typeof value === 'string' ? value : 'logo'}
-            boxSize="26px"
+            boxSize="28px"
             objectFit="contain"
             flexShrink={0}
           />

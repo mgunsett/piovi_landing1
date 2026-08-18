@@ -84,8 +84,8 @@ function NavbarClassic() {
         py={{ base: 1.5, lg: 1 }}
         borderRadius={{ base: '18px', lg: '10px' }}
         border="1px solid"
-        borderColor={'brand.amber'}
-        bg={'brand.dark3'}
+        borderColor={'brand.navy'}
+        bg={'brand.darkDeep'}
         backdropFilter="blur(10px) saturate(140%)"
         boxShadow={scrolled
           ? '0 10px 34px rgba(0,0,0,0.40)'
@@ -123,7 +123,7 @@ function NavbarClassic() {
               fontWeight="100"
               letterSpacing="wider"
               textTransform="uppercase"
-              color="brand.amber"
+              color="brand.bone"
               cursor="pointer"
               transition="color 0.25s"
               _before={{
@@ -158,9 +158,9 @@ function NavbarClassic() {
           display={{ base: 'none', lg: 'block' }}
           px={'10px'}
           py={'5px'}
-          bg="brand.amber"
+          bg="brand.darkDeep"
           border="1px solid"
-          borderColor='brand.blueMid'
+          borderColor='brand.red'
           borderRadius={'5px'}
           fontFamily='heading'
           fontSize="2xs"

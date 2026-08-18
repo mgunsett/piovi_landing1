@@ -1,43 +1,34 @@
-// ─── useMatches ──────────────────────────────────────────────────
-// Devuelve { last, next } para el MatchBox del Hero.
-// Render instantáneo con el fallback local; si Supabase está
-// configurado, hidrata con los datos reales en segundo plano.
-
-import { useEffect, useState } from 'react'
-import { supabase, isSupabaseConfigured } from '../lib/supabase'
-import { defaultMatches, rowToMatch } from '../data/matchData'
+import { useState, useEffect } from 'react'
+import { getDoc } from 'firebase/firestore'
+import { isFirebaseConfigured, playerMatchDoc } from '../lib/firebase'
+import { defaultMatches, docToMatch } from '../data/matchData'
 
 export function useMatches() {
   const [matches, setMatches] = useState(defaultMatches)
-  const [loading, setLoading] = useState(isSupabaseConfigured)
+  const [loading, setLoading] = useState(isFirebaseConfigured)
 
   useEffect(() => {
-    if (!isSupabaseConfigured) return
+    if (!isFirebaseConfigured) return
 
-    let active = true
+    const fetchMatches = async () => {
+      try {
+        const [lastSnap, nextSnap] = await Promise.all([
+          getDoc(playerMatchDoc('last')),
+          getDoc(playerMatchDoc('next')),
+        ])
 
-    ;(async () => {
-      const { data, error } = await supabase
-        .from('matches')
-        .select('*')
-        .in('slot', ['last', 'next'])
-
-      if (!active) return
-
-      if (!error && data) {
-        const lastRow = data.find((r) => r.slot === 'last')
-        const nextRow = data.find((r) => r.slot === 'next')
-        setMatches({
-          last: rowToMatch(lastRow) || defaultMatches.last,
-          next: rowToMatch(nextRow) || defaultMatches.next,
-        })
+        const result = { ...defaultMatches }
+        if (lastSnap.exists()) result.last = docToMatch(lastSnap.data())
+        if (nextSnap.exists()) result.next = docToMatch(nextSnap.data())
+        setMatches(result)
+      } catch {
+        // falls back to defaultMatches silently
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
-    })()
-
-    return () => {
-      active = false
     }
+
+    fetchMatches()
   }, [])
 
   return { matches, loading }

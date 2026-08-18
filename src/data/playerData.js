@@ -44,6 +44,7 @@ import logo3 from '@assets/logos/logo3.webp'
 //Icons
 import { FaInstagram, FaEnvelope } from 'react-icons/fa'
 import { IoMdStats } from "react-icons/io";
+import argentina from '@assets/argentina.webp'
 
 const name = 'GONZALO'
 const fullName = 'PIOVI'
@@ -57,7 +58,7 @@ export const playerData = {
   position: 'Defensor Central',
   positionShort: 'DEF',
   nationality: 'Argentina',
-  nationalityFlag: '🇦🇷',
+  nationalityFlag: argentina,
   age: 31,
   height: '1.81m',
   weight: '78kg',
