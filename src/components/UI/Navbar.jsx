@@ -39,17 +39,21 @@ function scrollTo(href) {
   }
 }
 
-function NavbarClassic() {
+function NavbarClassic({ ready }) {
   const [scrolled, setScrolled]   = useState(false)
   const [menuOpen, setMenuOpen]   = useState(false)
   const navRef                    = useRef(null)
 
+  // La entrada espera a que el Preloader termine: hasta entonces el
+  // navbar queda en opacity 0 (ver el `style` inline de abajo) y no se
+  // desperdicia la animación detrás del overlay.
   useEffect(() => {
+    if (!ready) return
     gsap.fromTo(navRef.current,
       { y: -60, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.9, ease: 'expo.out', delay: 0.5 }
+      { y: 0, opacity: 1, duration: 0.9, ease: 'expo.out', delay: 0.25 }
     )
-  }, [])
+  }, [ready])
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 80)
@@ -276,9 +280,11 @@ function NavbarClassic() {
 }
 
 // Selector: renderiza la variante según NAV_DESIGN ('clasico' | 'barra' | 'split' | 'menu')
-export default function Navbar() {
+// `ready` lo pasa App: es true cuando el Preloader terminó de cargar
+// el Hero. Sólo la variante activa ("clasico") lo usa.
+export default function Navbar({ ready = true }) {
   if (NAV_DESIGN === 'barra') return <NavbarBar />
   if (NAV_DESIGN === 'split') return <NavbarSplit />
   if (NAV_DESIGN === 'menu')  return <NavbarMenu />
-  return <NavbarClassic />
+  return <NavbarClassic ready={ready} />
 }

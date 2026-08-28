@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Box } from '@chakra-ui/react'
 
 // Images
@@ -5,6 +6,7 @@ import piovi3 from '@assets/piovi3.webp'
 
 // UI
 import Navbar from './components/UI/Navbar'
+import Preloader from './components/UI/Preloader'
 import Footer from './components/UI/Footer'
 
 // Sections
@@ -16,10 +18,17 @@ import PressSection from './components/Press/PressSection'
 import ContactSection from './components/Contact/ContactSection'
 
 export default function App() {
+  // El Preloader tapa la web hasta que la foto, el escudo, la bandera y
+  // las tipografías del Hero están descargados. Cuando avisa, `ready`
+  // pasa a true y recién ahí el Navbar y el Hero animan su entrada
+  // (mientras el overlay se funde por encima).
+  const [ready, setReady] = useState(false)
+
   return (
     <Box bg="#080C12" minH="100vh" position="relative">
-      <Navbar />
-      <Hero />
+      <Preloader onComplete={() => setReady(true)} />
+      <Navbar ready={ready} />
+      <Hero ready={ready} />
 
       {/* StatsSection is pulled up −100vh so it slides over the still-pinned
           Hero (the "section reveal" cover). This −100vh mirrors the 100vh

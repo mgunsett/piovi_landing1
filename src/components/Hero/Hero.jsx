@@ -10,9 +10,16 @@ import piovi4 from '@assets/piovi4.svg'
 import { playerData } from '../../data/playerData'
 import MatchBox from './MatchBox'
 import { useMatches } from '../../hooks/useMatches'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 // ─── HERO COMPONENT ──────────────────────────────────────────────
-export default function Hero({ playerImage, hidePlayerImage = false }) {
+export default function Hero({ playerImage, hidePlayerImage = false, ready = true }) {
+  // En mobile el Hero se pinta estático: nada de GSAP, ni parallax de
+  // mouse, ni scrub de scroll. Esas tres cosas cuestan un tween por
+  // frame sobre elementos enormes (letras a 37vw, foto a pantalla) y
+  // eran el cuello de botella de la primera pintura en celular.
+  const isMobile = useIsMobile()
+
   // Layout refs
   const outerRef     = useRef(null)  // 200vh scroll-space wrapper
   const containerRef = useRef(null)  // sticky 100vh inner viewport
@@ -33,7 +40,6 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
   // Static UI refs (no parallax)
   const subtitleRef = useRef(null)
-  const statsRef    = useRef(null)
   const lineRef     = useRef(null)
   const numberRef   = useRef(null)
 
@@ -45,6 +51,8 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
   // ── Mouse parallax on individual elements within each layer ────
   // Layers handle scroll-Y; elements handle mouse-X/Y — no conflict
   useEffect(() => {
+    if (isMobile) return
+
     const container = containerRef.current
     if (!container) return
 
@@ -66,10 +74,12 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
     container.addEventListener('mousemove', onMove)
     return () => container.removeEventListener('mousemove', onMove)
-  }, [])
+  }, [isMobile])
 
   // ── Scroll parallax — 3 layers at different Y speeds ──────────
   useEffect(() => {
+    if (isMobile) return
+
     const ctx = gsap.context(() => {
       // Scrub tied to the tall wrapper. The inner viewport is pinned via
       // CSS sticky for the whole [0 → wrapperH−100vh] window, so these
@@ -97,61 +107,75 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
     }, outerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [isMobile])
 
-  // ── Entry animation (page load) ───────────────────────────────
+  // ── Animación de entrada ──────────────────────────────────────
+  // Arranca cuando el Preloader avisa que el Hero terminó de cargar
+  // (`ready`), no en el montaje: así no se desperdicia detrás del
+  // overlay. En mobile no corre en absoluto.
   useEffect(() => {
+    if (isMobile) return
+
     const ctx = gsap.context(() => {
+      // El estado inicial se aplica ya en el montaje —con el preloader
+      // todavía tapando la web— para que al destaparse no haya salto.
+      gsap.set(lettersRef.current, { yPercent: 110, opacity: 0, rotateX: -40 })
+      gsap.set(numberRef.current, { opacity: 0, x: -30 })
+      gsap.set(lineRef.current, { scaleX: 0, transformOrigin: 'left' })
+      gsap.set(subtitleRef.current, { opacity: 0, y: 12 })
+      if (photoInnerRef.current) {
+        gsap.set(photoInnerRef.current, {
+          clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)',
+          scale: 1.06,
+          filter: 'brightness(1.8) saturate(0.4)',
+        })
+      }
+
+      if (!ready) return
+
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
 
-      tl.fromTo(
+      tl.to(
         lettersRef.current,
-        { yPercent: 110, opacity: 0, rotateX: -40 },
         { yPercent: 0, opacity: 1, rotateX: 0, duration: 1.1, stagger: 0.08, ease: 'expo.out' },
         0
       )
 
-      tl.fromTo(
-        photoInnerRef.current,
-        {
-          clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)',
-          scale: 1.06,
-          filter: 'brightness(1.8) saturate(0.4)',
-        },
-        {
-          clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-          scale: 1,
-          filter: 'brightness(1) saturate(1)',
-          duration: 1.5,
-          ease: 'expo.out',
-        },
-        0.25
-      )
-
-      if (glowFlashRef.current) {
-        tl.fromTo(
-          glowFlashRef.current,
-          { opacity: 0 },
+      if (photoInnerRef.current) {
+        tl.to(
+          photoInnerRef.current,
           {
-            opacity: 1,
-            duration: 0.18,
-            ease: 'power2.in',
-            onComplete: () => {
-              gsap.to(glowFlashRef.current, { opacity: 0, duration: 0.55, ease: 'power2.out' })
-            },
+            clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+            scale: 1,
+            filter: 'brightness(1) saturate(1)',
+            duration: 1.5,
+            ease: 'expo.out',
           },
-          1.55
+          0.25
         )
       }
 
-      tl.fromTo(numberRef.current,   { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }, 0.6)
-      tl.fromTo(lineRef.current,     { scaleX: 0 },           { scaleX: 1, duration: 0.7, transformOrigin: 'left', ease: 'power3.inOut' }, 0.9)
-      tl.fromTo(subtitleRef.current, { opacity: 0, y: 12 },   { opacity: 1, y: 0, duration: 0.6 }, 1.1)
-      tl.fromTo(statsRef.current,    { opacity: 0, y: 16 },   { opacity: 1, y: 0, duration: 0.6 }, 1.3)
+      tl.fromTo(
+        glowFlashRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.18,
+          ease: 'power2.in',
+          onComplete: () => {
+            gsap.to(glowFlashRef.current, { opacity: 0, duration: 0.55, ease: 'power2.out' })
+          },
+        },
+        1.55
+      )
+
+      tl.to(numberRef.current,   { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out' }, 0.6)
+      tl.to(lineRef.current,     { scaleX: 1, duration: 0.7, ease: 'power3.inOut' }, 0.9)
+      tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.6 }, 1.1)
     }, containerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [ready, isMobile])
 
   const imgSrc = playerImage || piovi4
 
@@ -203,7 +227,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           inset={0}
           zIndex={1}
           pointerEvents="none"
-          willChange="transform"
+          willChange={isMobile ? 'auto' : 'transform'}
         >
           {/* Blue radial glow behind the player */}
           <Box
@@ -277,7 +301,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
           inset={0}
           zIndex={5}
           pointerEvents="none"
-          willChange="transform"
+          willChange={isMobile ? 'auto' : 'transform'}
         >
           <Flex
             flexDirection="column"
@@ -328,21 +352,21 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
         {!hidePlayerImage && (
           <Box
-            ref={{base:'none', md:photoLayerRef}}
+            ref={photoLayerRef}
             position="absolute"
             inset={0}
             zIndex={10}
             pointerEvents="none"
           >
             <Box
-              ref={{base:'none', md:photoRef}}
+              ref={photoRef}
               position="absolute"
               bottom={{ base: '170px', md: '0' }}
               left="50%"
               transform="translateX(-50%)"
               w={{ base: '280px', md: '400px', lg: '370px' }}
             >
-              <Box ref={{base:'none', md:photoInnerRef}} position="relative">
+              <Box ref={photoInnerRef} position="relative">
                 <Image
                   src={imgSrc}
                   alt="Gonzalo Piovi"
@@ -441,7 +465,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
             >
               {playerData.number}
             </Text>
-            <Box ref={lineRef} h="1px" w="100px" bg="brand.red" mt={4}  />
+            <Box h="1px" w="100px" bg="brand.red" mt={4} />
             <Box pt="10px">
               <Text
                 fontFamily="'Barlow Condensed', sans-serif"
@@ -509,7 +533,7 @@ export default function Hero({ playerImage, hidePlayerImage = false }) {
 
         {/* Entry glow flash */}
         <Box
-          ref={{base:'none', md:glowFlashRef}}
+          ref={glowFlashRef}
           position="absolute"
           inset={0}
           zIndex={20}
