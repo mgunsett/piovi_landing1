@@ -12,7 +12,7 @@ import Footer from './components/UI/Footer'
 // Sections
 import Hero from './components/Hero/Hero'
 import StatsSection from './components/Stats/StatsSection'
-import GallerySection from './components/Gallery/GallerySection'
+import { GalleryMazo as GallerySection } from './components/GalleryTournaments'
 import VideosSection from './components/Videos/VideosSection'
 import PressSection from './components/Press/PressSection'
 import ContactSection from './components/Contact/ContactSection'
