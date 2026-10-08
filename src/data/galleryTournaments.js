@@ -23,11 +23,20 @@ import image19 from '@assets/galleryTorneos/Liga MX/image19.webp'
 
 // Copas
 import image1 from '@assets/galleryTorneos/Copas/image1.webp'
-import image4 from '@assets/galleryTorneos/Copas/image4.webp'
-import image3 from '@assets/galleryTorneos/Copas/image3.webp'
-import image8 from '@assets/galleryTorneos/Copas/image8.webp'
 import image2 from '@assets/galleryTorneos/Copas/image2.webp'
+import image3 from '@assets/galleryTorneos/Copas/image3.webp'
+import image4 from '@assets/galleryTorneos/Copas/image4.webp'
+import image5 from '@assets/galleryTorneos/Copas/image5.webp'
+import image6 from '@assets/galleryTorneos/Copas/image6.webp'
+import image7 from '@assets/galleryTorneos/Copas/image7.webp'
+import image8 from '@assets/galleryTorneos/Copas/image8.webp'
 import image9 from '@assets/galleryTorneos/Copas/image9.webp'
+import image10 from '@assets/galleryTorneos/Copas/image10.webp'
+import image11 from '@assets/galleryTorneos/Copas/image11.webp'
+import image12 from '@assets/galleryTorneos/Copas/image12.webp'
+import image13 from '@assets/galleryTorneos/Copas/image13.webp'
+import image14 from '@assets/galleryTorneos/Copas/image14.webp'
+
 
 // Equipos
 import image20 from '@assets/galleryTorneos/Equipos/image20.webp'
