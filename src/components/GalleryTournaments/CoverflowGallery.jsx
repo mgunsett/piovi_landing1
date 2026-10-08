@@ -264,7 +264,7 @@ function Lightbox({ images, label, index, onClose, onPrev, onNext }) {
         >
           <Image src={item.src} alt={item.alt} maxW="min(100%, 1000px)" maxH="74vh" objectFit="contain" borderRadius="md" />
           <Text fontFamily="condensed" fontSize="13px" letterSpacing="0.08em" color="rgba(255,255,255,0.55)" textAlign="center">
-            {label} · {item.caption}
+            {label}
           </Text>
         </MotionBox>
       </AnimatePresence>

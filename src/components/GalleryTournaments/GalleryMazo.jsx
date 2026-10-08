@@ -36,7 +36,7 @@ function Deck({ t, index, onSelect, onHover }) {
   const n = t.photos.length
   const cards = [
     { cls: 'c-l', i: n - 1 },
-    { cls: 'c-r', i: 1 },
+    { cls: 'c-r', i: 1 % n },
     { cls: 'c-top', i: 0 },
   ]
   return (
@@ -54,7 +54,7 @@ function Deck({ t, index, onSelect, onHover }) {
       display="flex"
       flexDirection={{ base: 'row', md: 'column' }}
       alignItems="center"
-      gap={{ base: 7, md: 7 }}
+      gap={{ base: '44px', md: 7 }}
       textAlign={{ base: 'left', md: 'center' }}
       p={{ base: '14px 16px 14px 22px', md: 0 }}
       border={{ base: '1px solid', md: 'none' }}
@@ -248,7 +248,7 @@ function MiniDeck({ t, onClick, onHover }) {
           inset={0}
           borderRadius="3px"
           border="1px solid rgba(85,101,155,.61)"
-          bgImage={`url(${t.photos[1].src})`}
+          bgImage={`url(${(t.photos[1] ?? t.photos[0]).src})`}
           bgSize="cover"
           bgPos="center"
           filter="brightness(.5)"

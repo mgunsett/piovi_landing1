@@ -14,39 +14,51 @@
 // ─────────────────────────────────────────────────────────────────
 
 // Liga MX
-import image7 from '@assets/galleryTorneos/Liga MX/image7.webp'
-import image17 from '@assets/galleryTorneos/Liga MX/image17.webp'
-import image5 from '@assets/galleryTorneos/Liga MX/image5.webp'
-import image12 from '@assets/galleryTorneos/Liga MX/image12.webp'
-import image14 from '@assets/galleryTorneos/Liga MX/image14.webp'
-import image19 from '@assets/galleryTorneos/Liga MX/image19.webp'
+import liga1 from '@assets/galleryTorneos/Liga MX/image_liga1.webp'
+import liga2 from '@assets/galleryTorneos/Liga MX/image_liga2.webp'
+import liga3 from '@assets/galleryTorneos/Liga MX/image_liga3.webp'
+import liga4 from '@assets/galleryTorneos/Liga MX/image_liga4.webp'
+import liga5 from '@assets/galleryTorneos/Liga MX/image_liga5.webp'
+import liga6 from '@assets/galleryTorneos/Liga MX/image_liga6.webp'
+import liga7 from '@assets/galleryTorneos/Liga MX/image_liga7.webp'
+import liga8 from '@assets/galleryTorneos/Liga MX/image_liga8.webp'
+import liga9 from '@assets/galleryTorneos/Liga MX/image_liga9.webp'
+import liga10 from '@assets/galleryTorneos/Liga MX/image_liga10.webp'
+import liga11 from '@assets/galleryTorneos/Liga MX/image_liga11.webp'
+import liga12 from '@assets/galleryTorneos/Liga MX/image_liga12.webp'
+import liga13 from '@assets/galleryTorneos/Liga MX/image_liga13.webp'
+import liga14 from '@assets/galleryTorneos/Liga MX/image_liga14.webp'
+import liga15 from '@assets/galleryTorneos/Liga MX/image_liga15.webp'
 
 // Copas
-import image1 from '@assets/galleryTorneos/Copas/image1.webp'
-import image2 from '@assets/galleryTorneos/Copas/image2.webp'
-import image3 from '@assets/galleryTorneos/Copas/image3.webp'
-import image4 from '@assets/galleryTorneos/Copas/image4.webp'
-import image5 from '@assets/galleryTorneos/Copas/image5.webp'
-import image6 from '@assets/galleryTorneos/Copas/image6.webp'
-import image7 from '@assets/galleryTorneos/Copas/image7.webp'
-import image8 from '@assets/galleryTorneos/Copas/image8.webp'
-import image9 from '@assets/galleryTorneos/Copas/image9.webp'
-import image10 from '@assets/galleryTorneos/Copas/image10.webp'
-import image11 from '@assets/galleryTorneos/Copas/image11.webp'
-import image12 from '@assets/galleryTorneos/Copas/image12.webp'
-import image13 from '@assets/galleryTorneos/Copas/image13.webp'
-import image14 from '@assets/galleryTorneos/Copas/image14.webp'
+import copa1 from '@assets/galleryTorneos/Copas/image_copa1.webp'
+import copa2 from '@assets/galleryTorneos/Copas/image_copa2.webp'
+import copa3 from '@assets/galleryTorneos/Copas/image_copa3.webp'
+import copa4 from '@assets/galleryTorneos/Copas/image_copa4.webp'
+import copa5 from '@assets/galleryTorneos/Copas/image_copa5.webp'
+import copa6 from '@assets/galleryTorneos/Copas/image_copa6.webp'
+import copa7 from '@assets/galleryTorneos/Copas/image_copa7.webp'
+import copa8 from '@assets/galleryTorneos/Copas/image_copa8.webp'
+import copa9 from '@assets/galleryTorneos/Copas/image_copa9.webp'
+import copa10 from '@assets/galleryTorneos/Copas/image_copa10.webp'
+import copa11 from '@assets/galleryTorneos/Copas/image_copa11.webp'
+import copa12 from '@assets/galleryTorneos/Copas/image_copa12.webp'
+import copa13 from '@assets/galleryTorneos/Copas/image_copa13.webp'
+import copa14 from '@assets/galleryTorneos/Copas/image_copa14.webp'
+import copa15 from '@assets/galleryTorneos/Copas/image_copa15.webp'
+import copa16 from '@assets/galleryTorneos/Copas/image_copa16.webp'
 
 
 // Equipos
-import image20 from '@assets/galleryTorneos/Equipos/image20.webp'
-import image13 from '@assets/galleryTorneos/Equipos/image13.webp'
-import image10 from '@assets/galleryTorneos/Equipos/image10.webp'
-import image11 from '@assets/galleryTorneos/Equipos/image11.webp'
-import image16 from '@assets/galleryTorneos/Equipos/image16.webp'
-import image18 from '@assets/galleryTorneos/Equipos/image18.webp'
-import image6 from '@assets/galleryTorneos/Equipos/image6.webp'
-import image15 from '@assets/galleryTorneos/Equipos/image15.webp'
+import equipo1 from '@assets/galleryTorneos/Equipos/image_equipos1.webp'
+import equipo2 from '@assets/galleryTorneos/Equipos/image_equipos2.webp'
+import equipo3 from '@assets/galleryTorneos/Equipos/image_equipos3.webp'
+import equipo4 from '@assets/galleryTorneos/Equipos/image_equipos4.webp'
+import equipo5 from '@assets/galleryTorneos/Equipos/image_equipos5.webp'
+import equipo6 from '@assets/galleryTorneos/Equipos/image_equipos6.webp'
+import equipo7 from '@assets/galleryTorneos/Equipos/image_equipos7.webp'
+import equipo8 from '@assets/galleryTorneos/Equipos/image_equipos8.webp'
+import equipo9 from '@assets/galleryTorneos/Equipos/image_equipos9.webp'
 
 const photo = (n, src, caption) => ({
   id: `img${n}`,
@@ -58,30 +70,49 @@ const photo = (n, src, caption) => ({
 export const tournaments = [
   {
     id: 'liga-mx',
-    name: 'Liga MX',
+    name: 'Cruz Azul',
     season: '2025 · 2026',
     order: 1,
     photos: [
-      photo(7, image7, 'Conduciendo el balón con la camiseta de Cruz Azul'),
-      photo(17, image17, 'Rematando el balón durante un partido'),
-      photo(5, image5, 'En acción con la camiseta titular'),
-      photo(12, image12, 'Junto al plantel antes de un partido'),
-      photo(14, image14, 'Aplaudiendo a la hinchada tras un partido'),
-      photo(19, image19, 'Conduciendo con la camiseta suplente'),
+      photo(1, liga1, 'Celebrando el gol con el plantel'),
+      photo(2, liga2, 'Festejando el gol con el plantel'),
+      photo(3, liga3, 'Celebrando el gol con el plantel'),
+      photo(4, liga4, 'Celebrando el gol con el plantel'),
+      photo(5, liga5, 'Celebrando el gol con el plantel'),
+      photo(6, liga6, 'Celebrando el gol con el plantel'),
+      photo(7, liga7, 'Celebrando el gol con el plantel'),
+      photo(8, liga8, 'Celebrando el gol con el plantel'),
+      photo(9, liga9, 'Celebrando el gol con el plantel'),
+      photo(10, liga10, 'Celebrando el gol con el plantel'),
+      photo(11, liga11, 'Celebrando el gol con el plantel'),
+      photo(12, liga12, 'Celebrando el gol con el plantel'),
+      photo(13, liga13, 'Celebrando el gol con el plantel'),
+      photo(14, liga14, 'Celebrando el gol con el plantel'),
+      photo(15, liga15, 'Celebrando el gol con el plantel'),
     ],
   },
   {
     id: 'copas',
     name: 'Copas',
-    season: '2025',
+    season: '2025 · 2026',
     order: 2,
     photos: [
-      photo(1, image1, 'Levantando el trofeo de campeón'),
-      photo(4, image4, 'Festejando con el plantel entre confeti'),
-      photo(3, image3, 'Sonriendo con la medalla y el trofeo'),
-      photo(8, image8, 'Posando con el trofeo'),
-      photo(2, image2, 'Festejando el título con su familia'),
-      photo(9, image9, 'Celebración familiar en el campo'),
+      photo(1, copa1, 'Levantando el trofeo de campeón'),
+      photo(4, copa4, 'Festejando con el plantel entre confeti'),
+      photo(3, copa3, 'Sonriendo con la medalla y el trofeo'),
+      photo(8, copa8, 'Posando con el trofeo'),
+      photo(2, copa2, 'Festejando el título con su familia'),
+      photo(9, copa9, 'Celebración familiar en el campo'),
+      photo(5, copa5, 'Con el trofeo y la medalla de campeón'),
+      photo(6, copa6, 'Mostrando la medalla de campeón'),
+      photo(7, copa7, 'Con el trofeo y la camiseta del equipo'),
+      photo(10, copa10, 'Con el trofeo y la camiseta del equipo'),
+      photo(11, copa11, 'Con el trofeo y la camiseta del equipo'),
+      photo(12, copa12, 'Con el trofeo y la camiseta del equipo'),
+      photo(13, copa13, 'Con el trofeo y la camiseta del equipo'),
+      photo(14, copa14, 'Con el trofeo y la camiseta del equipo'),
+      photo(15, copa15, 'Con el trofeo y la camiseta del equipo'),
+      photo(16, copa16, 'Con el trofeo y la camiseta del equipo'),
     ],
   },
   {
@@ -90,14 +121,15 @@ export const tournaments = [
     season: 'Trayectoria',
     order: 3,
     photos: [
-      photo(20, image20, 'Celebrando un gol con la camiseta de Racing Club'),
-      photo(13, image13, 'Presentación de su renovación con Cruz Azul'),
-      photo(10, image10, 'Retrato con la campera oficial de Cruz Azul'),
-      photo(11, image11, 'Firmando camisetas a los hinchas'),
-      photo(16, image16, 'Entrenando con Cruz Azul'),
-      photo(18, image18, 'Entrenamiento junto al plantel'),
-      photo(6, image6, 'Entrenando antes de un partido'),
-      photo(15, image15, 'Con la ropa oficial del club'),
+      photo(1, equipo1, 'Racing Club'),
+      photo(2, equipo2, 'Racing Club'),
+      photo(3, equipo3, 'Racing Club'),
+      photo(4, equipo4, 'Racing Club'),
+      photo(5, equipo5, 'Racing Club'),
+      photo(6, equipo6, 'Racing Club'),
+      photo(7, equipo7, 'Racing Club'),
+      photo(8, equipo8, 'Racing Club'),
+      photo(9, equipo9, 'Racing Club'),
     ],
   },
 ]

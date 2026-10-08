@@ -201,7 +201,7 @@ export default function VideosSection() {
                 as="button"
                 aria-label="Video anterior"
                 onClick={() => goTo(active - 1)}
-                isDisabled={active === 0}
+                disabled={active === 0}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
@@ -221,7 +221,7 @@ export default function VideosSection() {
                 as="button"
                 aria-label="Video siguiente"
                 onClick={() => goTo(active + 1)}
-                isDisabled={active === videos.length - 1}
+                disabled={active === videos.length - 1}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"

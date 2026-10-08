@@ -75,14 +75,14 @@ export const playerData = {
     { label: 'Velocidad',     value: 82 },
     { label: 'Físico',        value: 86 },
     { label: 'Defensa',       value: 88 },
-    { label: 'Pase',          value: 75 },
+    { label: 'Pase',          value: 94 },
     { label: 'Cabezazo',      value: 79 },
     { label: 'Anticipación',  value: 90 },
   ],
 
   // Stats de temporada actuales
   seasonStats: [
-    { label: 'Partidos',      value: 44 },
+    { label: 'Partidos',      value: 48 },
     { label: 'Goles',         value: 1 },
     { label: 'Asistencias',   value: 2 },
     { label: 'Duelos ganados',value: '78%' },
