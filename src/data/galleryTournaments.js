@@ -59,6 +59,10 @@ import equipo6 from '@assets/galleryTorneos/Equipos/image_equipos6.webp'
 import equipo7 from '@assets/galleryTorneos/Equipos/image_equipos7.webp'
 import equipo8 from '@assets/galleryTorneos/Equipos/image_equipos8.webp'
 import equipo9 from '@assets/galleryTorneos/Equipos/image_equipos9.webp'
+import equipo10 from '@assets/galleryTorneos/Equipos/image_equipos10.webp'
+import equipo11 from '@assets/galleryTorneos/Equipos/image_equipos11.webp'
+import equipo12 from '@assets/galleryTorneos/Equipos/image_equipos12.webp'
+import equipo13 from '@assets/galleryTorneos/Equipos/image_equipos13.webp'
 
 const photo = (n, src, caption) => ({
   id: `img${n}`,
@@ -126,10 +130,14 @@ export const tournaments = [
       photo(3, equipo3, 'Racing Club'),
       photo(4, equipo4, 'Racing Club'),
       photo(5, equipo5, 'Racing Club'),
-      photo(6, equipo6, 'Racing Club'),
-      photo(7, equipo7, 'Racing Club'),
-      photo(8, equipo8, 'Racing Club'),
-      photo(9, equipo9, 'Racing Club'),
+      photo(6, equipo6, 'Colon de Santa Fe'),
+      photo(7, equipo7, 'Colon de Santa Fe'),
+      photo(8, equipo8, 'Colon de Santa Fe'),
+      photo(9, equipo9, 'Colon de Santa Fe'),
+      photo(10, equipo10, 'Colon de Santa Fe'),
+      photo(11, equipo11, 'Defensa y Justicia'),
+      photo(12, equipo12, 'Gimnasia y Esgrima La Plata'),
+      photo(13, equipo13, 'Argentinos Juniors'),
     ],
   },
 ]
