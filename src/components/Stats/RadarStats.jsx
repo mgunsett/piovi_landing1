@@ -3,6 +3,8 @@ import { Box, Grid, Text, VStack, useToken, Flex } from '@chakra-ui/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { playerData } from '../../data/playerData.js'
+import useSeasonStats from '../../hooks/useSeasonStats'
+import { seasonTiles } from '../../lib/seasonTiles'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -303,6 +305,11 @@ export function SeasonColumn({ items }) {
 
 // ─── BLOQUE PRINCIPAL ────────────────────────────────────────────
 export function RadarStats() {
+  // Temporada en curso desde API-Football; sin datos, los valores fijos.
+  const season = useSeasonStats()
+  const seasonItems = season ? seasonTiles(season, playerData.positionShort) : playerData.seasonStats
+  const seasonTitle = season ? `Temporada ${season.temporada}` : 'Temporada 2025 / 2026'
+
   const overall = Math.round(
     playerData.stats.reduce((sum, s) => sum + s.value, 0) / playerData.stats.length
   )
@@ -362,8 +369,9 @@ export function RadarStats() {
           borderColor="brand.accent !important"
           pl={{ base: 0, lg: 10 }}
         >
-          <ColumnShell title="Temporada 2025 / 2026" side="right">
-            <SeasonColumn items={playerData.seasonStats} />
+          {/* key: al llegar los datos se vuelve a montar y se anima de nuevo */}
+          <ColumnShell key={season ? 'api' : 'static'} title={seasonTitle} side="right">
+            <SeasonColumn items={seasonItems} />
           </ColumnShell>
         </Box>
       </Grid>
