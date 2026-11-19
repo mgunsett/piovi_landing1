@@ -1,13 +1,5 @@
 import { Box, Flex, Text, Image, VStack } from '@chakra-ui/react'
 
-// ─── MATCH BOX ───────────────────────────────────────────────────
-// Caja del Hero: "Último Resultado" + "Próximo Partido".
-// Sigue la línea visual de la web (Nippo / Barlow Condensed,
-// azul Cruz Azul, bordes finos, esquinas rectas).
-//
-// variant="card"  → tarjeta vertical (desktop, flotante a la derecha)
-// variant="strip" → franja horizontal full-width (mobile, bajo el Hero)
-
 const PLACEHOLDER = 'data:image/svg+xml;utf8,' +
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/></svg>'
